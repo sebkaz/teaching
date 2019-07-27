@@ -16,8 +16,8 @@ exclude:      ["*.Rmd"]
 title:               Eksploracja danych
 tagline:             'kurs dla studentów UKSW'
 description:         'Eksploracja danych dla studentów WMP.SNŚ UKSW'
-url:                 https://sebkaz.github.io/DataMining
-baseurl:             "/DataMining"             
+url:                 https://sebkaz.github.io/teaching/datamining
+baseurl:             "/datamining"             
 paginate:            5
 
 # About/contact
