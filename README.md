@@ -1,0 +1,2 @@
+# teaching
+wykłady i ćwiczenia
