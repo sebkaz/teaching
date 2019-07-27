@@ -1,0 +1,132 @@
+---
+title: "GGPLOT"
+author: "Sebastian Zając"
+date: "10 02 2018"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(fig.width=4, fig.height=2, fig.align = 'center') 
+library("dplyr")
+```
+
+## Data presentation ggplot2
+
+Load library 
+
+```{r biblioteka}
+# load library ggplot 
+library(ggplot2)
+```
+Nasze dane dostępne bezpośrednio w R
+```{r}
+# our data
+head(mtcars)
+# info o typach danych
+str(mtcars)
+
+```
+
+## Including Plots
+
+```{r pierwszy}
+mtcars %>% 
+    ggplot(aes(x=cyl, y=mpg))
+```
+
+```{r z_danymi}
+mtcars %>% 
+    ggplot(aes(x=cyl, y=mpg))+geom_point()
+```
+
+Ponieważ liczba cylindrów (cyl) jest zmienną kategoryjną oznaczmy ja tak w ggplot i zobaczmy jak zmieni to wykres:
+
+```{r factor_cyl}
+mtcars %>% 
+    ggplot(aes(x=factor(cyl), y=mpg))+geom_point()
+```
+
+Zobaczmy jak wygląda zależność ilości mil na galon (mpg) w zależności od masy pojazdu (weight - in thousands of pounds)
+```{r color1}
+ggplot(mtcars, aes(x = wt, y = mpg)) +
+  geom_point()
+```
+
+Ciekawym sposobem wizualizacji kolejnych wymiarów  (3-d) jest dodanie koloru. Np zobaczmy jak powyższy wykres przedstawia się wraz ze zmienną opisującą pojemność skokową silnika.
+
+```{r color2}
+ggplot(mtcars, aes(x = wt, y = mpg, color=disp)) +
+  geom_point()
+```
+
+oprócz koloru można zmienić również rozmiar punktów w zależności od kolejnej zmiennej co daje nam możliwość przedstawienia kolejnego wymiaru (4-d)
+```{r size1, fig.width=5, fig.height=3,}
+ggplot(mtcars, aes(x = wt, y = mpg, size=disp)) +
+  geom_point()
+```
+
+W przypadku zmiennej kategoryjnej można również użyć *shape* aby odróżnić kategorie kształtem.
+
+## GGPlot Warstwy 
+
+1. First ggplot2 Layers  - DATA
+
+Iris (R.A. Fischer)
+3 gatunku Irysa - setosa, versicolor
+5 zmiennych 
+
+2. Second Layers  - Aesthatics
+co z X i Y 
+
+3. Third Layers - Geometries
+
+wystarczy aby zrobić plot
+
+4.   Facets
+
+5.   Statistics
+Modelowanie
+
+6. Coordinates
+
+7. Themes
+Wygląd
+
+## Exploring ggplot 
+Dane - 50 tyś diamentów 
+
+zawiera informacje o karacie - carat oraz cenie prize
+
+```{r diamonds}
+head(diamonds)
+str(diamonds)
+```
+
+```{r wykres1}
+ggplot(diamonds, aes(x = carat, y = price))
+```
+```{r wykres2}
+ggplot(diamonds, aes(x = carat, y = price))+ geom_point()
+```
+```{r wykres3}
+ggplot(diamonds, aes(x = carat, y = price)) + geom_point() + geom_smooth()
+```
+```{r wykres4}
+ggplot(diamonds, aes(x = carat, y = price)) + geom_smooth()
+```
+```{r wykres5}
+ggplot(diamonds, aes(x = carat, y = price, color=clarity)) + geom_smooth()
+```
+```{r wykres6}
+ggplot(diamonds, aes(x = carat, y = price, color=clarity)) + geom_point(alpha=0.4)
+```
+
+
+```{r new}
+dia_plot <- ggplot(diamonds, aes(x = carat, y = price))
+dia_plot <- dia_plot + geom_point(alpha=0.2)
+dia_plot + geom_smooth(se = FALSE) # bez przedziałów ufności
+
+```
+
