@@ -1,0 +1,264 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <title>SoP_SAS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    
+  </head>
+  <body>
+    <div class="jumbotron">
+      <div class="container">
+        <h1 class="display-3">Statystyka od Podstaw z wykorzystaniem narzędzi SAS</h1>
+        <h3>Nr przedmiotu: 136030-0131 SLLD</h3>
+        <p><strong>Prowadzący:</strong> dr hab. Ewa Frątczak, <a href='https://sebastianzajac.pl' target="_blank"> dr Sebastian Zając</a> <br/>
+        <a href="http://www.sgh.waw.pl/zaklady/zahziaw">Zakład Analizy Historii Zdarzeń i Analiz Wielopoziomowych</a>
+      </p>
+    </div>
+  </div>
+  
+  <section class='container'>
+    
+    <h2>Ćwiczenia 1</h2>
+    <div class="accordion" id="accordionExample">
+      <!--  Zad 1 -->
+      <div class="card">
+        <div class="card-header" id="headingOne">
+          <h2 class="mb-0">
+          <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+          #1 Podepnij katalog z danymi do biblioteki sop.
+          </button>
+          </h2>
+        </div>
+        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+          <div class="card-body">
+            <code>Libname sop 'C:\sciezka do katalogu'; </code>
+          </div>
+        </div>
+      </div>
+      <!-- Zad 2  -->
+      <div class="card">
+        <div class="card-header" id="headingTwo">
+          <h2 class="mb-0">
+          <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+          #2 Zaimportuj dane z pliku diagnoza07.xlsx
+          </button>
+          </h2>
+        </div>
+        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+          <div class="card-body">
+            <code>proc import <br>datafile="C:\sciezka do pliku\diagnoza07.xls" <br>
+            out=sop.diagnoza07 <br>
+            dbms=xls<br>
+            replace;<br>
+            getnames=yes;<br>
+            run;<br>
+            </code>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header" id="headingThree">
+          <h2 class="mb-0">
+          <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+          #3 Wyeksportuj dane z sop.diagnoza do pliku .dta, oraz dane ze zbioru sashelp.airline do pliku .csv.
+          </button>
+          </h2>
+        </div>
+        <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
+          <div class="card-body">
+            <code>
+            proc export data=sop.diagnoza07 <br>
+            outfile="C:\Twoj_katalog\diagnoza07_.dta" <br>
+            dbms=dta <br>
+            replace; <br>
+            run; <br>
+            </code>
+            <code>
+            proc export data=sop.diagnoza07 <br>
+            outfile="C:\Twoj_katalog\diagnoza07_.csv" <br>
+            dbms=csv <br>
+            replace; <br>
+            run; <br>
+            </code>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header" id="headingFour">
+          <h2 class="mb-0">
+          <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+          #4 Wyświetl atrybuty zbioru danych diagnoz07.xlsx.
+          </button>
+          </h2>
+        </div>
+        <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#accordionExample">
+          <div class="card-body">
+            <code>
+            proc contents data=sop.diagnoza07;<br>
+            run;
+            </code>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header" id="headingFive">
+          <h2 class="mb-0">
+          <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+          #5 Utwórz zbiór danych "d2" zawierający zmienną id_gosp oraz posorotwany dochód. Usuń obserwacje z ujemnymi wartościami dochodu.
+          </button>
+          </h2>
+        </div>
+        <div id="collapseFive" class="collapse" aria-labelledby="headingFive" data-parent="#accordionExample">
+          <div class="card-body">
+            <code>
+            proc sort data=sop.diagnoza07 out=sop.d2(keep = ID_GOSP DOCHM);<br>
+            by DOCHM;<br>
+            where DOCHM>=0;<br>
+            run;<br>
+            /* sql */
+            proc sql;<br>
+            create table sop.d2_sql as<br>
+            select t1.id_gosp, t1.dochm<br>
+            from sop.diagnoza07 t1 <br>
+            where t1.dochm >= 0<br>
+            order by t1.dochm ;<br>
+            quit;<br>
+            </code>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header" id="headingSix">
+          <h2 class="mb-0">
+          <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
+          #6 Utwórz zbiór danych "d6_9" zawierający listę osób, których dochód wynosi od 6 do 9 tys. zł
+          </button>
+          </h2>
+        </div>
+        <div id="collapseSix" class="collapse" aria-labelledby="headingSix" data-parent="#accordionExample">
+          <div class="card-body">
+            <code>
+            data work.d6_9;<br>
+            set sop.diagnoza07;<br>
+            where dochm >= 6000 and dochm <= 9000;<br>
+            keep ID_GOSP WOJ PLEC STAZP DOCHM;<br>
+            run;
+            </code>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header" id="headingSeven">
+          <h2 class="mb-0">
+          <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseSeven" aria-expanded="false" aria-controls="collapseSeven">
+          #7 Sformatuj zmienną PLEC i WOJ ze zbioru d6_9, tak by zawierały pełne nazwy zamiast kodów liczbowych.
+          </button>
+          </h2>
+        </div>
+        <div id="collapseSeven" class="collapse" aria-labelledby="headingSeven" data-parent="#accordionExample">
+          <div class="card-body">
+            <code>
+              /* format danych */
+            proc format lib=work;<br>
+            value plecfmt<br>
+1 = "Mężczyzna"<br>
+2 = "Kobieta"<br>
+;
+value wojfmt<br>
+2= 'DOLNOŚLĄSKIE'<br>
+4= 'KUJAWSKO-POMORSKIE'<br>
+6= 'LUBELSKIE'<br>
+8= 'LUBUSKIE'<br>
+10= 'ŁÓDZKIE'<br>
+12= 'MAŁOPOLSKIE'<br>
+14= 'MAZOWIECKIE'<br>
+16= 'OPOLSKIE'<br>
+18= 'PODKARPACKIE'<br>
+20= 'PODLASKIE'<br>
+22= 'POMORSKIE'<br>
+24= 'ŚLĄSKIE'<br>
+26= 'ŚWIĘTOKRZYSKIE'<br>
+28= 'WARMIŃSKO-MAZURSKIE'<br>
+30= 'WIELKOPOLSKIE'<br>
+32= 'ZACHODNIOPOMORSKIE'<br>
+;<br>
+run;<br>
+/* zastosowanie formatów wer 1*/<br>
+data sop.d6_9_names1;<br>
+set sop.d6_9;<br>
+format plec plecfmt. woj wojfmt. ;<br>
+label id_gosp="ID" plec="Płeć" dochm="Dochód" woj="Województwo";<br>
+run;<br>
+/* zastosowanie formatów wer 2*/<br>
+proc sql;<br>
+create table sop.d6_9_names_2 as<br>
+select t1.kmz, t1.woj format=wojfmt., t1.plec format=plecfmt. ,<br>
+t1.dochm format=nlmnlpln12. <br>
+from sop.d6_9 t1; <br>
+quit;
+            </code>
+          </div>
+        </div>
+      </div>
+
+     <div class="card">
+        <div class="card-header" id="headingEight">
+          <h2 class="mb-0">
+          <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseEight" aria-expanded="false" aria-controls="collapseEight">
+          #8 Za pomocą Query Builder stwórz raport o całkowitych i średnich zarobkach w każdym województwie.
+          </button>
+          </h2>
+        </div>
+        <div id="collapseEight" class="collapse" aria-labelledby="headingEight" data-parent="#accordionExample">
+          <div class="card-body">
+            <code>
+            proc sql;<br>
+            create table sop.raport1 as <br>
+            select t1.woj format=wojfmt,<br>
+            (SUM(t1.dochm)) format=nlmnlpln12. as dochody_total,<br>
+            (AVG(t1.dochm)) format=nlmnlpln12. as sredni_dochod <br>
+            from sop.diagnoza07 t1<br>
+            group by t1.woj;<br>
+            quit;
+            </code>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header" id="headingNine">
+          <h2 class="mb-0">
+          <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseNine" aria-expanded="false" aria-controls="collapseNine">
+          #9 Za pomocą Summary Tables zaraportuj średnie zarobki oraz medianę zarobków dla każdego województwa z podziałem na płeć. 
+          </button>
+          </h2>
+        </div>
+        <div id="collapseNine" class="collapse" aria-labelledby="headingNine" data-parent="#accordionExample">
+          <div class="card-body">
+            <code>
+            proc tabulate data=sop.diagnoza07;<br>
+            where plec not in (-8,-2,-1) and dochm>=0;<br>
+            var dochm;<br>
+            class woj plec;<br>
+            format plec plecfmt.<br>
+            woj wojfmt.;<br>
+            Table<br>
+            dochm={label="dochód"}*woj={label='wojewodztwo'}*plec={lable="płeć"},<br>
+            min, Mean={lable="srednie dochody} Median={label="madiana dochodów"} max;<br>
+            run;
+            </code>
+          </div>
+        </div>
+      </div> 
+    </div>
+    <hr>
+  </section>
+  <footer class="container">
+    <p>© Sebastian Zając 2019</p>
+  </footer>
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+</body>
+</html>
