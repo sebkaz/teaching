@@ -1,2 +1,0 @@
-# statystyka
-statystyka web page
