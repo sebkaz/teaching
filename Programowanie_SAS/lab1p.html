@@ -1,0 +1,594 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <title>PD_SAS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+</head>
+
+<body>
+    <div class="jumbotron">
+        <div class="container">
+            <h1 class="display-3">Podstawowe i zaawansowane programowanie oraz statystyka w SAS</h1>
+            <h3>Nr przedmiotu: 136030-0131 SLLD</h3>
+            <p><strong>Prowadzący:</strong> dr Karol Przanowski <a href='https://sebastianzajac.pl' target="_blank"> dr Sebastian Zając</a> <br />
+                <a href="http://www.sgh.waw.pl/zaklady/zahziaw">Zakład Analizy Historii Zdarzeń i Analiz Wielopoziomowych</a>
+            </p>
+        </div>
+    </div>
+
+
+    <article class="container">
+        <div class="card">
+            <div class="card-header">
+                <h2>Czego będziemy się uczyć ?</h2>
+            </div>
+            <div class="card-body">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">Przetwarzanie danych w SAS</li>
+                        <li class="breadcrumb-item">Raportowanie w SAS</li>
+                        <li class="breadcrumb-item">Statystyka w SAS</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+
+
+    </article>
+    <hr>
+    <article class="container">
+
+        <div class="alert alert-warning" role="alert">
+            <h2> Prezentacja - <a href="intro/presentation.html" class="alert-link">Wstęp do Big Data</a></h2>
+        </div>
+
+    </article>
+
+    <hr>
+
+    <article class="container">
+        <div class="alert alert-primary" role="alert">
+            <h2>Dlaczego Statistical Analysis System (SAS) ?</h2>
+        </div>
+
+        <ul>
+            <li>Zintegrowany system</li>
+            <li>Obecny w bankach, firmach ubezpieczeniowych, telekomach</li>
+            <li>Prowadzone badania naukowe: data science, medycyna, biostatystyka, ekonomia....</li>
+            <li>posiada doskonały Helpdesk</li>
+        </ul>
+        <div>
+            <h2>Dokumentacja</h2>
+            <p><a class="badge badge-danger" href="http://support.sas.com/documentation/" target="_blank">http://support.sas.com/documentation/</a></p>
+        </div>
+        <div class="alert alert-primary" role="alert">
+            <h2>Dlaczego SAS 4GL ?</h2>
+        </div>
+
+        <ul>
+            <li>bardzo elstyczny i szybki w pisaniu</li>
+            <li>Dostęp od wszystkich struktur danych</li>
+            <li>Instalacja na wielu systemach</li>
+            <li>Makro programowanie</li>
+            <li>Wiele przykładów w sieci</li>
+        </ul>
+    </article>
+
+    <article class="container">
+        <div class="alert alert-success" role="alert">
+            <h2>Środowisko pracy w SAS</h2>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3>Podstawowe środowiska pracy analityka</h3>
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">SAS BASE / SAS Foundation / SAS Display Manager</li>
+                    <li class="list-group-item">SAS Enterprise Guide</li>
+                    <li class="list-group-item">SAS Studio (www)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3>Zaawansowane środowiska pracy analityka</h3>
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">SAS Enterprise Miner</li>
+                    <li class="list-group-item">SAS Viya</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">SAS BASE</h2>
+            </div>
+            <img alt="Środowisko Base" src="img/rys2.png" />
+
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">SAS Studio</h2>
+            </div>
+            <img alt="Środowisko Studio" src="img/rys4.png" />
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Enterprise Guide</h2>
+            </div>
+            <img alt="Środowisko EG" src="img/rys1.png" />
+        </div>
+    </article>
+    <hr>
+    <section class="container">
+        <div class="alert alert-success" role="alert">
+            <h2>SAS Enterprise Guide</h2>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h3> okno powitalne</h3>
+            </div>
+            <div class="card-body">
+                <img alt="okno powitalne" src="img/rys3.png" />
+                <p class='card-text'> Po uruchomieniu aplikacji SAS Enterprise Guide widoczne jest okno powitalne, które umożliwia stworzenie nowego projektu lub otwarcie ostatnio używanego projektu.</p>
+
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3>Tworzenie nowego programu</h3>
+            </div>
+
+            <div class="card-body">
+                <p>Nowy program można utworzyć na kilka sposobów:</p>
+                <ul>
+                    <li>Z menu podręcznego dla przebiegu procesu: Nowy->Program</li>
+                    <li>Z menu głównego aplikacji: Plik->Nowy->Program</li>
+                </ul>
+                <img alt="okno powitalne" src="img/rys5.png" />
+
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3>Enhanced Editor</h3>
+            </div>
+
+            <div class="card-body">
+                <p class="card-text"> Enhanced Editor jest edytorem kodu, który:</p>
+                <ul>
+                    <li>umożliwia uruchamianie kodu,</li>
+                    <li>koloruje składnię,</li>
+                    <li>podpowiada składnię.</li>
+                </ul>
+                <img alt="okno powitalne" src="img/rys6.png" />
+                <div class="card-body">
+                    <h3 class="card-header">Opcje edytora</h3>
+                    <p class="card-text">Opcje edytora dostępne są w menu głównym <strong>Program -> Opcje edytora</strong></p>
+                </div>
+                <div class="card-body">
+                    <h3 class="card-header">Makro skróty</h3>
+                    <p class="card-text">Enhanced Editor pozwala stworzyć skróty ułatwiające tworzenie programów. Jako skrót można zapisać najczęściej używane fragmenty kodu.
+                        Skróty dostępne są z menu głównego <strong>Program->Dodaj makro skrótu</strong> </p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+    <hr>
+
+    <section class="container">
+        <div class="alert alert-success" role="alert">
+            <h3>Sposób zapisu i przechowywania danych i programów</h3>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3>Pliki programów</h3>
+            </div>
+
+            <div class="card-body">
+                <p>Pliki tekstowe, które możesz otworzyć w każdym notatniku <strong>*.sas</strong></p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3>Dane tabelaryczne zapisać można jako:</h3>
+            </div>
+
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">Format SAS: <strong>*.sas7bdat</strong></li>
+                    <li class="list-group-item">Tabele innych baz danych</li>
+                    <li class="list-group-item">Arkusze kalkulacyjne Excel</li>
+                    <li class="list-group-item">Pliki tekstowe</li>
+                    <li class="list-group-item">Pliki XML</li>
+                    <li class="list-group-item">...</li>
+                </ul>
+            </div>
+        </div>
+
+    </section>
+
+    <hr>
+
+    <section class="container">
+
+        <div class="alert alert-success" role="alert">
+            <h2>Biblioteki</h2>
+        </div>
+
+
+        <div class="card">
+            <div class="card-body">
+                <p>Repozytorium danych</p>
+                <p>Logiczna struktura wskazująca miejsce przechowywania danych (referencja, wskaźnik).</p>
+                <p>Definiuje sposób dostępu:</p>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">Lokalizację danych</li>
+                    <li class="list-group-item">Prawa dostępu</li>
+                </ul>
+            </div>
+        </div>
+
+
+        <div class="card">
+            <div class="card-header">
+                <h3>Podstawowe biblioteki</h3>
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item"><strong>WORK</strong> – tymczasowa, domyślna, unikalna dla każdej sesji</li>
+                    <li class="list-group-item"><strong>SASUSER</strong> – trwała, unikalna dla każdego użytkownika</li>
+                    <li class="list-group-item"><strong>MAPS, MAPSSAS, MAPSGFK</strong> – zawiera dane pozwalające narysować mapę</li>
+                </ul>
+            </div>
+        </div>
+
+
+        <div class="card">
+            <div class="card-header">
+                <h3>Biblioteki w SAS Enterprise Guide</h3>
+            </div>
+            <div class="card-body">
+                <img src="img/rys7.png" alt="">
+                <p class="card-text">Biblioteki podpinane z kodu będą widoczne po kliknięciu przycisku <b>Odśwież</b></p>
+
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2>Kody 4GL dla własnych bibliotek</h2>
+            </div>
+            <div class="card-body">
+                <h4>Tworzenie biblioteki</h4>
+                <code>LIBNAME nazwa_biblioteki silnik_biblioteki parametrny; </code>
+                <p>Domyślnym silinikiem biblioteki jest base.</p>
+
+                <h4>Informacja o bibliotece w logu</h4>
+                <code>LIBNAME nazwa_biblioteki LIST; </code>
+
+                <h4>Usuwanie bibliotek </h4>
+                <code>LIBNAME nazwa_biblioteki CLEAR; </code>
+
+            </div>
+        </div>
+
+
+    </section>
+
+    <section class='container'>
+
+
+        <div class="accordion" id="accordionExample">
+            <!--  Zad 1 -->
+            <div class="card">
+                <div class="card-header" id="headingOne">
+                    <h2 class="mb-0">
+                        <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                            #1 Napisać kod tworzący nawą bibliotekę DANE typu BASE wskazującej na dane w katalogu „c:\data”
+                        </button>
+                    </h2>
+                </div>
+                <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+                    <div class="card-body">
+                        <code>LIBNAME dane base 'C:\data'; </code>
+                    </div>
+                </div>
+            </div>
+            <!-- Zad 2  -->
+            <div class="card">
+                <div class="card-header" id="headingTwo">
+                    <h2 class="mb-0">
+                        <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                            #2 Napisać kod tworzący nawą bibliotekę CARSXLSX typu EXCEL wskazującej na dane w pliku „c:\data\cars.xlsx”.
+                        </button>
+                    </h2>
+                </div>
+                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+                    <div class="card-body">
+                        <code>LIBNAME carsxlsx excel ”c:\data\cars\cars.xlsx”;
+                        </code>
+                        <p>Uwaga! w przypadku systemów 64bit silnik EXCEL trzeba zmienić na PCFILES</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header" id="headingThree">
+                    <h2 class="mb-0">
+                        <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                            #3 Napisać kod tworzący nową bibliotekę ALL będącą konkatenacją bibliotek DANE I CARSXLS z poprzednich ćwiczeń.
+                        </button>
+                    </h2>
+                </div>
+                <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
+                    <div class="card-body">
+                        <code>
+                            LIBNAME ALL (dane, carsxls);
+                            <br>
+                            LIBNAME ALL ('C:/dane', 'C:/inny_katalog');
+                            </code>
+                            <br>
+                            <p>uwaga ! W przypadku zapisu do biblioteki wspólnej, tworzone zbiory będą zapisywane zawsze do pierwszej
+                            z łączonych bibliotek.</p>
+
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header" id="headingFour">
+                    <h2 class="mb-0">
+                        <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                            #4 Napisać kod wypisujący lokalizację biblioteki ALL do logu.
+                        </button>
+                    </h2>
+                </div>
+                <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#accordionExample">
+                    <div class="card-body">
+                        <code>
+                            LIBNAME ALL LIST;
+                        </code>
+                    </div>
+                </div>
+            </div>
+    </section>
+    <hr>
+
+<article class="container">
+    <div class="alert alert-success" role="alert">
+        <h2>Programowanie w SAS 4GL</h2>
+    </div>
+    <p>W Systemie SAS językiem, którym będziemy się posługiwać jest <strong>4GL (Fourth Generation Language)</strong>.
+ Jest to wyspecjalizowany język do przetwarzania danych w formie tabelarycznej. Stosuje się w nim koncepcje programowania proceduralnego.</p>
+ <div class="card">
+     <img src="img/rys9.png" alt="">
+     <div class="card-body">
+         <p class="card-text">Każdy program w języku SAS 4GL składa się z bloków (ang. Step), które wykonywane są sekwencyjnie. Wpierw wszystkie instrukcje są kompilowane, a następnie wykonywane. </p>
+         <p class="card-text">Kompilacja i wykonywanie programu jest również wykonywane sekwencyjnie. Komunikacja między blokami może odbywać się za pomocą makrozmiennych, makroprogramów lub z wykorzystaniem pośrednich zbiorów.</p>
+     </div>
+ </div>
+<div class="card">
+    <div class="card-header">
+        <h3>Pierwszy program</h3>
+    </div>
+    <div class="card-body">
+        <code>
+        data a; /* nazwa zbioru wynikowego zapisanego do biblioteki work */</br>
+        x=4; /* zmienna x o jednej obserwacji */</br>
+       run;</code>
+    </div>
+    <div class="card-body">
+        <p>Programy w 4GL dziela sie na bloki dwóch rodzajów: tzw. <b>DATA Stepy</b> i <b>PROC Stepy</b>.</br>
+             Powyżej widzimy przykład <strong>DATA Stepu</strong>, który zawsze zaczyna sie slowem kluczowym <em>DATA</em> i kończy słowem <em>RUN</em>.
+         </br><strong>Każde polecenie w jezyku 4GL musi byc zakończone średnikiem.</strong></br>
+          Efektem działania powyzszego kodu jest tabela o nazwie <strong>a</strong> zapisanej do biblioteki work,
+          z jedną kolumną o nazwie X i jedną wartością w kolumnie wynoszącą 4. <p>
+    </div>
+    <div class="card-body">
+        <p>Uruchom kod i sprawdź kolorowanie składni.</p>
+        <code>
+        data a;</br>
+            x=4 </br>
+       run;</code>
+
+       <p>Fizyczny podział na linie nie ma znaczenia,
+           gdyż kompilowana jest linia do napotkania znaku średnika.
+           Wielkość liter użytych w kodzie programu (z wyjątkiem porównywania wartości zmiennych tekstowych)
+           jest bez znaczenia.</p>
+    </div>
+<div class="card-header">
+    <h3>Typy danych</h3>
+</div>
+<div class="card-body">
+    <p> W jezyku 4GL występują tylko <strong>dwa</strong> typy zmiennych: numeryczne i tekstowe.</p>
+  <p>Dodajmy więcej zmiennych i może jakiś tekst. Separatorem dziesiętnym jest kropka.</p>
+  <code class='center'>
+      data a;</br>
+       x=2;</br>
+       y=7.5;</br>
+       z='abc';</br>
+      run;</code>
+
+
+      <h3>Atrybuty zmiennych</h3>
+      <ul>
+          <li>Nazwa: do 32 znaków, pierwszym znakiem musi być litera lub _</li>
+          <li>Typ: numeryczny, znakowy</li>
+          <li>Długość</li>
+          <li>Format</li>
+          <li>Informat</li>
+          <li>Etykieta: do 256 znaków</li>
+          <li>Typ indeksu: brak, prosty, złożony, oba</li>
+          <li>Atrybuty rozszerzone</li>
+      </ul>
+
+      <h3>Typ danych – numeryczny</h3>
+      <ul>
+          <li>Stałanumeryczna: 10, 5.3,  -5</li>
+          <li>Zmienna numeryczna - Długość 3-8 bajtów oraz
+              przechowuje wartości całkowitoliczbowe i zmiennoprzecinkowe</li>
+      </ul>
+
+      <h3>Typ danych - znakowy</h3>
+      <ul>
+          <li>Stała znakowa - ’tekst 1’, "tekst 2"</li>
+          <li>Zmienna znakowa - Długość 1-32 &nbsp; 767 bajtów, Czuła na wielkość liter</li>
+      </ul>
+</div>
+<div class="card-header">
+ <h3>Braki danych</h3>
+</div>
+<div class="card-body">
+    <code>
+    data b;</br>
+        x=0;</br>
+        y=1/x; </br>
+    run;</code>
+
+    <div>
+    <img src="img/rys10.png" alt="">
+</div>
+</div>
+<div class="card-header">
+ <h3>Zmodyfikujmy trochę nasz program</h3>
+</div>
+<div class="card-body">
+    <code>data a;</br>
+  x=5;</br>
+  x=200;</br>
+ run;</code>
+
+ <p>Potrzebna nam bedzie instrukcja,
+ ktora wymusza zapisanie wartosci do zbioru wynikowego - instrukcja OUTPUT:</p>
+ <code>data a;</br>
+  x=5;</br>
+  output;</br>
+  x=200;</br>
+  output;</br>
+ run;</code>
+ <p>Zapisywanie większej ilości wartości i zmiennych tym sposobem będzie trwało raczej długo. </p>
+ <h3>Zadanie domowe -  jakie wyniki wygenerują kody?</h3>
+
+ <code>
+ data a;</br>
+  x=5;</br>
+  output;</br>
+ run;</br>
+ </br></br>
+ data a;</br>
+  x=5;</br>
+  output;</br>
+  x=200;</br>
+ run;</br>
+ </br></br>
+ data a;</br>
+  x=5;</br>
+  y=7;</br>
+  output;</br>
+  x=6;</br>
+  y=8;</br>
+  output;</br>
+ run;</code>
+</div>
+<div class="card-header">
+    <h3>Prosta pętla DO END</h3>
+</div>
+<div class="card-body">
+    <code>
+        data zbior;</br>
+        DO i=1 to 10;</br>
+        x=floor(100*ranuni(0));</br>
+        output;</br>
+        end;</br>
+        run;</br>
+    </code>
+</div>
+
+<div class="card-header">
+    <h3>Parametr SET w DATA STEPIE</h3>
+</div>
+<div class="card-body">
+    <code>
+data c;</br>
+set work.zbior; </br>
+run;</br>
+    </code>
+
+    <p>
+    Data Step jest blokiem odpowiedzialnym za przetwarzanie sekwencyjne</p>
+    <p>Instrukcja SET występuje tylko w DATA Stepie</p>
+    <p>Domyślnie instrukcja SET czyta wszystkie obserwacje ze zbioru począwszy od pierwszej.
+</p>
+<p>W przypadku gdy chcesz iterować po plikua nie po tabeli <strong>SET</strong> trzeba zamienić na<strong> INFILE</strong>.</p>
+<p>W ramach DATA STEP-u tworzona jest automatycznie pętla główna (ang. implicit loop), w obrębie której:
+czytana jest kolejna obserwacja z wejściowego zbioru danych (lub wiersz z wejściowego pliku płaskiego),
+wykonywane są instrukcje będące treścią danego kroku,
+finalna postać obserwacji zapisywana jest do zbioru wynikowego.
+Domyślnie pętla główna wykonywana jest dla każdej obserwacji w zbiorze wejściowym.
+W przypadku, gdy w DATA STEPIE nie ma żadnej instrukcji czytającej ze zbiorów, pętla główna wykonuje się tylko jeden raz.</p>
+<div class="">
+    <p>Chcemy każdą wartość występującej  zmiennej X zwiększyć o 100.</p>
+    <code>
+        data b;</br>
+         set zbior;</br>
+         x=x+100;</br>
+        run;</br>
+    </code>
+     <p>Nie jest nam potrzebna żadna dodatkowa pętla !</p>
+</div>
+
+</div>
+<div class="card-header">
+    <h3>Wektor PDV (Program Data Vector)</h3>
+    <p>PDV jest strukturą tworzoną w pamieci w trakcie kompilacji DATA STEPu.
+        Jest to wektor (jednowymiarowa tablica) zawierająca zmienne istniejące w
+        DATA STEPIE, tzn. zmienne, które istnieją w zbiorze (zbiorach) wejściowym,
+        jak i wszelkie pozostałe zmienne zadeklarowane w kodzie.
+        Przed rozpoczęciem działania DATA STEPU wszystkie zmienne są inicjalizowane
+         na brak danych, następnie podczas wykonywania instrukcji poszczególne
+         wartości nadpisują zawartości wektora. Domyślnie wartości zmiennych,
+          które nie pochodzą ze zbiorów wejściowych, na początku każdej iteracji
+          DATA STEPU są inicjalizowane na braki danych.
+          Jeżeli nie zadecydowano inaczej to po zakończeniu każdego obrotu pętli głównej cała
+          zawartość PDV jest zapisywana do zbioru wynikowego tworząc w nim kolejną obserwację.
+           Zmienne pojawiają się w wektorze PDV w kolejności ich wystąpienia w
+           DATA STEPIE i dokładnie w tej kolejności trafiają do zbioru wynikowego.
+           Wektor PDV zawiera dodatkowo zmienne automatyczne,
+           które nie są zapisywane do zbioru wyjściowego ale mogą być wykorzystane
+           podczas przetwarzania, np.:</p>
+
+           <ul>
+               <li>_N_ - zawiera numer bieżącej iteracji data stepu</li>
+               <li>_ERROR_-sygnalizujępojawieniesiębłędupodczasprzetwarzania.Domyślnąwartością
+               jest 0 co oznacza, że błędy nie wystąpiły. Kiedy pojawi się jeden lub więcej błędów,
+               zmienna przyjmuje wartość 1.</li>
+           </ul>
+</div>
+</div>
+
+</article>
+
+    <footer class="container">
+        <p>© Sebastian Zając 2019</p>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+</body>
+
+</html>

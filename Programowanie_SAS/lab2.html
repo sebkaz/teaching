@@ -1,0 +1,159 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <title>PD_SAS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+</head>
+
+<body>
+    <div class="jumbotron">
+        <div class="container">
+            <h1 class="display-3">Podstawowe i zaawansowane programowanie oraz statystyka w SAS</h1>
+            <h3>Nr przedmiotu: 136030-0131 SLLD</h3>
+            <p><strong>Prowadzący:</strong> dr Karol Przanowski <a href='https://sebastianzajac.pl' target="_blank"> dr Sebastian Zając</a> <br />
+                <a href="http://www.sgh.waw.pl/zaklady/zahziaw">Zakład Analizy Historii Zdarzeń i Analiz Wielopoziomowych</a>
+            </p>
+        </div>
+    </div>
+
+    <article class="container">
+        <h2>Jesteśmy na etapie</h2>
+        <ol>
+            <li><strong>Przetwarzanie danych w SAS</strong></li>
+            <li>Raportowanie w SAS</li>
+            <li>Statystyka w SAS</li>
+        </ol>
+    </article>
+
+<article class="container">
+<h2>  Co już wiemy ?  </h2>
+<ol>
+    <li>Teoria Big Data jest dla Ciebie oczywista</li>
+    <li>Znasz środowiska SAS w których możesz wpisywać kod</li>
+    <li>Masz podstawowe informacje o SAS (format danych, kody, ustawienia edytorów)</li>
+    <li>Rozumiesz, że w SAS posługujesz się kodem 4GL</li>
+</ol>
+</article>
+
+<section class="container">
+    <p>W Systemie SAS zaimplementowanych jest kilka jezykow programowania.
+Tym, ktory bedzie głównie omawiany podczas tego wykladu jest jezyk 4GL
+ (Fourth Generation Language). Jest to wyspecjalizowany jezyk do przetwarzania
+ danych w formie tabelarycznej. </p>
+
+ <div class="">
+     <img src="img/rys9.png" alt="">
+ </div>
+ <p>Program w języku SAS 4GL składa się z bloków (z ang. Step).
+     Najpierw instrukcje są kompilowane za pomocą kompilatora języka SAS 4GL, a następnie wykonywane.</p>
+     <p>Kompilacja i wykonywanie programu jest wykonywane w sposób sekwencyjny.
+         Komunikacja pomiędzy poszczególnymi blokami (stepami) odbywa się za pomocą makrozmiennych,
+         makroprogramów lub z wykorzystaniem pośrednich zbiorów danych tworzonych w poszczególnych blokach.
+ </p>
+
+
+ <p>Napiszmy prosty program !</p>
+ <code>data z;</br>
+ x=2;</br>
+run;</code>
+<p>Programy w 4GL dziela sie na bloki dwóch rodzajów: tzw. <b>DATA Stepy</b> i <b>PROC Stepy</b>.</br>
+     Powyzej widzimy przykład DATA Stepu, który zawsze zaczyna sie slowem kluczowym <em>DATA</em> i konczy slowem <em>RUN</em>.
+ </br>Kazde polecenie w <strong>jezyku 4GL</strong> musi byc zakończone średnikiem.</br>
+  Efektem działania powyzszego kodu jest tabela o nazwie <strong>z</strong>,
+  z jedną kolumną o nazwie X i jedną wartością w kolumnie wynoszącą 2. </br>
+
+  <p> W jezyku 4GL wystepuja tylko dwa typy zmiennych: numeryczne i tekstowe.</p>
+<p>Dodajmy więcej zmiennych i może jakiś tekst. Separatorem dziesiętnym jest kropka.</p>
+<code class='center'>
+    data a;</br>
+     x=2;</br>
+     y=7.5;</br>
+     z='abc';</br>
+    run;</code></br>
+
+
+<h3>Atrybuty zmiennych</h3>
+<ul>
+    <li>Nazwa: do 32 znaków</li>
+    <li>Typ: numeryczny, znakowy</li>
+    <li>długość</li>
+    <li>format</li>
+    <li>informat</li>
+    <li>Etykieta: do 256 znaków</li>
+    <li>Typ indeksu: brak, prosty, złożony, oba</li>
+    <li>Dodatkowe atrybuty</li>
+</ul>
+
+<h3>Typ danych – numeryczny</h3>
+<ul>
+    <li>Stałanumeryczna: 10, 5.3,  -5</li>
+    <li>Zmienna numeryczna - Długość 3-8 bajtów oraz
+        przechowuje wartości całkowitoliczbowe i zmiennoprzecinkowe</li>
+</ul>
+
+<h3>Typ danych - znakowy</h3>
+<ul>
+    <li>Stała znakowa - ’tekst 1’, "tekst 2"</li>
+    <li>Zmienna znakowa - Długość 1-32,767 bajtów, Czuła na wielkość liter</li>
+</ul>
+
+<h3>Braki danych</h3>
+<div class="">
+    <img src="img/rys10.png" alt="">
+</div>
+
+   <p>Zmodyfikujmy trochę nasz program</p>
+   <code>data a;</br>
+ x=5;</br>
+ x=200;</br>
+run;</code>
+
+<p>Potrzebna nam bedzie instrukcja,
+ktora wymusza zapisanie wartosci do zbioru wynikowego - instrukcja OUTPUT:</p>
+<code>data a;</br>
+ x=5;</br>
+ output;</br>
+ x=200;</br>
+ output;</br>
+run;</code>
+<p>Zapisywanie większej ilości wartości i zmiennych tym sposobem będzie trwało raczej długo. </p>
+<h3>Zadanie domowe -  jakie wyniki wygenerują kody?</h3>
+
+<code>
+data a;</br>
+ x=5;</br>
+ output;</br>
+run;</br>
+</br></br>
+data a;</br>
+ x=5;</br>
+ output;</br>
+ x=200;</br>
+run;</br>
+</br></br>
+data a;</br>
+ x=5;</br>
+ y=7;</br>
+ output;</br>
+ x=6;</br>
+ y=8;</br>
+ output;</br>
+run;</code>
+
+</section>
+
+        <hr>
+    </section>
+    <footer class="container">
+        <p>© Sebastian Zając 2019</p>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+</body>
+
+</html>

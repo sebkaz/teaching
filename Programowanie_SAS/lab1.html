@@ -157,11 +157,11 @@
     </div>
     <p>Biblioteki podpinane z kodu będą widoczne po automatycznie</p>
 
-    <code>LIBNAMEN nazwa_biblioteki silnik_biblioteki parametrny; </code>
+    <code>LIBNAME nazwa_biblioteki silnik_biblioteki parametrny; </code>
     <p>Domyślnym silinikiem biblioteki jest base.</p>
-    <code>LIBNAMEN nazwa_biblioteki LIST; </code>
+    <code>LIBNAME nazwa_biblioteki LIST; </code>
     <p>Informacje o bibliotece do logu</p>
-    <code>LIBNAMEN nazwa_biblioteki CLEAR; </code>
+    <code>LIBNAME nazwa_biblioteki CLEAR; </code>
     <p>Usuwanie bibliotek </p>
 </section>
 
@@ -180,7 +180,7 @@
                 </div>
                 <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
                     <div class="card-body">
-                        <code>LIBNAMEN dane  base 'C:\data'; </code>
+                        <code>LIBNAME dane  base 'C:\data'; </code>
                     </div>
                 </div>
             </div>
@@ -238,115 +238,6 @@ z łączonych bibliotek.
 
 </section>
 
-<section class="container">
-    <p>W Systemie SAS zaimplementowanych jest kilka jezykow programowania.
-Tym, ktory bedzie glownie omawiany podczas tego wykladu jest jezyk 4GL
- (Fourth Generation Language). Jest to wyspecjalizowany jezyk do przetwarzania
- danych w formie tabelarycznej. </p>
-
- <div class="">
-     <img src="img/rys9.png" alt="">
- </div>
- <p>Program w języku SAS 4GL składa się z bloków (z ang. Step), które wykonywane są sekwencyjnie.
-     Najpierw instrukcje są kompilowane za pomocą kompilatora języka SAS 4GL, a następnie wykonywane.</p>
-     <p>Kompilacja i wykonywanie programu jest wykonywane w sposób sekwencyjny.
-         Komunikacja pomiędzy poszczególnymi blokami (stepami) odbywa się za pomocą makrozmiennych,
-         makroprogramów lub z wykorzystaniem pośrednich zbiorów danych tworzonych w poszczególnych blokach.
- </p>
-
-
-
-
- <p>Napiszmy prosty program !</p>
- <code>data a;</br>
- x=2;</br>
-run;</code>
-<p>Programy w 4GL dziela sie na bloki dwoch rodzajow: tzw. <b>DATA Stepy</b> i <b>PROC Stepy</b>.</br>
-     Powyzej widzimy przyklad DATA Stepu, ktory zawsze zaczyna sie slowem kluczowym DATA i konczy slowem RUN.
- </br>Kazde polecenie w jezyku 4GL musi byc zakonczone srednikiem.
- Jak widac, powyzszy efektem dzialania powyzszego kodu jest tabela o nazwie A,
-  z jedna kolumna o nazwie X i jedna wartoscia w kolumnie rowna 2. </br>
-  Zwrocmy uwage na zawartosc okienka Log - jak widac, </br>
-  w jezyku 4GL kolumny tabelek nazywaja sie zmiennymi, a wiersze - obserwacjami.</p>
-<p>Dodajmy więcej zmiennych i może jakiś tekst</p>
-<code>
-    data a;</br>
-     x=2;</br>
-     y=7.5;</br>
-     z='abc';</br>
-    run;</code></br>
-    <p>Separatorem dziesietnym jest kropka.
-   W jezyku 4GL wystepuja tylko dwa typy zmiennych: numeryczne i tekstowe.</p>
-
-<h3>Atrybuty zmiennych</h3>
-<ul>
-    <li>Nazwa: do 32 znaków</li>
-    <li>Typ: numeryczny, znakowy</li>
-    <li>długość</li>
-    <li>format</li>
-    <li>informat</li>
-    <li>Etykieta: do 256 znaków</li>
-    <li>Typ indeksu: brak, prosty, złożony, oba</li>
-    <li>Dodatkowe atrybuty</li>
-</ul>
-
-<h3>Typ danych – numeryczny</h3>
-<ul>
-    <li>Stałanumeryczna: 10, 5.3,  -5</li>
-    <li>Zmienna numeryczna - Długość 3-8 bajtów oraz
-        przechowuje wartości całkowitoliczbowe i zmiennoprzecinkowe</li>
-</ul>
-
-<h3>Typ danych - znakowy</h3>
-<ul>
-    <li>Stała znakowa - ’tekst 1’, "tekst 2"</li>
-    <li>Zmienna znakowa - Długość 1-32,767 bajtów, Czuła na wielkość liter</li>
-</ul>
-
-<h3>Braki danych</h3>
-<div class="">
-    <img src="img/rys10.png" alt="">
-</div>
-
-   <p>Zmodyfikujmy trochę nasz program</p>
-   <code>data a;</br>
- x=5;</br>
- x=200;</br>
-run;</code>
-
-<p>Potrzebna nam bedzie instrukcja,
-ktora wymusza zapisanie wartosci do zbioru wynikowego - instrukcja OUTPUT:</p>
-<code>data a;</br>
- x=5;</br>
- output;</br>
- x=200;</br>
- output;</br>
-run;</code>
-<p>Zapisywanie większej ilości wartości i zmiennych tym sposobem będzie trwało raczej długo. </p>
-<h3>Zadanie domowe -  jakie wyniki wygenerują kody?</h3>
-
-<code>
-data a;</br>
- x=5;</br>
- output;</br>
-run;</br>
-</br></br>
-data a;</br>
- x=5;</br>
- output;</br>
- x=200;</br>
-run;</br>
-</br></br>
-data a;</br>
- x=5;</br>
- y=7;</br>
- output;</br>
- x=6;</br>
- y=8;</br>
- output;</br>
-run;</code>
-
-</section>
 
         <hr>
     </section>
