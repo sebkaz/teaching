@@ -13,7 +13,7 @@
     <div class="jumbotron">
         <div class="container">
             <h1 class="display-3">Podstawowe i zaawansowane programowanie oraz statystyka w SAS</h1>
-            <h3>Nr przedmiotu: 136030-0131 SLLD</h3>
+            <h3>Nr przedmiotu: 223110-1234</h3>
             <p><strong>Prowadzący:</strong> dr Karol Przanowski <a href='https://sebastianzajac.pl' target="_blank"> dr Sebastian Zając</a> <br />
                 <a href="http://www.sgh.waw.pl/zaklady/zahziaw">Zakład Analizy Historii Zdarzeń i Analiz Wielopoziomowych</a>
             </p>
@@ -21,133 +21,254 @@
     </div>
 
     <article class="container">
-        <h2>Jesteśmy na etapie</h2>
-        <ol>
-            <li><strong>Przetwarzanie danych w SAS</strong></li>
-            <li>Raportowanie w SAS</li>
-            <li>Statystyka w SAS</li>
-        </ol>
+        <div class="card">
+            <div class="card-header">
+                <h2>Gdzie jesteśmy ?</h2>
+            </div>
+            <div class="card-body">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item active">Przetwarzanie danych w SAS</li>
+                        <li class="breadcrumb-item">Raportowanie w SAS</li>
+                        <li class="breadcrumb-item">Statystyka w SAS</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
     </article>
 
 <article class="container">
-<h2>  Co już wiemy ?  </h2>
-<ol>
-    <li>Teoria Big Data jest dla Ciebie oczywista</li>
-    <li>Znasz środowiska SAS w których możesz wpisywać kod</li>
-    <li>Masz podstawowe informacje o SAS (format danych, kody, ustawienia edytorów)</li>
-    <li>Rozumiesz, że w SAS posługujesz się kodem 4GL</li>
-</ol>
+    <div class="card">
+        <div class="card-header">
+            <h3>  Co już wiemy ?</h3>
+        </div>
+        <div class="card-body">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">Teoria Big Data jest dla Ciebie oczywista</li>
+                <li class="list-group-item">Znasz środowiska SAS w których możesz wpisywać kod</li>
+                <li class="list-group-item">Masz podstawowe informacje o SAS (format danych, kody, ustawienia edytorów)</li>
+                <li class="list-group-item">Rozumiesz, że w SAS posługujesz się kodem 4GL</li>
+            </ul>
+        </div>
+    </div>
 </article>
+<hr>
 
-<section class="container">
-    <p>W Systemie SAS zaimplementowanych jest kilka jezykow programowania.
-Tym, ktory bedzie głównie omawiany podczas tego wykladu jest jezyk 4GL
- (Fourth Generation Language). Jest to wyspecjalizowany jezyk do przetwarzania
- danych w formie tabelarycznej. </p>
 
- <div class="">
+<article class="container">
+    <div class="alert alert-success" role="alert">
+        <h2>Programowanie w SAS 4GL</h2>
+    </div>
+    <p>W Systemie SAS językiem, którym będziemy się posługiwać jest <strong>4GL (Fourth Generation Language)</strong>.
+ Jest to wyspecjalizowany język do przetwarzania danych w formie tabelarycznej. Stosuje się w nim koncepcje programowania proceduralnego.</p>
+ <div class="card">
      <img src="img/rys9.png" alt="">
+     <div class="card-body">
+         <p class="card-text">Każdy program w języku SAS 4GL składa się z bloków (ang. Step), które wykonywane są sekwencyjnie. Wpierw wszystkie instrukcje są kompilowane, a następnie wykonywane. </p>
+         <p class="card-text">Kompilacja i wykonywanie programu jest również wykonywane sekwencyjnie. Komunikacja między blokami może odbywać się za pomocą makrozmiennych, makroprogramów lub z wykorzystaniem pośrednich zbiorów.</p>
+     </div>
  </div>
- <p>Program w języku SAS 4GL składa się z bloków (z ang. Step).
-     Najpierw instrukcje są kompilowane za pomocą kompilatora języka SAS 4GL, a następnie wykonywane.</p>
-     <p>Kompilacja i wykonywanie programu jest wykonywane w sposób sekwencyjny.
-         Komunikacja pomiędzy poszczególnymi blokami (stepami) odbywa się za pomocą makrozmiennych,
-         makroprogramów lub z wykorzystaniem pośrednich zbiorów danych tworzonych w poszczególnych blokach.
- </p>
+<div class="card">
+    <div class="card-header">
+        <h3>Pierwszy program</h3>
+    </div>
+    <div class="card-body">
+        <code>
+        data a; /* nazwa zbioru wynikowego zapisanego do biblioteki work */</br>
+        x=4; /* zmienna x o jednej obserwacji */</br>
+       run;</code>
+    </div>
+    <div class="card-body">
+        <p>Programy w 4GL dziela sie na bloki dwóch rodzajów: tzw. <b>DATA Stepy</b> i <b>PROC Stepy</b>.</br>
+             Powyżej widzimy przykład <strong>DATA Stepu</strong>, który zawsze zaczyna sie slowem kluczowym <em>DATA</em> i kończy słowem <em>RUN</em>.
+         </br><strong>Każde polecenie w jezyku 4GL musi byc zakończone średnikiem.</strong></br>
+          Efektem działania powyzszego kodu jest tabela o nazwie <strong>a</strong> zapisanej do biblioteki work,
+          z jedną kolumną o nazwie X i jedną wartością w kolumnie wynoszącą 4. <p>
+    </div>
+    <div class="card-body">
+        <p>Uruchom kod i sprawdź kolorowanie składni.</p>
+        <code>
+        data a;</br>
+            x=4 </br>
+       run;</code>
+
+       <p>Fizyczny podział na linie nie ma znaczenia,
+           gdyż kompilowana jest linia do napotkania znaku średnika.
+           Wielkość liter użytych w kodzie programu (z wyjątkiem porównywania wartości zmiennych tekstowych)
+           jest bez znaczenia.</p>
+    </div>
+<div class="card-header">
+    <h3>Typy danych</h3>
+</div>
+<div class="card-body">
+    <p> W jezyku 4GL występują tylko <strong>dwa</strong> typy zmiennych: numeryczne i tekstowe.</p>
+  <p>Dodajmy więcej zmiennych i może jakiś tekst. Separatorem dziesiętnym jest kropka.</p>
+  <code class='center'>
+      data a;</br>
+       x=2;</br>
+       y=7.5;</br>
+       z='abc';</br>
+      run;</code>
 
 
- <p>Napiszmy prosty program !</p>
- <code>data z;</br>
- x=2;</br>
-run;</code>
-<p>Programy w 4GL dziela sie na bloki dwóch rodzajów: tzw. <b>DATA Stepy</b> i <b>PROC Stepy</b>.</br>
-     Powyzej widzimy przykład DATA Stepu, który zawsze zaczyna sie slowem kluczowym <em>DATA</em> i konczy slowem <em>RUN</em>.
- </br>Kazde polecenie w <strong>jezyku 4GL</strong> musi byc zakończone średnikiem.</br>
-  Efektem działania powyzszego kodu jest tabela o nazwie <strong>z</strong>,
-  z jedną kolumną o nazwie X i jedną wartością w kolumnie wynoszącą 2. </br>
+      <h3>Atrybuty zmiennych</h3>
+      <ul>
+          <li>Nazwa: do 32 znaków, pierwszym znakiem musi być litera lub _</li>
+          <li>Typ: numeryczny, znakowy</li>
+          <li>Długość</li>
+          <li>Format</li>
+          <li>Informat</li>
+          <li>Etykieta: do 256 znaków</li>
+          <li>Typ indeksu: brak, prosty, złożony, oba</li>
+          <li>Atrybuty rozszerzone</li>
+      </ul>
 
-  <p> W jezyku 4GL wystepuja tylko dwa typy zmiennych: numeryczne i tekstowe.</p>
-<p>Dodajmy więcej zmiennych i może jakiś tekst. Separatorem dziesiętnym jest kropka.</p>
-<code class='center'>
-    data a;</br>
-     x=2;</br>
-     y=7.5;</br>
-     z='abc';</br>
-    run;</code></br>
+      <h3>Typ danych – numeryczny</h3>
+      <ul>
+          <li>Stałanumeryczna: 10, 5.3,  -5</li>
+          <li>Zmienna numeryczna - Długość 3-8 bajtów oraz
+              przechowuje wartości całkowitoliczbowe i zmiennoprzecinkowe</li>
+      </ul>
 
+      <h3>Typ danych - znakowy</h3>
+      <ul>
+          <li>Stała znakowa - ’tekst 1’, "tekst 2"</li>
+          <li>Zmienna znakowa - Długość 1-32 &nbsp; 767 bajtów, Czuła na wielkość liter</li>
+      </ul>
+</div>
+<div class="card-header">
+ <h3>Braki danych</h3>
+</div>
+<div class="card-body">
+    <code>
+    data b;</br>
+        x=0;</br>
+        y=1/x; </br>
+    run;</code>
 
-<h3>Atrybuty zmiennych</h3>
-<ul>
-    <li>Nazwa: do 32 znaków</li>
-    <li>Typ: numeryczny, znakowy</li>
-    <li>długość</li>
-    <li>format</li>
-    <li>informat</li>
-    <li>Etykieta: do 256 znaków</li>
-    <li>Typ indeksu: brak, prosty, złożony, oba</li>
-    <li>Dodatkowe atrybuty</li>
-</ul>
-
-<h3>Typ danych – numeryczny</h3>
-<ul>
-    <li>Stałanumeryczna: 10, 5.3,  -5</li>
-    <li>Zmienna numeryczna - Długość 3-8 bajtów oraz
-        przechowuje wartości całkowitoliczbowe i zmiennoprzecinkowe</li>
-</ul>
-
-<h3>Typ danych - znakowy</h3>
-<ul>
-    <li>Stała znakowa - ’tekst 1’, "tekst 2"</li>
-    <li>Zmienna znakowa - Długość 1-32,767 bajtów, Czuła na wielkość liter</li>
-</ul>
-
-<h3>Braki danych</h3>
-<div class="">
+    <div>
     <img src="img/rys10.png" alt="">
 </div>
+</div>
+<div class="card-header">
+ <h3>Zmodyfikujmy trochę nasz program</h3>
+</div>
+<div class="card-body">
+    <code>data a;</br>
+  x=5;</br>
+  x=200;</br>
+ run;</code>
 
-   <p>Zmodyfikujmy trochę nasz program</p>
-   <code>data a;</br>
- x=5;</br>
- x=200;</br>
-run;</code>
+ <p>Potrzebna nam bedzie instrukcja,
+ ktora wymusza zapisanie wartosci do zbioru wynikowego - instrukcja OUTPUT:</p>
+ <code>data a;</br>
+  x=5;</br>
+  output;</br>
+  x=200;</br>
+  output;</br>
+ run;</code>
+ <p>Zapisywanie większej ilości wartości i zmiennych tym sposobem będzie trwało raczej długo. </p>
+ <h3>Zadanie domowe -  jakie wyniki wygenerują kody?</h3>
 
-<p>Potrzebna nam bedzie instrukcja,
-ktora wymusza zapisanie wartosci do zbioru wynikowego - instrukcja OUTPUT:</p>
-<code>data a;</br>
- x=5;</br>
- output;</br>
- x=200;</br>
- output;</br>
-run;</code>
-<p>Zapisywanie większej ilości wartości i zmiennych tym sposobem będzie trwało raczej długo. </p>
-<h3>Zadanie domowe -  jakie wyniki wygenerują kody?</h3>
+ <code>
+ data a;</br>
+  x=5;</br>
+  output;</br>
+ run;</br>
+ </br></br>
+ data a;</br>
+  x=5;</br>
+  output;</br>
+  x=200;</br>
+ run;</br>
+ </br></br>
+ data a;</br>
+  x=5;</br>
+  y=7;</br>
+  output;</br>
+  x=6;</br>
+  y=8;</br>
+  output;</br>
+ run;</code>
+</div>
+<div class="card-header">
+    <h3>Prosta pętla DO END</h3>
+</div>
+<div class="card-body">
+    <code>
+        data zbior;</br>
+        DO i=1 to 10;</br>
+        x=floor(100*ranuni(0));</br>
+        output;</br>
+        end;</br>
+        run;</br>
+    </code>
+</div>
 
-<code>
-data a;</br>
- x=5;</br>
- output;</br>
+<div class="card-header">
+    <h3>Parametr SET w DATA STEPIE</h3>
+</div>
+<div class="card-body">
+    <code>
+data c;</br>
+set work.zbior; </br>
 run;</br>
-</br></br>
-data a;</br>
- x=5;</br>
- output;</br>
- x=200;</br>
-run;</br>
-</br></br>
-data a;</br>
- x=5;</br>
- y=7;</br>
- output;</br>
- x=6;</br>
- y=8;</br>
- output;</br>
-run;</code>
+    </code>
 
-</section>
+    <p>
+    Data Step jest blokiem odpowiedzialnym za przetwarzanie sekwencyjne</p>
+    <p>Instrukcja SET występuje tylko w DATA Stepie</p>
+    <p>Domyślnie instrukcja SET czyta wszystkie obserwacje ze zbioru począwszy od pierwszej.
+</p>
+<p>W przypadku gdy chcesz iterować po plikua nie po tabeli <strong>SET</strong> trzeba zamienić na<strong> INFILE</strong>.</p>
+<p>W ramach DATA STEP-u tworzona jest automatycznie pętla główna (ang. implicit loop), w obrębie której:
+czytana jest kolejna obserwacja z wejściowego zbioru danych (lub wiersz z wejściowego pliku płaskiego),
+wykonywane są instrukcje będące treścią danego kroku,
+finalna postać obserwacji zapisywana jest do zbioru wynikowego.
+Domyślnie pętla główna wykonywana jest dla każdej obserwacji w zbiorze wejściowym.
+W przypadku, gdy w DATA STEPIE nie ma żadnej instrukcji czytającej ze zbiorów, pętla główna wykonuje się tylko jeden raz.</p>
+<div class="">
+    <p>Chcemy każdą wartość występującej  zmiennej X zwiększyć o 100.</p>
+    <code>
+        data b;</br>
+         set zbior;</br>
+         x=x+100;</br>
+        run;</br>
+    </code>
+     <p>Nie jest nam potrzebna żadna dodatkowa pętla !</p>
+</div>
 
-        <hr>
-    </section>
+</div>
+<div class="card-header">
+    <h3>Wektor PDV (Program Data Vector)</h3>
+    <p>PDV jest strukturą tworzoną w pamieci w trakcie kompilacji DATA STEPu.
+        Jest to wektor (jednowymiarowa tablica) zawierająca zmienne istniejące w
+        DATA STEPIE, tzn. zmienne, które istnieją w zbiorze (zbiorach) wejściowym,
+        jak i wszelkie pozostałe zmienne zadeklarowane w kodzie.
+        Przed rozpoczęciem działania DATA STEPU wszystkie zmienne są inicjalizowane
+         na brak danych, następnie podczas wykonywania instrukcji poszczególne
+         wartości nadpisują zawartości wektora. Domyślnie wartości zmiennych,
+          które nie pochodzą ze zbiorów wejściowych, na początku każdej iteracji
+          DATA STEPU są inicjalizowane na braki danych.
+          Jeżeli nie zadecydowano inaczej to po zakończeniu każdego obrotu pętli głównej cała
+          zawartość PDV jest zapisywana do zbioru wynikowego tworząc w nim kolejną obserwację.
+           Zmienne pojawiają się w wektorze PDV w kolejności ich wystąpienia w
+           DATA STEPIE i dokładnie w tej kolejności trafiają do zbioru wynikowego.
+           Wektor PDV zawiera dodatkowo zmienne automatyczne,
+           które nie są zapisywane do zbioru wyjściowego ale mogą być wykorzystane
+           podczas przetwarzania, np.:</p>
+
+           <ul>
+               <li>_N_ - zawiera numer bieżącej iteracji data stepu</li>
+               <li>_ERROR_-sygnalizujępojawieniesiębłędupodczasprzetwarzania.Domyślnąwartością
+               jest 0 co oznacza, że błędy nie wystąpiły. Kiedy pojawi się jeden lub więcej błędów,
+               zmienna przyjmuje wartość 1.</li>
+           </ul>
+</div>
+</div>
+
+</article>
+
     <footer class="container">
         <p>© Sebastian Zając 2019</p>
     </footer>

@@ -13,7 +13,7 @@
     <div class="jumbotron">
         <div class="container">
             <h1 class="display-3">Podstawowe i zaawansowane programowanie oraz statystyka w SAS</h1>
-            <h3>Nr przedmiotu: 136030-0131 SLLD</h3>
+            <h3>Nr przedmiotu: 223110-1234</h3>
             <p><strong>Prowadzący:</strong> dr Karol Przanowski <a href='https://sebastianzajac.pl' target="_blank"> dr Sebastian Zając</a> <br />
                 <a href="http://www.sgh.waw.pl/zaklady/zahziaw">Zakład Analizy Historii Zdarzeń i Analiz Wielopoziomowych</a>
             </p>
@@ -519,69 +519,7 @@
     </code>
 </div>
 
-<div class="card-header">
-    <h3>Parametr SET w DATA STEPIE</h3>
-</div>
-<div class="card-body">
-    <code>
-data c;</br>
-set work.zbior; </br>
-run;</br>
-    </code>
 
-    <p>
-    Data Step jest blokiem odpowiedzialnym za przetwarzanie sekwencyjne</p>
-    <p>Instrukcja SET występuje tylko w DATA Stepie</p>
-    <p>Domyślnie instrukcja SET czyta wszystkie obserwacje ze zbioru począwszy od pierwszej.
-</p>
-<p>W przypadku gdy chcesz iterować po plikua nie po tabeli <strong>SET</strong> trzeba zamienić na<strong> INFILE</strong>.</p>
-<p>W ramach DATA STEP-u tworzona jest automatycznie pętla główna (ang. implicit loop), w obrębie której:
-czytana jest kolejna obserwacja z wejściowego zbioru danych (lub wiersz z wejściowego pliku płaskiego),
-wykonywane są instrukcje będące treścią danego kroku,
-finalna postać obserwacji zapisywana jest do zbioru wynikowego.
-Domyślnie pętla główna wykonywana jest dla każdej obserwacji w zbiorze wejściowym.
-W przypadku, gdy w DATA STEPIE nie ma żadnej instrukcji czytającej ze zbiorów, pętla główna wykonuje się tylko jeden raz.</p>
-<div class="">
-    <p>Chcemy każdą wartość występującej  zmiennej X zwiększyć o 100.</p>
-    <code>
-        data b;</br>
-         set zbior;</br>
-         x=x+100;</br>
-        run;</br>
-    </code>
-     <p>Nie jest nam potrzebna żadna dodatkowa pętla !</p>
-</div>
-
-</div>
-<div class="card-header">
-    <h3>Wektor PDV (Program Data Vector)</h3>
-    <p>PDV jest strukturą tworzoną w pamieci w trakcie kompilacji DATA STEPu.
-        Jest to wektor (jednowymiarowa tablica) zawierająca zmienne istniejące w
-        DATA STEPIE, tzn. zmienne, które istnieją w zbiorze (zbiorach) wejściowym,
-        jak i wszelkie pozostałe zmienne zadeklarowane w kodzie.
-        Przed rozpoczęciem działania DATA STEPU wszystkie zmienne są inicjalizowane
-         na brak danych, następnie podczas wykonywania instrukcji poszczególne
-         wartości nadpisują zawartości wektora. Domyślnie wartości zmiennych,
-          które nie pochodzą ze zbiorów wejściowych, na początku każdej iteracji
-          DATA STEPU są inicjalizowane na braki danych.
-          Jeżeli nie zadecydowano inaczej to po zakończeniu każdego obrotu pętli głównej cała
-          zawartość PDV jest zapisywana do zbioru wynikowego tworząc w nim kolejną obserwację.
-           Zmienne pojawiają się w wektorze PDV w kolejności ich wystąpienia w
-           DATA STEPIE i dokładnie w tej kolejności trafiają do zbioru wynikowego.
-           Wektor PDV zawiera dodatkowo zmienne automatyczne,
-           które nie są zapisywane do zbioru wyjściowego ale mogą być wykorzystane
-           podczas przetwarzania, np.:</p>
-
-           <ul>
-               <li>_N_ - zawiera numer bieżącej iteracji data stepu</li>
-               <li>_ERROR_-sygnalizujępojawieniesiębłędupodczasprzetwarzania.Domyślnąwartością
-               jest 0 co oznacza, że błędy nie wystąpiły. Kiedy pojawi się jeden lub więcej błędów,
-               zmienna przyjmuje wartość 1.</li>
-           </ul>
-</div>
-</div>
-
-</article>
 
     <footer class="container">
         <p>© Sebastian Zając 2019</p>
