@@ -48,6 +48,7 @@
                 <li class="list-group-item">Znasz środowiska SAS w których możesz wpisywać kod</li>
                 <li class="list-group-item">Masz podstawowe informacje o SAS (format danych, kody, ustawienia edytorów)</li>
                 <li class="list-group-item">Rozumiesz, że w SAS posługujesz się kodem 4GL</li>
+                <li class="list-group-item">test 1 - utwórz katalog 'pd' na pulpicie i podepnij do niego bibliotekę 'dane' w sas - zgłoś prowadzącemu aby zaliczyć </li>
             </ul>
         </div>
     </div>
@@ -74,7 +75,7 @@
     </div>
     <div class="card-body">
         <code>
-        data a; /* nazwa zbioru wynikowego zapisanego do biblioteki work */</br>
+        data dane.a; /* nazwa zbioru wynikowego zapisanego do biblioteki work */</br>
         x=4; /* zmienna x o jednej obserwacji */</br>
        run;</code>
     </div>
@@ -88,7 +89,7 @@
     <div class="card-body">
         <p>Uruchom kod i sprawdź kolorowanie składni.</p>
         <code>
-        data a;</br>
+        data dane.a;</br>
             x=4 </br>
        run;</code>
 
@@ -104,7 +105,7 @@
     <p> W jezyku 4GL występują tylko <strong>dwa</strong> typy zmiennych: numeryczne i tekstowe.</p>
   <p>Dodajmy więcej zmiennych i może jakiś tekst. Separatorem dziesiętnym jest kropka.</p>
   <code class='center'>
-      data a;</br>
+      data dane.b;</br>
        x=2;</br>
        y=7.5;</br>
        z='abc';</br>
@@ -141,12 +142,12 @@
 </div>
 <div class="card-body">
     <code>
-    data b;</br>
+    data dane.c;</br>
         x=0;</br>
         y=1/x; </br>
     run;</code>
 
-    <div>
+<div>
     <img src="img/rys10.png" alt="">
 </div>
 </div>
@@ -154,14 +155,14 @@
  <h3>Zmodyfikujmy trochę nasz program</h3>
 </div>
 <div class="card-body">
-    <code>data a;</br>
+    <code>data dane.a1;</br>
   x=5;</br>
   x=200;</br>
  run;</code>
 
  <p>Potrzebna nam bedzie instrukcja,
  ktora wymusza zapisanie wartosci do zbioru wynikowego - instrukcja OUTPUT:</p>
- <code>data a;</br>
+ <code>data dane.a2;</br>
   x=5;</br>
   output;</br>
   x=200;</br>
@@ -196,7 +197,7 @@
 </div>
 <div class="card-body">
     <code>
-        data zbior;</br>
+        data dane.zbior;</br>
         DO i=1 to 10;</br>
         x=floor(100*ranuni(0));</br>
         output;</br>
@@ -210,11 +211,14 @@
 </div>
 <div class="card-body">
     <code>
-data c;</br>
+data dane.zbior_copy;</br>
 set work.zbior; </br>
 run;</br>
     </code>
-
+<p class="alert alert-warning" role="alert"> Powyższy program to metoda, którą możesz skopiować cały zbiór określony w SET do zbioru określonego w DATA.</p>
+<div>
+    <img src="img/rys19.png" alt="">
+</div>
     <p>
     Data Step jest blokiem odpowiedzialnym za przetwarzanie sekwencyjne</p>
     <p>Instrukcja SET występuje tylko w DATA Stepie</p>
@@ -230,17 +234,45 @@ W przypadku, gdy w DATA STEPIE nie ma żadnej instrukcji czytającej ze zbioro
 <div class="">
     <p>Chcemy każdą wartość występującej  zmiennej X zwiększyć o 100.</p>
     <code>
-        data b;</br>
+        data dane.zbior_m;</br>
          set zbior;</br>
          x=x+100;</br>
         run;</br>
     </code>
      <p>Nie jest nam potrzebna żadna dodatkowa pętla !</p>
 </div>
-
 </div>
+
+<div class="card">
+    <div class="card-header">
+        <h3>Krótko o PROC Stepie</h3>
+    </div>
+    <div class="card-text">
+        <div>
+            <img src="img/rys20.png" alt="">
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">Blok PROC STEP jest elementem programów w SAS 4GL składającym się z pojedynczej, predefiniowanej procedury SAS</li>
+            <li class="list-group-item">Większość PROC STEP-ów czyta dane z pojedynczego zbioru danych wejściowych i zapisuje informacje do zbiorów wyjściowych lub tworzy szereg raportów prezentujących uzyskane wyniki.</li>
+            <li class="list-group-item">Każda procedura posiada zestaw instrukcji i opcji.</li>
+        </ul>
+        <code class="card-text">
+            proc sql; </br>
+            create table work.test as </br>
+            select * from dane.zbior_m; </br>
+            quit;</br>
+        </code>
+        <code>
+            proc print data=work.test ; </br>
+            run; </br>
+        </code>
+    </div>
+</div>
+
 <div class="card-header">
     <h3>Wektor PDV (Program Data Vector)</h3>
+</div>
+<div class="card-body">
     <p>PDV jest strukturą tworzoną w pamieci w trakcie kompilacji DATA STEPu.
         Jest to wektor (jednowymiarowa tablica) zawierająca zmienne istniejące w
         DATA STEPIE, tzn. zmienne, które istnieją w zbiorze (zbiorach) wejściowym,
@@ -264,10 +296,138 @@ W przypadku, gdy w DATA STEPIE nie ma żadnej instrukcji czytającej ze zbioro
                jest 0 co oznacza, że błędy nie wystąpiły. Kiedy pojawi się jeden lub więcej błędów,
                zmienna przyjmuje wartość 1.</li>
            </ul>
-</div>
+           <div>
+               <img src="img/rys11.png" alt="">
+           </div>
+           <div>
+               <img src="img/rys12.png" alt="">
+           </div>
+           <div>
+               <img src="img/rys13.png" alt="">
+           </div>
+           <div>
+               <img src="img/rys14.png" alt="">
+           </div>
+           <div>
+               <img src="img/rys15.png" alt="">
+           </div>
+           <div>
+               <img src="img/rys16.png" alt="">
+           </div>
+           <div>
+               <img src="img/rys17.png" alt="">
+           </div>
+           <div>
+               <img src="img/rys18.png" alt="">
+           </div>
 </div>
 
+<code>
+data _null_;</br>
+a = 1;</br>
+put 'a= ' a;</br>
+put a;</br>
+run;</br>
+</code>
+<code>
+data _null_;</br>
+a = 3;</br>
+put 'wektor PDV =  ' _all_;</br>
+run;
+</code>
+
+</div>
+
+<div class="card">
+<div class="card-header">
+    <h3>Tworzenie zmiennych</h3>
+</div>
+<div class="card-text">
+    <p>Zmienne tworzymy przez przypisanie bądź użycie instrukcji <em> length</em></p>
+<code>
+data dane.zmienne;</br>
+length txt1 txt2 $12;</br>
+length n1 n2 n3 8;</br>
+txt3= "Sebastian Zając";</br>
+n4 = 123;</br>
+run;</br>
+</code>
+<p>Istnieje jeszcze <em>retain</em></p>
+<code>
+data dane.ret_test;</br>
+retain a 0;</br>
+length b $5;</br>
+b='to jest bardzo dlugi napis';</br>
+a = a+1;</br>
+put a;</br>
+put _all_;</br>
+run;</br>
+</code>
+
+<p>Przykład !</p>
+<code>
+data _null_;</br>
+    length wiersz 8;</br>
+    set sashelp.class;</br>
+    wiersz = wiersz +1;</br>
+    put wiersz;</br>
+    run;</br>
+</code>
+<p>A teraz inaczej</p>
+<code>
+data _null_;</br>
+length wiersz 8;</br>
+set sashelp.class;</br>
+retain wiersz 0;</br>
+wiersz = wiersz +1;</br>
+put wiersz;</br>
+run;</br>
+</code>
+</div>
+</div>
 </article>
+
+<article class="container">
+    <div class="alert alert-primary" role="alert">
+        <h2>Filtrowanie rekordów poprzez <strong> WHERE</strong></h2>
+    </div>
+    <div class="card">
+        <div class="card-header">
+                <h3>Jako opcje zbioru</h3>
+        </div>
+        <div class="card-text">
+            <code>
+                data dane.boys(where=(sex='M')) dane.girls(where=(sex='F'));</br>
+                    set sashelp.class(where=(age=14));</br>
+                run; </br>
+
+            </code>
+        </div>
+        <div class="card-header">
+            <h3>Jako instrukcja</h3>
+        </div>
+        <div class="card-text">
+            <code>
+                data dane.girls_14;</br>
+                set sashelp.class;</br>
+                where age=14 and sex="F";</br>
+                run;
+            </code>
+
+
+        </div>
+
+    </div>
+
+    <div class="alert alert-primary" role="alert">
+        <h2>Filtrowanie wierszy poprzez <strong> KEEP, DROP</strong></h2>
+    </div>
+
+    <div class="alert alert-primary" role="alert">
+        <h2>Zamiana nazwy kolumn <strong>RENAME</strong></h2>
+    </div>
+</article>
+
 
     <footer class="container">
         <p>© Sebastian Zając 2019</p>
