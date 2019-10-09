@@ -37,7 +37,26 @@ version
 ### RStudio
 ![](img/screen1.jpg)
 
-### Pakiety
+### Globalne opcje RStudio
+
+> Menu Tools -> Global Options
+
+### DEMO Pakietów R
+
+```{r demo, eval=FALSE}
+
+demo(persp)
+demo(graphics)
+demo(Japanese)
+
+library(lattice)
+demo(lattice)
+
+demo(lm.glm)
+
+```
+
+### Pakiety i środowisko
 
 ```{r install, eval=FALSE}
 # install
@@ -61,6 +80,7 @@ list.files()
 
 Możesz również zainstalować i używać R Studio z pakietu [Anaconda](https://www.anaconda.com/download/).
 
+
 Wszystkie aktualnie stworzone zmienne można znaleźć za pomocą funckji:
 
 ```{r}
@@ -74,9 +94,251 @@ ls()
 ```
 
 > *Zadanie domowe* 
-> zaznajomić się z [R Markdown]() 
->
+> zaznajomić się z [R Markdown](https://www.youtube.com/watch?v=MIlzQpXlJNk) 
 
+
+## Podstawowe operacje programistyczne
+
+W R możesz wykonywać wszystkie podstawowe operacje arytmetyczne. 
+
+```{r}
+1+1
+3^2
+sin(pi/2)
+sqrt(16)
+(1+5)*4
+```
+
+#### Przypisywanie zmiennych
+
+```{r}
+x <- 13
+y <- 3
+
+# sprawdz wartosc x
+x
+
+x+y
+
+z <- x*y
+q <- x^4*z
+```
+
+#### operatory porównania
+
+```{r}
+x <= y
+
+# !!! pamiętaj = to nie to samo co ==
+x == y
+
+x > y
+```
+
+### Struktury danych
+
+W odróżnieniu od innych języków programowania w R podstawową strukturą danych jest _wektor_. (Jakie znasz podstawowe struktury w innych językach ?).
+
+**Wektor** to sekwencja wartości tego samego typu (liczb, stringów, wartości logicznyc itp). Jedna liczba to wektor jednoelementowy. 
+
+Wektor tworzymy wykorzystując funkcję `c()` (ang. column)
+
+```{r}
+# vector z liczb 1,2 oraz 3
+c(1,2,3)
+# wektor z wartosciami tekstowymi
+c("hello", "kolokwium",'zadanie')
+```
+
+Wektory można tworzyć jako gotowe sekwencje. 
+```{r}
+1:10
+
+-3:5
+
+seq(from=0, to=300, by=12)
+
+seq(1,2,length.out = 10)
+
+```
+
+Jakiego typu wartości otrzymamy jeżeli utworzymy następujący wektor ?  
+```{r}
+c(1, "napis", 4.21, TRUE)
+
+```
+
+Podstawowe typy wektorów to: 
+
+- `logiczne` TRUE oraz FALSE (wielkość liter ma znaczenie)
+- `integer` liczby całkowite
+- `numeric` liczby rzeczywiste
+- `complex` liczby zespolone
+- `character` tekst
+
+Aby sprawdzić jakiego typu jest obiekt użyj metody `class()`.
+
+```{r}
+x <- 1:5
+class(x)
+y <- c("aaa", "foo")
+class(y)
+```
+
+
+#### Operacje na wetkorach
+
+Aby sprawdzić ile elementów zawartych jest w wektorze korzystamy z metody `length()`.
+
+```{r}
+x
+length(x)
+y
+length(y)
+```
+
+Każdemu elementowi wektora można przypisać etykietę. 
+
+```{r}
+wzrost <- c(jan=178, pier=163, anna=157, john=198)
+
+wzrost
+
+names(wzrost)
+
+```
+
+Jeżeli mamy do dyspozycji dwa wektory:
+```{r}
+x <- c(2,5,6,2,1)
+y <- c(1,4,2,4,1)
+x + y
+x < y
+exp(-x^2) + cos(y)
+
+# a co jeśli ? 
+3+ x
+
+z <- c(2,3)
+z + y
+```
+
+#### Przydatne gotowe wektory
+
+
+```{r}
+month.name
+
+LETTERS
+
+letters
+```
+
+#### Indeksowanie
+
+```{r}
+LETTERS[4:9]
+
+letters[ c(1,5,8:12) ]
+
+```
+
+Jak wybrać co drugi element ? 
+
+```{r}
+# indeksy
+co_drugi <- seq(from=1, to=length(LETTERS), by=2)
+# wartosci
+LETTERS[ co_drugi ]
+```
+
+Wartości ujemne w indeksach wskazują, które elementy chcemy pominąć
+```{r}
+month.name[ -(6:8)]
+```
+
+Możemy korzystać również z przypisanych nazw
+```{r}
+wzrost <- c(jan=178, pier=163, anna=157, john=198)
+
+wzrost[ c("jan", "anna") ]
+```
+
+Inną bardzo przydatną własnością jest możliwość zdefiniowania warunku logicznego
+
+```{r}
+wzrost[ wzrost > 165]
+```
+
+### RAMKI DANYCH
+
+```{r}
+?iris
+# przykładowa ramka danych
+data("iris")
+# pierwsze 3 elemetny
+head(iris,3)
+
+# the number of rows
+nrow(iris)
+
+# the number of columns
+ncol(iris)
+
+# both
+dim(iris)
+# names of the columns
+names(iris)
+# summary
+summary(iris)
+# short summary
+str(iris)
+```
+
+#### Indeksowanie Ramki Danych
+
+Wiersze
+
+```{r}
+iris[ c(1,4,5) , ]
+```
+
+Kolumny
+
+```{r}
+iris[ c(1,4,5) , 2:4]
+```
+```{r}
+iris[, "Sepal.Length"]
+
+iris[ iris[, "Sepal.Length"]<5, ]
+
+iris[ iris[, "Sepal.Length"]<5, c("Sepal.Length","Species")]
+
+iris$Sepal.Width
+
+iris$nowy <- iris$Sepal.Width*2
+
+iris[ iris[, "Sepal.Length"]<5, c("Sepal.Length","nowy","Species")]
+```
+
+### Tworzenie ramki danych z wektorów 
+
+```{r}
+FamilyNamas <- c('Ojeciec', 'Matka','siostra','brat','pies')
+FamilyAge <- c(53,52,15,8,3)
+FamilySex <- c('M','F','F','M','F')
+FamilyWeights <-c(92, 67, 45, 15, 3)
+
+Family <- data.frame(FamilyNamas,FamilyAge, FamilySex,FamilyWeights)
+
+str(Family)
+
+summary(Family)
+
+Family$FamilyAge
+
+```
 
 ## Wczytywanie danych z plików tekstowych
 
@@ -322,7 +584,7 @@ Wszystkie one dotyczą zbioru danych auta2012 dostępnego w pakiecie PogromcyDan
 1. Która Marka występuje najczęściej w zbiorze danych auta2012?
 2. Spośród aut marki Toyota, który model występuje najczęściej.
 3. Sprawdź ile jest aut z silnikiem diesla wyprodukowanych w 2007 roku?
-4.Jakiego koloru auta mają najmniejszy medianowy przebieg?
+4. Jakiego koloru auta mają najmniejszy medianowy przebieg?
 5. Gdy ograniczyć się tylko do aut wyprodukowanych w 2007, która Marka występuje najczęściej w zbiorze danych auta2012?
 6. Spośród aut marki Toyota, który model najbardziej stracił na cenie pomiędzy rokiem produkcji 2007 a 2008.
 7. Spośród aut z silnikiem diesla wyprodukowanych w 2007 roku która marka jest najdroższa?
@@ -343,248 +605,6 @@ Wszystkie one dotyczą zbioru danych auta2012 dostępnego w pakiecie PogromcyDan
 
 
 
-## Podstawowe operacje programistyczne
-
-W R możesz wykonywać wszystkie podstawowe operacje arytmetyczne. 
-
-```{r}
-1+1
-3^2
-sin(pi/2)
-sqrt(16)
-(1+5)*4
-```
-
-#### Przypisywanie zmiennych
-
-```{r}
-x <- 13
-y <- 3
-
-# sprawdz wartosc x
-x
-
-x+y
-
-z <- x*y
-q <- x^4*z
-```
-
-#### operatory porównania
-
-```{r}
-x <= y
-
-# !!! pamiętaj = to nie to samo co ==
-x == y
-
-x > y
-```
-
-### Struktury danych
-
-W odróżnieniu od innych języków programowania w R podstawową strukturą danych jest _wektor_. (Jakie znasz podstawowe struktury w innych językach ?).
-
-**Wektor** to sekwencja wartości tego samego typu (liczb, stringów, wartości logicznyc itp). Jedna liczba to wektor jednoelementowy. 
-
-Wektor tworzymy wykorzystując funkcję `c()` (ang. column)
-
-```{r}
-# vector z liczb 1,2 oraz 3
-c(1,2,3)
-# wektor z wartosciami tekstowymi
-c("hello", "kolokwium",'zadanie')
-```
-
-Wektory można tworzyć jako gotowe sekwencje. 
-```{r}
-1:10
-
--3:5
-
-seq(from=0, to=300, by=12)
-
-seq(1,2,length.out = 10)
-
-```
-
-Jakiego typu wartości otrzymamy jeżeli utworzymy następujący wektor ?  
-```{r}
-c(1, "napis", 4.21, TRUE)
-
-```
-
-Podstawowe typy wektorów to: 
-
-- `logiczne` TRUE oraz FALSE (wielkość liter ma znaczenie)
-- `integer` liczby całkowite
-- `numeric` liczby rzeczywiste
-- `complex` liczby zespolone
-- `character` tekst
-
-Aby sprawdzić jakiego typu jest obiekt użyj metody `class()`.
-
-```{r}
-x <- 1:5
-class(x)
-y <- c("aaa", "foo")
-class(y)
-```
-
-
-#### Operacje na wetkorach
-
-Aby sprawdzić ile elementów zawartych jest w wektorze korzystamy z metody `length()`.
-
-```{r}
-x
-length(x)
-y
-length(y)
-```
-
-Każdemu elementowi wektora można przypisać etykietę. 
-
-```{r}
-wzrost <- c(jan=178, pier=163, anna=157, john=198)
-
-wzrost
-
-names(wzrost)
-
-```
-
-Jeżeli mamy do dyspozycji dwa wektory:
-```{r}
-x <- c(2,5,6,2,1)
-y <- c(1,4,2,4,1)
-x + y
-x < y
-exp(-x^2) + cos(y)
-
-# a co jeśli ? 
-3+ x
-
-z <- c(2,3)
-z + y
-```
-
-#### Przydatne gotowe wektory
-
-
-```{r}
-month.name
-
-LETTERS
-
-letters
-```
-
-#### Indeksowanie
-
-```{r}
-LETTERS[4:9]
-
-letters[ c(1,5,8:12) ]
-
-```
-
-Jak wybrać co drugi element ? 
-
-```{r}
-# indeksy
-co_drugi <- seq(from=1, to=length(LETTERS), by=2)
-# wartosci
-LETTERS[ co_drugi ]
-```
-
-Wartości ujemne w indeksach wskazują, które elementy chcemy pominąć
-```{r}
-month.name[ -(6:8)]
-```
-
-Możemy korzystać również z przypisanych nazw
-```{r}
-wzrost <- c(jan=178, pier=163, anna=157, john=198)
-
-wzrost[ c("jan", "anna") ]
-```
-
-Inną bardzo przydatną własnością jest możliwość zdefiniowania warunku logicznego
-
-```{r}
-wzrost[ wzrost > 165]
-```
-
-### RAMKI DANYCH
-
-```{r}
-?iris
-# przykładowa ramka danych
-data("iris")
-# pierwsze 3 elemetny
-head(iris,3)
-
-# the number of rows
-nrow(iris)
-
-# the number of columns
-ncol(iris)
-
-# both
-dim(iris)
-# names of the columns
-names(iris)
-# summary
-summary(iris)
-# short summary
-str(iris)
-```
-
-#### Indeksowanie Ramki Danych
-
-Wiersze
-
-```{r}
-iris[ c(1,4,5) , ]
-```
-
-Kolumny
-
-```{r}
-iris[ c(1,4,5) , 2:4]
-```
-```{r}
-iris[, "Sepal.Length"]
-
-iris[ iris[, "Sepal.Length"]<5, ]
-
-iris[ iris[, "Sepal.Length"]<5, c("Sepal.Length","Species")]
-
-iris$Sepal.Width
-
-iris$nowy <- iris$Sepal.Width*2
-
-iris[ iris[, "Sepal.Length"]<5, c("Sepal.Length","nowy","Species")]
-```
-
-### Tworzenie ramki danych z wektorów 
-
-```{r}
-FamilyNamas <- c('Ojeciec', 'Matka','siostra','brat','pies')
-FamilyAge <- c(53,52,15,8,3)
-FamilySex <- c('M','F','F','M','F')
-FamilyWeights <-c(92, 67, 45, 15, 3)
-
-Family <- data.frame(FamilyNamas,FamilyAge, FamilySex,FamilyWeights)
-
-str(Family)
-
-summary(Family)
-
-Family$FamilyAge
-
-```
 
 
 
