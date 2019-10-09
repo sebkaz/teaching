@@ -197,6 +197,20 @@ y
 length(y)
 ```
 
+```{r}
+z <- c(3,2,3,5,2,0,9,-7,0,20)
+
+sort(z)
+
+sort(z, decreasing = TRUE)
+
+
+rev(z)
+
+unique(z)
+```
+
+
 Każdemu elementowi wektora można przypisać etykietę. 
 
 ```{r}
@@ -212,8 +226,13 @@ Jeżeli mamy do dyspozycji dwa wektory:
 ```{r}
 x <- c(2,5,6,2,1)
 y <- c(1,4,2,4,1)
-x + y
+
+result.add <- x + y
+
+print(result.add)
+
 x < y
+
 exp(-x^2) + cos(y)
 
 # a co jeśli ? 
