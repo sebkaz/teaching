@@ -210,3 +210,63 @@ Kwartet Anscombe'a
 
 ![](img/ans.png)
 
+
+Zadanie na ćwiczenia
+================
+
+Znajdź dane z kwartetu, wpisz do R i oblicz wszystkie statystyki (średnia, wariancja, odch)
+
+
+Graficzny opis danych
+================
+
+- Histogramy i wykresy częstości
+- Wykresy rozrzutu (scatter plot)
+- wykresy podułkowe
+
+
+Histogram
+==================
+
+**Graficzny sposób przedstawiania rozładu empirycznego cechy.**
+
+Złożony z szeregu prostokątów umieszczonych
+na osi współrzędnych. Na osi "x" mamy przedziały klasowe wartości cechy a na osi "y" liczebności tych przedziałów. 
+
+- Porządkuje wiedzę o danych 
+- pokazuje odchylenia
+- pokazuje dane dominujące w zbiorze
+- dla danych jakościowych i ilościowych
+
+
+Histogram
+==================
+
+![](img/hist.png)
+
+
+Scatter plot
+==================
+
+![](img/scatt1.png)
+
+
+Scatter plot
+==================
+
+![](img/scatt1.png)
+
+
+Box Plot
+================
+
+- Wykres przedstawia medianę (środek pudełka), kwartyle (dolna i górna granica), obserwacje odstające oraz min i max.
+- Box Plot jest bardzo popularną metodą prezentacji zmienności pojedynczej zmiennej
+- bardzo często wykorzystywany do testów w rozbiciu na grupy.
+
+
+BoxPlot 
+=============
+
+![](img/boxplot.png)
+
