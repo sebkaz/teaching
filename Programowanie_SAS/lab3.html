@@ -40,20 +40,92 @@
 <article class="container">
     <div class="card">
         <div class="card-header">
-            <h3>  Co już wiemy ?</h3>
+            <h3>  Co już potrafimy ?</h3>
         </div>
         <div class="card-body">
             <ul class="list-group list-group-flush">
-                <li class="list-group-item">Teoria Big Data jest dla Ciebie oczywista</li>
-                <li class="list-group-item">Znasz środowiska SAS w których możesz wpisywać kod</li>
-                <li class="list-group-item">Masz podstawowe informacje o SAS (format danych, kody, ustawienia edytorów)</li>
-                <li class="list-group-item">Rozumiesz, że w SAS posługujesz się kodem 4GL</li>
+                <li class="list-group-item">Biblioteki - tworzenie i usuwanie, wypisanie do loga info</li>
+                <li class="list-group-item">Data Stepy, SET</li>
+                <li class="list-group-item">Wektor PDV</li>
+                <li class="list-group-item">Proc Step z SQL</li>
             </ul>
         </div>
     </div>
 </article>
+ 
+ <article class="container">
+     
+     <div class="alert alert-success" role="alert">
+        <h2>Data Step powtórzenie</h2>
+    </div>
 
+    <div class="card">
+        <h3 class= card-header>Zadanie</h3>
+        <div class="card-body">
+            
+            <p class="card-text">Skopiuj zbiór sashepl.cars do biblioteki work zmieniając jego nazwę na <em>samochody</em></p>
+            <p class="card-text">Za pomocą data stepu oraz proc sql stwórz tabelę dla samochodów z Europy o pojemności silnika pomiędzy 2 i 4 litry.</p>
+            <p class="card-text">Wybierz kolumny: </p>
+            <p class="card-text">Nazwy kolumn zmień na ich polskie odpowiedniki.</p>    
+    </div>
+    </div>
 
+ </article>
+
+<article class="container">
+     
+     <div class="alert alert-success" role="alert">
+        <h2>Funkcje w SAS </h2>
+    </div>
+
+    <div class="card">
+        <h3 class= card-header>Format daty i czasu</h3>
+        <div class="card-body">
+            <p>data, czas, dataczas</p>
+          <code>
+              data a;</br>
+                x=date();</br>
+                y=today();</br>
+                t=time();</br>
+                dt=datetime();<br/>
+                format x y date9. <br>
+                        t time9.</br>
+                        dt datetime18. ;<br>
+              run;<br>
+          </code>
+        </div>
+        <div class="card-body">
+            <p>dataczas na datę i czas</p>
+          <code>
+              data a;</br>
+                dt=datetime();<br/>
+                dp=datepart(dt);<br>
+                tp=timepart(dt);<br>
+                format dt datetime18.<br>
+                dp date9.<br>
+                tp time9. ; <br>
+              run;<br>
+          </code>
+        </div>
+        <div class="card-body">
+            <p>elementy daty</p>
+          <code>
+              data a;</br>
+                d=today();<br/>
+                year = year(d);<br>
+                quarter = qtr(d);<br>
+                month = month(d);<br>
+                day = day(d);<br>
+                week = week(d);<br>
+                weekday = weekday(d);<br>
+                format d date9.; <br>
+              run;<br>
+          </code>
+        </div>
+
+    </div>
+
+ </article>
 
 
     <footer class="container">
