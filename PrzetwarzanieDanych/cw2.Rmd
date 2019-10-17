@@ -541,7 +541,7 @@ for roll_num in range(100):
 	result = die.roll()
 	results.append(result)
 
-print(result)		    		
+print(results)		    		
 ```
 
 > **Zadanie** Napisz program realizujący 100 rzutów dwoma kośćmi. Policz częstotliwości wykorzystując metodę `count()`
@@ -680,7 +680,15 @@ sc = pd.plotting.scatter_matrix(df, alpha=0.3, figsize=(10,10), diagonal="hist",
 
 Mimo, iż zbiory te są bardzo przydatne w trakcie nauki bardzo często będziesz musiał zajmować się złożonymi i rzeczywistymi danymi. Stąd potrzebna będzie nam wiedza jak wczytywać dane zewnętrzne.
 
+```python
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+X_train, X_test, y_train, y_test = train_test_split(iris.data, iris.target, train_size=0.7, random_state=1)
+dtc = DecisionTreeClassifier()
+dtc.fit(X_train, y_train)
+dtc.score(X_test, y_test)
 
+```
 
 ### Generowanie danych sztucznych
 
@@ -844,3 +852,15 @@ accuracy_score(y, y_pred)
 ```
 
 > **Zadanie** Znajdź inne cechy i wygeneruj z nich swoje modele. 
+
+
+## Inteligencja zbiorowa
+
+Jak już dowiedzieliśmy się na wykładzie (prawda, że pamiętasz ?) Netflix to internetowa wypozyczalnia płyt DVD umożliwiająca wybór filmów. Pod koniec 2006 firma ta poinformowała o nagrodzie w wysokości 1 mln dolarów dla pierwszej osoby, która poprawi dokładność systemu rekomendacji o $10\%$. Dodatkowo każdy lider raz do roku otrzyma 50 tyś dolarów. Najlepszy zespół otrzymał wynik $7\%$. Korzystając z danych dotyczących filmów, które spodobały się poszczególnym klientom, firma rekomenduje filmy pozostałym klientom. Wykorzystując zebrane dane oraz zaawansowane algorytmy firma stworzyła nowe możliwości biznesowe w celu lepszego zrozumienia klientów i użytkowników. 
+
+
+[dane](data/recomendation.py).
+
+```python
+from recomendations import critics, sim_distance, sim_manhatan, sim_pearson, topMatches
+```

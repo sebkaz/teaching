@@ -798,7 +798,7 @@ for roll_num in range(100):
     result = die.roll()
     results.append(result)
 
-print(result)                   </code></pre>
+print(results)                  </code></pre>
 <blockquote>
 <p><strong>Zadanie</strong> Napisz program realizujący 100 rzutów dwoma kośćmi. Policz częstotliwości wykorzystując metodę <code>count()</code></p>
 </blockquote>
@@ -911,6 +911,13 @@ for c in np.nditer(iris.target):
 df = pd.DataFrame(iris.data, columns=iris.feature_names)
 sc = pd.plotting.scatter_matrix(df, alpha=0.3, figsize=(10,10), diagonal=&quot;hist&quot;, color=colors, marker=&quot;o&quot;, grid=&quot;True&quot;)</code></pre>
 <p>Mimo, iż zbiory te są bardzo przydatne w trakcie nauki bardzo często będziesz musiał zajmować się złożonymi i rzeczywistymi danymi. Stąd potrzebna będzie nam wiedza jak wczytywać dane zewnętrzne.</p>
+<pre class="python"><code>from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+X_train, X_test, y_train, y_test = train_test_split(iris.data, iris.target, train_size=0.7, random_state=1)
+dtc = DecisionTreeClassifier()
+dtc.fit(X_train, y_train)
+dtc.score(X_test, y_test)
+</code></pre>
 </div>
 <div id="generowanie-danych-sztucznych" class="section level3">
 <h3>Generowanie danych sztucznych</h3>
@@ -1019,6 +1026,12 @@ accuracy_score(y, y_pred)</code></pre>
 <blockquote>
 <p><strong>Zadanie</strong> Znajdź inne cechy i wygeneruj z nich swoje modele.</p>
 </blockquote>
+</div>
+<div id="inteligencja-zbiorowa" class="section level2">
+<h2>Inteligencja zbiorowa</h2>
+<p>Jak już dowiedzieliśmy się na wykładzie (prawda, że pamiętasz ?) Netflix to internetowa wypozyczalnia płyt DVD umożliwiająca wybór filmów. Pod koniec 2006 firma ta poinformowała o nagrodzie w wysokości 1 mln dolarów dla pierwszej osoby, która poprawi dokładność systemu rekomendacji o <span class="math inline">\(10\%\)</span>. Dodatkowo każdy lider raz do roku otrzyma 50 tyś dolarów. Najlepszy zespół otrzymał wynik <span class="math inline">\(7\%\)</span>. Korzystając z danych dotyczących filmów, które spodobały się poszczególnym klientom, firma rekomenduje filmy pozostałym klientom. Wykorzystując zebrane dane oraz zaawansowane algorytmy firma stworzyła nowe możliwości biznesowe w celu lepszego zrozumienia klientów i użytkowników.</p>
+<p><a href="data/recomendation.py">dane</a>.</p>
+<pre class="python"><code>from recomendations import critics, sim_distance, sim_manhatan, sim_pearson, topMatches</code></pre>
 </div>
 </div>
 
