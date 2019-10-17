@@ -1031,7 +1031,35 @@ accuracy_score(y, y_pred)</code></pre>
 <h2>Inteligencja zbiorowa</h2>
 <p>Jak już dowiedzieliśmy się na wykładzie (prawda, że pamiętasz ?) Netflix to internetowa wypozyczalnia płyt DVD umożliwiająca wybór filmów. Pod koniec 2006 firma ta poinformowała o nagrodzie w wysokości 1 mln dolarów dla pierwszej osoby, która poprawi dokładność systemu rekomendacji o <span class="math inline">\(10\%\)</span>. Dodatkowo każdy lider raz do roku otrzyma 50 tyś dolarów. Najlepszy zespół otrzymał wynik <span class="math inline">\(7\%\)</span>. Korzystając z danych dotyczących filmów, które spodobały się poszczególnym klientom, firma rekomenduje filmy pozostałym klientom. Wykorzystując zebrane dane oraz zaawansowane algorytmy firma stworzyła nowe możliwości biznesowe w celu lepszego zrozumienia klientów i użytkowników.</p>
 <p><a href="data/recomendation.py">dane</a>.</p>
-<pre class="python"><code>from recomendations import critics, sim_distance, sim_manhatan, sim_pearson, topMatches</code></pre>
+<pre class="python"><code>from recomendations import critics, sim_distance, sim_manhatan, sim_pearson, topMatches
+
+critics['Lisa Rose']['Kobieta w błękitnej wodzie']</code></pre>
+<div id="znajdowanie-podobnych-użytkowników" class="section level3">
+<h3>Znajdowanie podobnych użytkowników</h3>
+<p>Jak podobni są do siebie ludzie oceniający ?</p>
+<ul>
+<li>Porównaj każdego z każdym i określ <code>miarę podobieństwa</code>. np odległość Euklidesowa, bądź korelacja Pearsona</li>
+</ul>
+<pre class="python"><code>from math import sqrt
+
+sqrt(pow(5-4, 2)+ pow(4-1, 2))</code></pre>
+<p>Zwykła odległość będzie wskazywała duże wartości dla oddalonych od siebie osób - czyli o różnych preferencjach.</p>
+<p>Aby zmienić wartości warto dokonać transformacji:</p>
+<p><span class="math inline">\(1/(1+ \text{euclid})\)</span></p>
+<p>Zauważ, że wyniki zawsze będą z przedziału <span class="math inline">\([0, 1]\)</span> gdzie <span class="math inline">\(1\)</span> oznacz pełną zgodność w ocenach</p>
+<pre class="python"><code>1/(1+sqrt(pow(5-4, 2)+ pow(4-1, 2)))</code></pre>
+<pre class="python"><code>sim_distance(critics,'Lisa Rose', 'Gene Seymour')</code></pre>
+<blockquote>
+<blockquote>
+<p>policzmy odłegłości dla wszystkich</p>
+</blockquote>
+</blockquote>
+<pre class="python"><code>distance = {}
+for el in critics:
+    distance[el] = [(sim_distance(critics, el, other), other) for other in critics if other!=el]
+    
+print(distance)</code></pre>
+</div>
 </div>
 </div>
 

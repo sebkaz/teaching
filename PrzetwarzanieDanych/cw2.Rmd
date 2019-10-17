@@ -863,4 +863,43 @@ Jak już dowiedzieliśmy się na wykładzie (prawda, że pamiętasz ?) Netflix t
 
 ```python
 from recomendations import critics, sim_distance, sim_manhatan, sim_pearson, topMatches
+
+critics['Lisa Rose']['Kobieta w błękitnej wodzie']
 ```
+### Znajdowanie podobnych użytkowników
+
+Jak podobni są do siebie ludzie oceniający ?
+
+- Porównaj każdego z każdym i określ `miarę podobieństwa`. np odległość Euklidesowa, bądź korelacja Pearsona
+
+```python
+from math import sqrt
+
+sqrt(pow(5-4, 2)+ pow(4-1, 2))
+```
+Zwykła odległość będzie wskazywała duże wartości dla oddalonych od siebie osób - czyli o różnych preferencjach. 
+
+Aby zmienić wartości warto dokonać transformacji: 
+
+$1/(1+ \text{euclid})$
+
+Zauważ, że wyniki zawsze będą z przedziału $[0, 1]$ gdzie $1$ oznacz pełną zgodność w ocenach
+```python
+1/(1+sqrt(pow(5-4, 2)+ pow(4-1, 2)))
+```
+
+```python
+sim_distance(critics,'Lisa Rose', 'Gene Seymour')
+```
+
+>> policzmy odłegłości dla wszystkich 
+
+```python
+distance = {}
+for el in critics:
+    distance[el] = [(sim_distance(critics, el, other), other) for other in critics if other!=el]
+    
+print(distance)
+```
+
+
