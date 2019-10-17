@@ -122,7 +122,49 @@
               run;<br>
           </code>
         </div>
+        <div class="card-body">
+            <p>Funkcje liczbowe dla dat</p>
+          <code>
+              data a;</br>
+                d = mdy(10,10,2019);</br>
+                dt = dhms(d,19,20,34);</br>
+                t =hms(13,42,13);</br>
+                format d date9. t time9. dt datetime18. ;<br>
+              run;<br>
+          </code>
+        </div>
+        <div class="card-body">
+            <p>Czas - składniki</p>
+          <code>
+              data a;</br>
+                t = time();</br>
+                h = hour(t);</br>
+                m = minute(t);</br>
+                s = second(t);</br>
+                format t time9.;<br>
+              run;<br>
+          </code>
+        </div>
+        <div class="card-body">
+            <p>funkcje do obliczania okresów</p>
+          <code>
+              data a;</br>
+                dzis = today();</br>
+                d = intnx('month', dzis, -5, "B");</br>
+                count = intck('month', d, dzis);<br>
+                format d time9.;<br>
+              run;<br>
+          </code>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <h3>Zadanie</h3>
+        </div>
+                <div class="card-body">
+            <p>Za pomocą fukcji oraz własnych obliczeń oblicz swój wiek w latach, miesiącach i dniach.</p>
 
+        </div>
     </div>
 
  </article>
