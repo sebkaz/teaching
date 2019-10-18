@@ -49,18 +49,57 @@
                 <li class="list-group-item">Znasz środowiska SAS w których możesz wpisywać kod</li>
                 <li class="list-group-item">Masz podstawowe informacje o SAS (format danych, kody, ustawienia edytorów)</li>
                 <li class="list-group-item">Rozumiesz, że w SAS posługujesz się kodem 4GL</li>
+                <li class="list-group-item">Potrafisz napisać podstawowy Data Step w SAS </li>
             </ul>
         </div>
     </div>
     </article>
     <hr>
+    <article class="container">
+    <div class="card">
+        <div class="card-header">
+            <h3>Zadanie</h3>
+        </div>
+        <div class="card-body">
+            <p>Utwórz katalog na swoim dysku i podepnij go jako bibliotekę SAS o nazwie <strong>dane</strong></p>
+            <p>Stwórz nowy zbiór w nowej bibliotece ze zmienną x = 3 oraz y = 'abc' </p>
+        </div>
+    </div>
+
+    <div class="card">
+    <div class="card-header">
+        <h3>Krótko o PROC Stepie</h3>
+    </div>
+    <div class="card-body">
+        <div>
+            <img src="img/rys20.png" alt="">
+       </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">Blok PROC STEP jest elementem programów w SAS 4GL składającym się z pojedynczej, predefiniowanej procedury SAS</li>
+            <li class="list-group-item">Większość PROC STEP-ów czyta dane z pojedynczego zbioru danych wejściowych i zapisuje informacje do zbiorów wyjściowych lub tworzy szereg raportów prezentujących uzyskane wyniki.</li>
+            <li class="list-group-item">Każda procedura posiada zestaw instrukcji i opcji.</li>
+        </ul>
+        <code>
+            proc sql; </br>
+            create table work.test as </br>
+            select * from dane.zbior_m; </br>
+            quit;</br>
+        </code>
+        <code>
+            proc print data=work.test ; </br>
+            run; </br>
+        </code>
+    </div>
+</div>
+
+
     <div class="card-header">
         <h3>Parametr SET w DATA STEPIE</h3>
     </div>
     <div class="card-body">
         <code>
-    data c;</br>
-    set work.zbior; </br>
+    data copy;</br>
+    set sashelp.class; </br>
     run;</br>
         </code>
 
@@ -76,8 +115,16 @@
     finalna postać obserwacji zapisywana jest do zbioru wynikowego.
     Domyślnie pętla główna wykonywana jest dla każdej obserwacji w zbiorze wejściowym.
     W przypadku, gdy w DATA STEPIE nie ma żadnej instrukcji czytającej ze zbiorów, pętla główna wykonuje się tylko jeden raz.</p>
-    <div class="">
+ 
         <p>Chcemy każdą wartość występującej  zmiennej X zwiększyć o 100.</p>
+        <code>
+        data zbior;</br>
+        DO i=1 to 10;</br>
+        x=floor(100*ranuni(0));</br>
+        output;</br>
+        end;</br>
+        run;</br>
+    </code>
         <code>
             data b;</br>
              set zbior;</br>
@@ -86,37 +133,283 @@
         </code>
          <p>Nie jest nam potrzebna żadna dodatkowa pętla !</p>
     </div>
-
-    </div>
-    <div class="card-header">
-        <h3>Wektor PDV (Program Data Vector)</h3>
-        <p>PDV jest strukturą tworzoną w pamieci w trakcie kompilacji DATA STEPu.
-            Jest to wektor (jednowymiarowa tablica) zawierająca zmienne istniejące w
-            DATA STEPIE, tzn. zmienne, które istnieją w zbiorze (zbiorach) wejściowym,
-            jak i wszelkie pozostałe zmienne zadeklarowane w kodzie.
-            Przed rozpoczęciem działania DATA STEPU wszystkie zmienne są inicjalizowane
-             na brak danych, następnie podczas wykonywania instrukcji poszczególne
-             wartości nadpisują zawartości wektora. Domyślnie wartości zmiennych,
-              które nie pochodzą ze zbiorów wejściowych, na początku każdej iteracji
-              DATA STEPU są inicjalizowane na braki danych.
-              Jeżeli nie zadecydowano inaczej to po zakończeniu każdego obrotu pętli głównej cała
-              zawartość PDV jest zapisywana do zbioru wynikowego tworząc w nim kolejną obserwację.
-               Zmienne pojawiają się w wektorze PDV w kolejności ich wystąpienia w
-               DATA STEPIE i dokładnie w tej kolejności trafiają do zbioru wynikowego.
-               Wektor PDV zawiera dodatkowo zmienne automatyczne,
-               które nie są zapisywane do zbioru wyjściowego ale mogą być wykorzystane
-               podczas przetwarzania, np.:</p>
-
-               <ul>
-                   <li>_N_ - zawiera numer bieżącej iteracji data stepu</li>
-                   <li>_ERROR_-sygnalizujępojawieniesiębłędupodczasprzetwarzania.Domyślnąwartością
-                   jest 0 co oznacza, że błędy nie wystąpiły. Kiedy pojawi się jeden lub więcej błędów,
-                   zmienna przyjmuje wartość 1.</li>
-               </ul>
-    </div>
     </div>
 
+
+<div class="card-header">
+    <h3>Wektor PDV (Program Data Vector)</h3>
+</div>
+<div class="card-body">
+    <p>PDV jest strukturą tworzoną w pamieci w trakcie kompilacji DATA STEPu.
+        Jest to wektor (jednowymiarowa tablica) zawierająca zmienne istniejące w
+        DATA STEPIE, tzn. zmienne, które istnieją w zbiorze (zbiorach) wejściowym,
+        jak i wszelkie pozostałe zmienne zadeklarowane w kodzie.
+        Przed rozpoczęciem działania DATA STEPU wszystkie zmienne są inicjalizowane
+         na brak danych, następnie podczas wykonywania instrukcji poszczególne
+         wartości nadpisują zawartości wektora. Domyślnie wartości zmiennych,
+          które nie pochodzą ze zbiorów wejściowych, na początku każdej iteracji
+          DATA STEPU są inicjalizowane na braki danych.
+          Jeżeli nie zadecydowano inaczej to po zakończeniu każdego obrotu pętli głównej cała
+          zawartość PDV jest zapisywana do zbioru wynikowego tworząc w nim kolejną obserwację.
+           Zmienne pojawiają się w wektorze PDV w kolejności ich wystąpienia w
+           DATA STEPIE i dokładnie w tej kolejności trafiają do zbioru wynikowego.
+           Wektor PDV zawiera dodatkowo zmienne automatyczne,
+           które nie są zapisywane do zbioru wyjściowego ale mogą być wykorzystane
+           podczas przetwarzania, np.:</p>
+
+           <ul>
+               <li>_N_ - zawiera numer bieżącej iteracji data stepu</li>
+               <li>_ERROR_-sygnalizujępojawieniesiębłędupodczasprzetwarzania.Domyślnąwartością
+               jest 0 co oznacza, że błędy nie wystąpiły. Kiedy pojawi się jeden lub więcej błędów,
+               zmienna przyjmuje wartość 1.</li>
+           </ul>
+           <div>
+               <img src="img/rys11.png" alt="">
+           </div>
+           <div>
+               <img src="img/rys12.png" alt="">
+           </div>
+           <div>
+               <img src="img/rys13.png" alt="">
+           </div>
+           <div>
+               <img src="img/rys14.png" alt="">
+           </div>
+           <div>
+               <img src="img/rys15.png" alt="">
+           </div>
+           <div>
+               <img src="img/rys16.png" alt="">
+           </div>
+           <div>
+               <img src="img/rys17.png" alt="">
+           </div>
+           <div>
+               <img src="img/rys18.png" alt="">
+           </div>
+</div>
+
+<code>
+data _null_;</br>
+a = 1;</br>
+put 'a= ' a;</br>
+put a;</br>
+run;</br>
+</code>
+<code>
+data _null_;</br>
+a = 3;</br>
+put 'wektor PDV =  ' _all_;</br>
+run;
+</code>
+
+</div>
+
+<div class="card">
+<div class="card-header">
+    <h3>Tworzenie zmiennych</h3>
+</div>
+<div class="card-text">
+    <p>Zmienne tworzymy przez przypisanie bądź użycie instrukcji <em> length</em></p>
+<code>
+data dane.zmienne;</br>
+length txt1 txt2 $12;</br>
+length n1 n2 n3 8;</br>
+txt3= "Sebastian Zając";</br>
+n4 = 123;</br>
+run;</br>
+</code>
+<p>Istnieje jeszcze <em>retain</em></p>
+<code>
+data dane.ret_test;</br>
+retain a 0;</br>
+length b $5;</br>
+b='to jest bardzo dlugi napis';</br>
+a = a+1;</br>
+put a;</br>
+put _all_;</br>
+run;</br>
+</code>
+
+<p>Przykład !</p>
+<code>
+data _null_;</br>
+    length wiersz 8;</br>
+    set sashelp.class;</br>
+    wiersz = wiersz +1;</br>
+    put wiersz;</br>
+    run;</br>
+</code>
+<p>A teraz inaczej</p>
+<code>
+data _null_;</br>
+length wiersz 8;</br>
+set sashelp.class;</br>
+retain wiersz 0;</br>
+wiersz = wiersz +1;</br>
+put wiersz;</br>
+run;</br>
+</code>
+</div>
+</div>
+</article>
+
+<article class="container">
+    <div class="alert alert-primary" role="alert">
+        <h2>Filtrowanie rekordów poprzez <strong> WHERE</strong></h2>
+    </div>
+    <div class="card">
+        <div class="card-header">
+                <h3>Jako opcje zbioru</h3>
+        </div>
+        <div class="card-text">
+            <code>
+                data dane.boys(where=(sex='M')) dane.girls(where=(sex='F'));</br>
+                    set sashelp.class(where=(age=14));</br>
+                run; </br>
+
+            </code>
+        </div>
+        <div class="card-header">
+            <h3>Jako instrukcja</h3>
+        </div>
+        <div class="card-text">
+            <code>
+                data dane.girls_14;</br>
+                set sashelp.class;</br>
+                where age=14 and sex="F";</br>
+                run;
+            </code>
+
+
+        </div>
+
+    </div>
+
+    <div class="alert alert-primary" role="alert">
+        <h2>Filtrowanie wierszy poprzez <strong> KEEP, DROP</strong></h2>
+    </div>
+
+    <div class="alert alert-primary" role="alert">
+        <h2>Zamiana nazwy kolumn <strong>RENAME</strong></h2>
+    </div>
     </article>
+
+<article class="container">
+     
+     <div class="alert alert-success" role="alert">
+        <h2>Data Step powtórzenie</h2>
+    </div>
+
+    <div class="card">
+        <h3 class= card-header>Zadanie</h3>
+        <div class="card-body">
+            
+            <p class="card-text">Skopiuj zbiór sashepl.cars do biblioteki work zmieniając jego nazwę na <em>samochody</em></p>
+            <p class="card-text">Za pomocą data stepu oraz proc sql stwórz tabelę dla samochodów z Europy o pojemności silnika pomiędzy 2 i 4 litry.</p>
+            <p class="card-text">Wybierz kolumny: </p>
+            <p class="card-text">Nazwy kolumn zmień na ich polskie odpowiedniki.</p>    
+    </div>
+    </div>
+
+ </article>
+
+<article class="container">
+     
+     <div class="alert alert-success" role="alert">
+        <h2>Funkcje w SAS </h2>
+    </div>
+
+    <div class="card">
+        <h3 class= card-header>Format daty i czasu</h3>
+        <div class="card-body">
+            <p>data, czas, dataczas</p>
+          <code>
+              data a;</br>
+                x=date();</br>
+                y=today();</br>
+                t=time();</br>
+                dt=datetime();<br/>
+                format x y date9. <br>
+                        t time9.</br>
+                        dt datetime18. ;<br>
+              run;<br>
+          </code>
+        </div>
+        <div class="card-body">
+            <p>dataczas na datę i czas</p>
+          <code>
+              data a;</br>
+                dt=datetime();<br/>
+                dp=datepart(dt);<br>
+                tp=timepart(dt);<br>
+                format dt datetime18.<br>
+                dp date9.<br>
+                tp time9. ; <br>
+              run;<br>
+          </code>
+        </div>
+        <div class="card-body">
+            <p>elementy daty</p>
+          <code>
+              data a;</br>
+                d=today();<br/>
+                year = year(d);<br>
+                quarter = qtr(d);<br>
+                month = month(d);<br>
+                day = day(d);<br>
+                week = week(d);<br>
+                weekday = weekday(d);<br>
+                format d date9.; <br>
+              run;<br>
+          </code>
+        </div>
+        <div class="card-body">
+            <p>Funkcje liczbowe dla dat</p>
+          <code>
+              data a;</br>
+                d = mdy(10,10,2019);</br>
+                dt = dhms(d,19,20,34);</br>
+                t =hms(13,42,13);</br>
+                format d date9. t time9. dt datetime18. ;<br>
+              run;<br>
+          </code>
+        </div>
+        <div class="card-body">
+            <p>Czas - składniki</p>
+          <code>
+              data a;</br>
+                t = time();</br>
+                h = hour(t);</br>
+                m = minute(t);</br>
+                s = second(t);</br>
+                format t time9.;<br>
+              run;<br>
+          </code>
+        </div>
+        <div class="card-body">
+            <p>funkcje do obliczania okresów</p>
+          <code>
+              data a;</br>
+                dzis = today();</br>
+                d = intnx('month', dzis, -5, "B");</br>
+                count = intck('month', d, dzis);<br>
+                format d time9.;<br>
+              run;<br>
+          </code>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <h3>Zadanie</h3>
+        </div>
+                <div class="card-body">
+            <p>Za pomocą fukcji oraz własnych obliczeń oblicz swój wiek w latach, miesiącach i dniach.</p>
+
+        </div>
+    </div>
+
+ </article>
 
     <footer class="container">
         <p>© Sebastian Zając 2019</p>

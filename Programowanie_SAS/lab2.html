@@ -243,31 +243,6 @@ W przypadku, gdy w DATA STEPIE nie ma żadnej instrukcji czytającej ze zbioro
 </div>
 </div>
 
-<div class="card">
-    <div class="card-header">
-        <h3>Krótko o PROC Stepie</h3>
-    </div>
-    <div class="card-text">
-        <div>
-            <img src="img/rys20.png" alt="">
-        </div>
-        <ul class="list-group list-group-flush">
-            <li class="list-group-item">Blok PROC STEP jest elementem programów w SAS 4GL składającym się z pojedynczej, predefiniowanej procedury SAS</li>
-            <li class="list-group-item">Większość PROC STEP-ów czyta dane z pojedynczego zbioru danych wejściowych i zapisuje informacje do zbiorów wyjściowych lub tworzy szereg raportów prezentujących uzyskane wyniki.</li>
-            <li class="list-group-item">Każda procedura posiada zestaw instrukcji i opcji.</li>
-        </ul>
-        <code class="card-text">
-            proc sql; </br>
-            create table work.test as </br>
-            select * from dane.zbior_m; </br>
-            quit;</br>
-        </code>
-        <code>
-            proc print data=work.test ; </br>
-            run; </br>
-        </code>
-    </div>
-</div>
 
 <div class="card-header">
     <h3>Wektor PDV (Program Data Vector)</h3>
