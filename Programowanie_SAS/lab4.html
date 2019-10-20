@@ -55,7 +55,140 @@
     </div>
 </article>
 
+<article class="container">
+     
+<div class="alert alert-success" role="alert">
+        <h2>test 2</h2>
+        <p>Na podstawie zbioru SASHELP.GULFOIL swtórz zbiór Gulfoil w bibliotece WORK. Wybrać dane z regionu centralnego i z lat 2000-2005. Stworzyć nowe zmienne zawierające nr miesiąca oraz dnia tygodnia.</p>
+    </div>
 
+     <div class="alert alert-success" role="alert">
+        <h2>Funkcje w SAS 2</h2>
+    </div>
+
+    <div class="card">
+        <h3 class= card-header>Funkcje liczbowe</h3>
+        <div class="card-body">
+            <p>zaokraglenia i wartosci numeryczne</p>
+          <code>
+              data zaokraglenia;</br>
+                liczba = 134.12;<br>
+                f = floor(liczba); /* liczba całkowita mniejsza niż podany arg */<br>
+                c = ceil(liczba);/* liczba całkowita wieksza niż podany arg */<br>
+                i = int(liczba);/* część całkowita z arg */<br>
+                fz = fuzz(liczba);/* liczba najbliższa liczbie całkowitej jeśli argument różni się od tej liczby o mniej niż 1E-12 */<br>
+                r = round(liczba, 10);/* zwraca arg1 zaokrąglony do najbliższej wielokrotności arg2 */<br>
+                abs = ABS(liczba);<br>
+                exp = EXP(liczba);<br>
+                log = LOG(liczba);<br>
+                log10 = LOG10(liczba);<br>
+                mod = MOD(liczba, 5);<br>
+                sqrt = SQRT(liczba);<br>
+                sign = SIGN(liczba);<br>
+              run;<br>
+          </code>
+          <p></p>
+        </div>
+        <div class="card-body">
+            <p>Liczby losowe</p>
+          <code>
+              data a;</br>
+                a = rannor(0);<br/>
+                b = ranbin(0);<br>
+                c = rancau(0);<br>
+                d = ranexp(0);<br>
+                e = rangam(0);<br>
+                f = ranpoi(0);<br>
+                g = ranuni(0);<br>
+              run;<br>
+          </code>
+          <p>Ze zbioru sashelp.cars wylosować obserwacje z prawdopodobieństwem 25% i zapisac do zbioru CARS w bibliotece work.</p>
+        </div>
+        <div class="card-body">
+            <p>matematyczne</p>
+          <code>
+              data math;</br>
+              l1 = 35;<br>
+              l2 = 24;<br>
+
+                max = max(of l1 - l2);<br>
+                min = min(l1, l2);<br>
+                mean = mean(l1,l2);<br>
+                var = var(of l1-l2);<br>
+                sum = sum(l1,l2);<br>
+                n = n(l1,l2); <br>
+                nmiss= nmiss(l1,l2);<br>
+                range = range(l1,l2);<br>
+                std = std(l1,l2);
+
+                <br>
+              run;<br>
+          </code>
+        </div>
+        <div class="card-body">
+            <p>lag n</p>
+          <code>
+              data a;</br>
+                set sashelp.class(keep=weight);</br>
+                x = lag(weight);</br>
+                y = lag2(weight);</br>
+              run;<br>
+              proc print;<br>
+              title 'funkcja lag()';<br>
+              run;
+          </code>
+        </div>
+        <div class="card-body">
+            <p>dif n</p>
+          <code>
+               data a;</br>
+                set sashelp.class(keep=weight);</br>
+                x = dif(weight);</br>
+                y = dif2(weight);</br>
+              run;<br>
+              proc print;
+              title 'funkcja DIF()';
+              run;
+          </code>
+        </div>
+    <div class="card-body">
+            <p>napisy</p>
+          <code>
+               data c;</br>
+                a = "Ala ma kotka";<br>
+                x = "Ala,ma,kota";
+                b = Index(a, "kotka");/* pozycja jednego stringa w drugim */<br>
+                Imie = scan(a, 1); /* zwraca poszczegolne wyrazy */<br>
+                Zwierzak = scan(a, 3);
+                test = scan(x,2,',');
+                c = substr(a,5);
+                d = substr(a,5,2);
+                low = lowcase(a);
+                up = upcase(a);
+                prop = propcase(a);
+                change = tranwrd(a, "tka","ty");
+                z = "S    A     S   ";
+                zz = compress(z);
+                fname = "Sebastian     ";
+                lname = "Zajac   ";
+                fname_1 = trim(fname); /* prawa strona */
+                fname_2 = strip(fname);/* left right */
+                person = fname||' '||lname;
+                person2 = compbl(person); 
+                person3 = cat(fname,lname);
+                rev = reverse(person2);
+                q = quote(rev);
+              run;<br>
+              proc print;
+              title 'Napisy i ich przetwarzanie';
+              run;
+          </code>
+        </div>
+        <p>Na podstawie zbioru SASHELP.COMPANY stwórz zbiór pracownicy zawierający tylko imię, nazwisko i inicjały. </p>
+    </div>
+ 
+
+ </article>
 
 
     <footer class="container">
