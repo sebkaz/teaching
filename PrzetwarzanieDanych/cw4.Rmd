@@ -1,0 +1,53 @@
+---
+title: "cw4 - Systemy rekomendacyjne"
+output: html_document
+---
+
+
+## Inteligencja zbiorowa
+
+Jak już dowiedzieliśmy się na wykładzie (prawda, że pamiętasz ?) Netflix to internetowa wypozyczalnia płyt DVD umożliwiająca wybór filmów. Pod koniec 2006 firma ta poinformowała o nagrodzie w wysokości 1 mln dolarów dla pierwszej osoby, która poprawi dokładność systemu rekomendacji o $10\%$. Dodatkowo każdy lider raz do roku otrzyma 50 tyś dolarów. Najlepszy zespół otrzymał wynik $7\%$. Korzystając z danych dotyczących filmów, które spodobały się poszczególnym klientom, firma rekomenduje filmy pozostałym klientom. Wykorzystując zebrane dane oraz zaawansowane algorytmy firma stworzyła nowe możliwości biznesowe w celu lepszego zrozumienia klientów i użytkowników. 
+
+
+[dane](data/recomendation.py).
+
+```python
+from recomendations import critics, sim_distance, sim_manhatan, sim_pearson, topMatches
+
+critics['Lisa Rose']['Kobieta w błękitnej wodzie']
+```
+### Znajdowanie podobnych użytkowników
+
+Jak podobni są do siebie ludzie oceniający ?
+
+- Porównaj każdego z każdym i określ `miarę podobieństwa`. np odległość Euklidesowa, bądź korelacja Pearsona
+
+```python
+from math import sqrt
+
+sqrt(pow(5-4, 2)+ pow(4-1, 2))
+```
+Zwykła odległość będzie wskazywała duże wartości dla oddalonych od siebie osób - czyli o różnych preferencjach. 
+
+Aby zmienić wartości warto dokonać transformacji: 
+
+$1/(1+ \text{euclid})$
+
+Zauważ, że wyniki zawsze będą z przedziału $[0, 1]$ gdzie $1$ oznacz pełną zgodność w ocenach
+```python
+1/(1+sqrt(pow(5-4, 2)+ pow(4-1, 2)))
+```
+
+```python
+sim_distance(critics,'Lisa Rose', 'Gene Seymour')
+```
+
+>> policzmy odłegłości dla wszystkich 
+
+```python
+distance = {}
+for el in critics:
+    distance[el] = [(sim_distance(critics, el, other), other) for other in critics if other!=el]
+    
+print(distance)
+```

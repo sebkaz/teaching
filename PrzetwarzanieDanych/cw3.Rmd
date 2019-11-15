@@ -58,15 +58,6 @@ sc = pd.plotting.scatter_matrix(df, alpha=0.3, figsize=(10,10), diagonal="hist",
 
 Mimo, iż zbiory te są bardzo przydatne w trakcie nauki bardzo często będziesz musiał zajmować się złożonymi i rzeczywistymi danymi. Stąd potrzebna będzie nam wiedza jak wczytywać dane zewnętrzne.
 
-```python
-from sklearn.model_selection import train_test_split
-from sklearn.tree import DecisionTreeClassifier
-X_train, X_test, y_train, y_test = train_test_split(iris.data, iris.target, train_size=0.7, random_state=1)
-dtc = DecisionTreeClassifier()
-dtc.fit(X_train, y_train)
-dtc.score(X_test, y_test)
-
-```
 
 ### Generowanie danych sztucznych
 
@@ -109,6 +100,7 @@ df = pd.read_csv("polish_names.csv")
 ```
 
 Na początek chcemy poznać jakie dane mamy do dyspozycji:
+
 1. Ile jest wierszy (wszystkich obiektów)?
 2. Ile jest kolumn (cechy obiektów)?
 3. Czy są braki w danych?
@@ -181,7 +173,7 @@ df['target'] = df['gender'].map(lambda x: int(x == 'm'))
 df.head(10)
 ```
 
-### Feature enginneering
+### Feature engineering
 
 Załóżmy, że cechą na podstawie której będziemy chcieli wyznaczyć czy imię jest męskie czy żeńskie będzie długość imienia.
 
@@ -229,53 +221,14 @@ y_pred = model.predict(X)
 accuracy_score(y, y_pred)
 ```
 
-> **Zadanie** Znajdź inne cechy i wygeneruj z nich swoje modele. 
-
-
-## Inteligencja zbiorowa
-
-Jak już dowiedzieliśmy się na wykładzie (prawda, że pamiętasz ?) Netflix to internetowa wypozyczalnia płyt DVD umożliwiająca wybór filmów. Pod koniec 2006 firma ta poinformowała o nagrodzie w wysokości 1 mln dolarów dla pierwszej osoby, która poprawi dokładność systemu rekomendacji o $10\%$. Dodatkowo każdy lider raz do roku otrzyma 50 tyś dolarów. Najlepszy zespół otrzymał wynik $7\%$. Korzystając z danych dotyczących filmów, które spodobały się poszczególnym klientom, firma rekomenduje filmy pozostałym klientom. Wykorzystując zebrane dane oraz zaawansowane algorytmy firma stworzyła nowe możliwości biznesowe w celu lepszego zrozumienia klientów i użytkowników. 
-
-
-[dane](data/recomendation.py).
-
 ```python
-from recomendations import critics, sim_distance, sim_manhatan, sim_pearson, topMatches
-
-critics['Lisa Rose']['Kobieta w błękitnej wodzie']
-```
-### Znajdowanie podobnych użytkowników
-
-Jak podobni są do siebie ludzie oceniający ?
-
-- Porównaj każdego z każdym i określ `miarę podobieństwa`. np odległość Euklidesowa, bądź korelacja Pearsona
-
-```python
-from math import sqrt
-
-sqrt(pow(5-4, 2)+ pow(4-1, 2))
-```
-Zwykła odległość będzie wskazywała duże wartości dla oddalonych od siebie osób - czyli o różnych preferencjach. 
-
-Aby zmienić wartości warto dokonać transformacji: 
-
-$1/(1+ \text{euclid})$
-
-Zauważ, że wyniki zawsze będą z przedziału $[0, 1]$ gdzie $1$ oznacz pełną zgodność w ocenach
-```python
-1/(1+sqrt(pow(5-4, 2)+ pow(4-1, 2)))
+# możesz też użyć drzewa decyzyjnego
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+X_train, X_test, y_train, y_test = train_test_split(iris.data, iris.target, train_size=0.7, random_state=1)
+dtc = DecisionTreeClassifier()
+dtc.fit(X_train, y_train)
+dtc.score(X_test, y_test)
 ```
 
-```python
-sim_distance(critics,'Lisa Rose', 'Gene Seymour')
-```
-
->> policzmy odłegłości dla wszystkich 
-
-```python
-distance = {}
-for el in critics:
-    distance[el] = [(sim_distance(critics, el, other), other) for other in critics if other!=el]
-    
-print(distance)
-```
+> **Zadanie** Zaproponuj inne cechy i wygeneruj z nich swoje modele tak by uzyskać jak najlepszy wynik. Rozwiązanie  (możesz użyć Jupyter notebook'a) wyślij jako formę zaliczenia zajęć on-line
