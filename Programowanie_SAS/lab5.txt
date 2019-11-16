@@ -1,0 +1,371 @@
+/* utwórz 3 zmienne  l1 , l2, l3 
+
+l1 - wartość losowa z rozkładu normalnego 
+l2,l3  - wartość losowa z rozkładu jednostajnego 
+srednia - średnia z l1 - l3 
+suma = suma z l1 - l3
+p = pierwiastek z l2
+l1 i l3 zaokraglone do 3 miejsca po przecinku. 
+
+
+
+
+*/
+
+
+
+
+
+
+/* data step dla dwoch zbiorow w set */ 
+
+data zb_1;
+ input x y$;
+ cards;
+ 1.1 A
+ 1.2 B
+ 1.3 C 
+ 1.4 D
+ ;
+run;
+
+data zb_2;
+ input x y$;
+ cards;
+ 2.1 A
+ 2.2 B
+ 2.3 C 
+ 2.4 D
+ ;
+run;
+
+
+data zn_out;
+set zb_1 zb_2;
+run;
+
+proc print;
+run;
+
+
+data zb_3;
+ input t k$;
+ cards;
+ 2.1 A
+ 2.2 B
+ 2.3 C 
+ 2.4 D
+ ;
+run;
+
+data zb_out4;
+set zb_1 zb_3;
+run;
+proc print;
+run;
+
+data zb_5;
+ input t y$;
+ cards;
+ 2.1 A
+ 2.2 B
+ 2.3 C 
+ 2.4 D
+ ;
+run;
+
+
+data zb_out6;
+set zb_1 zb_5;
+run;
+proc print;
+run;
+
+
+/* testy */
+
+data zb_out2;
+set zb_1;
+set zb_2;
+run;
+
+
+data zb_out2;
+set zb_1(rename=(x=t));
+set zb_2;
+run;
+
+data zb_out7;
+set zb_5;
+set zb_2;
+run;
+
+
+
+data zb_out3;
+set zb_1 zb_2;
+by y;
+run;
+
+
+
+
+/* sortowanie */
+data zbior;
+ input x y;
+ cards;
+ 2 3
+ 24 25
+ 23 25
+ 2 4
+ 23 22
+ 1 2
+ 1 2
+ ;
+run;
+
+/*
+Sortowanie w jezyku 4GL wykonuje sie za pomoca procedury SORT. 
+Jej najprostszy wariant skladniowy wyglada tak:
+*/
+
+proc sort data=zbior out=zbiors;
+ by x;
+run;
+
+proc sort data=zbior out=zbiors;
+ by x y ;
+run;
+
+/*
+Chcac odwrocic porzadek sortowania, nalezy napisac tak:
+*/
+
+proc sort data=zbior out=zbiors;
+ by descending x;
+run;
+
+/*
+Istnieje mozliwosc pozbycia sie powtarzajacych sie wartosci obserwacji:
+*/
+
+proc sort data=zbior out=zbiors nodup;
+ by /*descending*/ x;
+run;
+
+/*
+A takze powtarzajacych sie wartosci klucza:
+*/
+
+proc sort data=zbior out=zbiors nodupkey;
+ by /*descending*/ x ; 
+run;
+
+/*
+Dokladniej, znaczy to tyle, ze sposrod obserwacji o powtarzajacej
+ sie wartosci klucza zapisana jest pierwsza.
+*/
+
+/* 
+Nalezy zdawac sobie sprawe z pewnej wlasnosci implementacji sortowania w 4GL. 
+Wszystko bedzie dobrze widoczne na ponizszym zbiorze:
+*/
+
+data a;
+ input x y;
+ cards;
+ 1 2
+ 0 2
+ 1 3
+ 1 2
+ 9 8
+ ;
+run;
+
+/*
+Chcac usunac duplikaty, wykonujemy ponizszy DATA Step:
+*/
+
+proc sort data=a out=as nodup;
+ by x;
+run;
+
+/*
+Tymczasem, poniewaz NODUPRECS sprawdza jedynie kolejne obserwacje,
+ niektore niekolejne obserwacje powtarzajace sie moga pozostac w zbiorze wynikowym.
+ Rada na to jest sortowanie po wszystkich zmiennych:
+*/
+
+proc sort data=a out=as nodup;
+ by x y;
+run;
+
+/*
+Oczywiscie, mozliwe sa kombinacje w porzadku sortowania klucza:
+*/
+
+proc sort data=a out=as nodup;
+ by x descending y;
+run;
+
+/* 
+Zwrocmy uwage na to, ze SAS nie wykonuje niepotrzebnych sortowan,
+ tzn. nie sortuje zbioru, ktory juz kiedys posortowal i od 
+ tamtego czasu go nie modyfikowal. Oto stosowny przyklad: 
+*/
+
+proc sort data=a out=aposort;
+ by x;
+run;
+
+proc sort data=aposort;
+ by x;
+run;
+
+/*
+Zwrocmy uwage na komunikat wyswietlany w okienku Log.
+
+Skad SAS wie, ze zbior APOSORT byl juz sortowany? 
+Ta i inne informacje o zbiorze moga byc odkryte za pomoca procedury CONTENTS:
+
+*/
+
+proc contents data=aposort out=info;
+run;
+
+/*
+Inna niezwykle uzyteczna cecha jezyka 4GL sa tablice. 
+W odroznieniu od tablic wystepujacych w innych jezykach programowania, 
+tablice w SASie sa wirtualna referencja do grupy zmiennych. 
+
+Funkcjonalnosc tablic najlepiej widac w sytuacji, kiedy chcemy 
+te sama operacje wykonac na duzej grupie zmiennych tego samego typu:
+*/
+
+data a;
+ input x1 x2 x3 x4 x5;
+ cards;
+ 1 2 3 3 5
+ 3 4 5 4 5
+ 4 5 5 4 5
+ ;
+run;
+
+/*
+Powiedzmy, ze do kazdej wartosci kazdej ze zmiennych X1,...,X5 chcemy dodac liczbe 100.
+*/
+
+data a100;
+ set a;
+ x1=100+x1;
+ x2=100+x2;
+ x3=100+x3;
+ x4=100+x4;
+ x5=100+x5;
+run;
+
+/* 
+Za pomoca tablic, takie zadanie wykonuje sie bardziej elegancko.
+
+
+dim()
+hbound()
+lbound()
+*/
+
+
+
+
+data a100;
+ set a;
+ array zmienne(*) x1-x5; 
+ do j=1 to dim(zmienne);
+  zmienne(j)=zmienne(j)+100;
+ end;
+ drop j;
+run;
+
+/* 
+Nalezy przy tym pamietac, ze elementy tablicy musza byc tego samego typu.
+
+Za pomoca tablic mozna deklarowac nowe zmienne.
+*/
+
+
+data a;
+ array z {3}$ z1 a u ('a','mama','w'); 
+run;
+
+/*
+Warto zwrocic uwage, ze jesli elementom tablicy przypisane
+ sa wartosci poczatkowe, to wszystkie elementy zachowuja sie 
+ jak gdyby byly deklarowane za pomoca instrukcji RETAIN.
+*/
+
+data b;
+ set a;
+ array tablica(3);
+ if _n_=1 then do j=1 to dim(tablica);
+                  tablica(j)=7;
+               end;
+ drop j; 
+run;
+
+
+/* 
+Uzyteczna odmiana tablic, 
+pokrywajaca sie w funkcjonalnosci z tablicami z innych 
+jezykow programowania wysokiego poziomu, sa tablice tymczasowe. 
+*/
+
+
+data a;
+ array tymcz (10) _temporary_;
+ do i=1 to dim(tymcz);
+  tymcz(i)=5*i;
+ end;
+ do i=1 to dim(tymcz);
+  x=tymcz(i);
+  output;
+ end;
+ drop i;
+run;
+
+
+data tab;
+array tabb{3} (1 2 3);
+dim = dim(tabb);
+hbound = hbound(tabb);
+lbound = lbound(tabb);
+sum = sum(of tabb(*));
+run;
+
+data premia;
+array premia{3} _temporary_ (0.12 0.5 0.7);
+pracownik = "pierwszy";
+wyplata = 1000;
+prem = wyplata *(premia(2));
+razem = wyplata+prem;
+run;
+
+/* 
+
+5 lat 
+wpłacić 1000 PLN
+
+oprocentowanie 4% w skali roku i kapitalizacja odsetek co rok 
+
+
+
+*/
+
+
+data a;
+	array rok(6);
+	rok(1)=1000;
+	do i=2 to dim(rok);
+		rok(i)=1.04*rok(i-1);
+	end;
+	drop i;
+run;
+		

@@ -1,0 +1,424 @@
+/* Sortowanie  */
+data pl;
+	input wyrazy $;
+	cards;
+żaba
+ćma
+żywioł
+źrenica
+ławka
+;
+run;
+
+proc sort data=pl sortseq=polish;
+	by wyrazy;
+run;
+
+/* Konwersja danych
+
+tekst -> numeryczny
+numeryczny -> tekstowy
+
+*/
+/* NIEJAWNA */
+/* jeśli jest odpowiedni kontekst to zmiany wykonywane są automatycznie */
+data result;
+	length numeric 8;
+	text='100';
+	numeric=text;
+	text=numeric*2;
+
+	/* jaki bedzie log ? */
+run;
+
+/* JAWNA
+
+PUT(zmienna, format) - numeric -> tekst
+INPUT(zmienna, informat) - tekst -> numeric
+*/
+data wyr;
+	numeric=15;
+	text1='1,200.20';
+	text2=put(numeric, z3.);
+	numeric2=input(text1, comma8.2);
+run;
+
+/*
+Wygodna cecha jezyka 4GL sa tzw. listy zmiennych.
+ Wystepuja listy wg numerow (ang. numbered range lists), 
+ listy wg nazw i listy wg prefiksow,
+Omowimy po kolei te typy, wskazujac na odpowiednie przyklady.
+
+Listy wg numerow:
+*/
+
+data a;
+ x1=1; x2=2; x3=3; y7=70; y8=80; y9=90.5;
+ format x1-x3 words.;
+ format y7-y8 roman.;
+ format y9 2.;
+run;
+
+data b;
+ set a (keep=x1-x3);
+ suma=sum(of x2-x3);
+run;
+
+/* 
+Listy wg nazw:
+*/
+
+data a;
+ input id name $ x y z;
+ cards;
+ 1 Zosia 2 3 4
+ 2 Kasia 3 4 4
+ ;
+run;
+
+data b;
+ set a (keep=x--z);
+run;
+proc print;
+run;
+
+data b;
+ set a (keep=name--y);
+run;
+proc print;
+run;
+
+
+data b;
+ set a (keep=id-numeric-y);
+run;
+proc print;
+run;
+
+/*
+Listy wg prefiksow:
+*/
+
+data a;
+ x_a=1; x_b=2; x_c=3; yxz=0;
+ output;
+ x_a=2; x_b=3; x_c=4; yxz=9;
+ output;
+run;
+
+data b;
+ set a (keep=x:);
+ z=sum(of x:);
+run;
+
+
+
+/*
+Rozwazanie konwersji danych nieuchronnie prowadzi do innego niezwykle wygodnego
+ wynalazku sasowego, tj. formatow i informatow. 
+ Formaty to sposoby na wyswietlanie danych, 
+ a informaty to sposoby na odpowiednie (zalezne od potrzeb)
+ interpretowanie wczytywanych danych. 
+ Istnieje cala masa wbudowanych formatow i informatow, 
+ w pozniejszej fazie wykladu dowiemy sie takze, 
+ jak samodzielnie deklarowac formaty uzytkownika.
+*/
+
+data a;
+ x=0.45;
+ format x fract.;
+run;
+
+data a;
+ x=0.45;
+ format x 5.3;
+run;
+
+
+/* Instrukcja warunkowa IF
+
+IF warunek THEN instrukcja;
+<ELSE instrukcja>;
+
+*/
+data warunek;
+	set sashelp.cars;
+	if enginesize >3;
+run;
+
+data warunek2;
+	set sashelp.cars;
+
+	if enginesize >3 Then
+		test=1;
+	else
+		test=0;
+run;
+
+proc print data=warunek2;
+	Title 'Warunek IF';
+	by make;
+	var make model type ;
+	footnote "Utworzono &systime &sysday, &sysdate9";
+run;
+
+/* Pętle Do End
+
+DO zmienna=start TO stop <BY krok>;
+Instrukcje;
+END;
+
+*/
+data losowe_do;
+	DO x=1 TO 10 BY 1;
+		y=ranuni(0);
+		output;
+	end;
+run;
+
+/* Pętle Do While End
+
+DO WHILE(warunek);
+Instrukcje;
+END;
+
+*/
+data _null_;
+	n=0;
+
+	do while(n<=10);
+		put n=;
+		n+1;
+	end;
+run;
+
+/* Pętle Do Until End
+
+DO UNTIL(warunek);
+Instrukcje;
+END;
+
+*/
+data _null_;
+	n=0;
+
+	do UNTIL(n<=10);
+		put n=;
+		n+1;
+	end;
+run;
+
+/* łączenie pętli */
+data losowe_1;
+	do x=1 to 100 by 1 until (y>0.7);
+		y=ranuni(0);
+		output;
+	end;
+run;
+
+data inwestycje;
+	rok=2000;
+
+	do while(rok<=year(today()));
+		kapital+5000;
+
+		do miesiac=1 to 12;
+			kapital+(kapital*(0.04/12));
+		end;
+		output;
+		rok+1;
+	end;
+	drop miesiac;
+run;
+
+/* SELECT as SWITCH*/
+data _null_;
+	set a;
+
+	select;
+		when (i=1) 
+			do;
+				put i=;
+				put 'Tak';
+			end;
+		when (i=2) put 'Nie';
+		otherwise put 'Nie 1';
+	end;
+run;
+
+/*
+Niezwykle przydatna cecha jezyka 4GL jest jego mozliwosc tzw. przetwarzania w grupach.
+Stworzmy na poczatek odpowiedni zbior:
+*/
+data a;
+	do x='a', 'b', 'c';
+
+		do y='AAA', 'BBB', 'CCCC';
+			z=floor(10*ranuni(0));
+			u=floor(10*ranuni(0));
+			output;
+		end;
+	end;
+run;
+
+/*
+Jak widac, w zbiorze A sa "klasy" (zwane w terminologii sasowej grupami)
+wyznaczone przez rozne wartosci zmiennych (a takze ich kombinacji) X i Y.
+Za przetwarzanie danych w grupach w SASie odpowiedzialna jest instrukcja BY.
+Na pierwszy rzut oka nie sposob zobaczyc jej dzialania w ponizszym kodzie:
+*/
+data b;
+	set a;
+	by x;
+run;
+
+/*
+Dopiero dopisanie instrukcji PUT ze slowem kluczowym _ALL_ ujawnia, ze zawartosc wektora PDV zmienia sie po uzyciu BY.
+*/
+data b;
+	set a;
+	by x;
+	put _all_;
+run;
+
+/*
+Dzialanie BY stanie sie jasne po wykonaniu ponizszych linijek:
+*/
+data b;
+	set a;
+	by x y;
+	put _all_;
+run;
+proc print;
+run;
+
+
+
+data b;
+	set a;
+	pierwszy_x=first.x;
+	ostatni_x=last.x;
+	pierwszy_y=first.y;
+	ostatni_y=last.y;
+	by x y;
+run;
+proc print;
+run;
+
+/*
+Czasami, np. w fazie testow duzego programu, chcielibysmy moc wczytywac 
+zamiast calosci czesc zbioru sasowego. Mozna to osiagnac korzystajac z opcji
+ globalnych FIRSTOBS i OBS.
+*/
+ 
+data a;
+ do i=1 to 100;
+  output;
+ end;
+run;
+
+options firstobs=3 obs=7;
+
+data b;
+ set a;
+run;
+
+/*
+Te opcje sa globalne, tzn. dotycza wszystkich zbiorow, 
+jak jasno widac na ponizszym przykladzie.
+*/
+
+data c;
+ set a;
+run;
+
+/*
+Dezaktywujemy je piszac:
+*/
+
+options firstobs=1 obs=max;
+
+data c;
+ set a;
+run;
+
+
+/*Formaty 
+
+Zmiana sposobu prezentacji danych
+
+*/
+
+data _NULL_;
+liczba=4;
+put liczba;
+put liczba 4.1;
+put liczba commax4.2;
+put liczba roman.;
+put liczba wordf5.;
+run;
+
+/* <$>nazwa<w>.<d>
+$ - wiadomo 
+nazwa - wiadomo 
+w - max liczba znakow
+d - dl czesci dziesietnej
+
+ */
+
+data zb1;
+input lp rok miesiac $ dochod;
+format lp ROMAN. miesiac $10. dochod comma10.2;
+cards;
+1 2019 styczeń 500000
+2 2019 luty 543400
+3 2019 marzec 430000
+4 2018 styczeń 542000
+5 2018 luty 309877
+6 2018 marzec 660000
+;
+run;
+
+proc contents data=zb1;
+run;
+
+
+
+proc print data=zb1;
+format dochod DOLLAR10.2;
+/* by rok */
+var miesiac dochod;
+run;
+
+
+proc format;
+value numerfmt
+1 = 'jeden'
+2 = 'dwa'
+3 = 'trzy'
+;
+run;
+
+proc format FMTLIB;
+value $znakowy
+'K' = 'kobieta'
+'M' = 'mężczyzna'
+;
+run;
+
+data zb2;
+input lp plec $;
+cards;
+1 K
+2 M
+3 K
+;
+run;
+
+data zb2_f;
+set zb2;
+format lp numerfmt. plec $znakowy.;
+run;
+
+proc print;
+run;
