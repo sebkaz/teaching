@@ -1,0 +1,469 @@
+/* 
+tekst -> numeryczny
+numeryczny -> tekstowy
+
+*/
+/* NIEJAWNA */
+/* jeśli jest odpowiedni kontekst to zmiany wykonywane są automatycznie */
+data result;
+	length numeric 8;
+	text='100';
+	numeric=text;
+	text=numeric*2;
+	/* jaki bedzie log ? */
+run;
+
+/* JAWNA
+
+PUT(zmienna, format) - numeric -> tekst
+INPUT(zmienna, informat) - tekst -> numeric
+*/
+data wyr;
+	numeric=15;
+	text1='1,200.20';
+	text2=put(numeric, z3.);
+	numeric2=input(text1, comma8.2);
+run;
+proc print;
+run;
+
+
+
+/*
+Wygodna cecha jezyka 4GL sa tzw. listy zmiennych.
+ Wystepuja listy wg numerow (ang. numbered range lists), 
+ listy wg nazw i listy wg prefiksow,
+Omowimy po kolei te typy, wskazujac na odpowiednie przyklady.
+
+Listy wg numerow:
+*/
+
+data a;
+ x1=1; x2=2; x3=3; y7=70; y8=80; y9=90.5;
+ format x1-x3 words.;
+ format y7-y8 roman.;
+ format y9 2.;
+run;
+proc print;
+run;
+
+
+data b;
+ set a (keep=x1-x3);
+ suma=sum(of x2-x3);
+run;
+proc print;
+run;
+
+/* 
+Listy wg nazw:
+*/
+
+data a;
+ input id name $ x y z;
+ cards;
+ 1 Zosia 2 3 4
+ 2 Kasia 3 4 4
+ ;
+run;
+
+data b;
+ set a (keep=x--z);
+run;
+proc print;
+run;
+
+data b;
+ set a (keep=name--y);
+run;
+proc print;
+run;
+
+
+data b;
+ set a (keep=id-numeric-y);
+run;
+proc print;
+run;
+
+/*
+Listy wg prefiksow:
+*/
+
+data a;
+ x_a=1; x_b=2; x_c=3; yxz=0;
+ output;
+ x_a=2; x_b=3; x_c=4; yxz=9;
+ output;
+run;
+
+data b;
+ set a (keep=x:);
+ z=sum(of x:);
+run;
+proc print;
+run;
+
+
+
+/* Instrukcja warunkowa IF
+
+IF warunek THEN instrukcja;
+<ELSE instrukcja>;
+
+*/
+data warunek;
+	set sashelp.cars;
+	if enginesize >3;
+run;
+
+data warunek2;
+	set sashelp.cars;
+
+	if enginesize >3 Then
+		test=1;
+	else
+		test=0;
+run;
+
+proc print data=warunek2;
+	Title 'Warunek IF';
+	by make; 
+	var make model type ;
+	footnote "Utworzono &systime &sysday, &sysdate9";
+run;
+
+/* Pętle Do End
+
+DO zmienna=start TO stop <BY krok>;
+Instrukcje;
+END;
+
+*/
+data losowe_do;
+	DO x=1 TO 10 BY 1;
+		y=ranuni(0);
+		output;
+	end;
+run;
+
+/* Pętle Do While End
+
+DO WHILE(warunek);
+Instrukcje;
+END;
+
+*/
+data _null_;
+	n=0;
+
+	do while(n<=10);
+		put n=;
+		n+1;
+	end;
+run;
+
+/* Pętle Do Until End
+
+DO UNTIL(warunek);
+Instrukcje;
+END;
+
+*/
+data _null_;
+	n=0;
+
+	do UNTIL(n<=10);
+		put n=;
+		n+1;
+	end;
+run;
+
+/* łączenie pętli */
+data losowe_1;
+	do x=1 to 100 by 1 until (y>0.7);
+		y=ranuni(0);
+		output;
+	end;
+run;
+
+data inwestycje;
+	rok=2000;
+
+	do while(rok<=year(today()));
+		kapital+5000;
+
+		do miesiac=1 to 12;
+			kapital+(kapital*(0.04/12));
+		end;
+		output;
+		rok+1;
+	end;
+	drop miesiac;
+run;
+
+/* SELECT as SWITCH*/
+data _null_;
+	set a;
+
+	select;
+		when (i=1) 
+			do;
+				put i=;
+				put 'Tak';
+			end;
+		when (i=2) put 'Nie';
+		otherwise put 'Nie 1';
+	end;
+run;
+
+
+
+
+data a;
+	do x='a', 'b', 'c';
+
+		do y='AA  ', 'BBB', 'CCCC';
+			z=floor(10*ranuni(0));
+			u=floor(10*ranuni(0));
+			output;
+		end;
+	end;
+run;
+proc print;
+run;
+
+
+
+data b;
+	set a;
+	by x;
+	put _all_;
+run;
+
+
+data b;
+	set a;
+	pierwszy_x=first.x;
+	ostatni_x=last.x;
+	pierwszy_y=first.y;
+	ostatni_y=last.y;
+	put _all_;
+	by x y;
+run;
+proc print;
+run;
+
+data zb1;
+input lp rok miesiac $ dochod;
+format lp ROMAN. miesiac $10. dochod comma10.2;
+cards;
+1 2019 styczeń 500000
+2 2019 luty 543400
+3 2019 marzec 430000
+4 2018 styczeń 542000
+5 2018 luty 309877
+6 2018 marzec 660000
+;
+run;
+proc print;
+run;
+
+
+proc sort data=zb1;
+by rok;
+run;
+
+proc contents data=zb1;
+run;
+
+proc print;
+by rok;
+run;
+
+
+data pl;
+	input wyrazy $;
+	cards;
+żaba
+ćma
+żywioł
+źrenica
+ławka
+;
+run;
+
+proc sort data=pl sortseq=polish;
+	by wyrazy;
+run;
+
+proc sort data=zbior out=zbiors;
+ by x;
+run;
+
+proc sort data=zb1 out=zb2_s nodup;
+by rok;
+run;
+
+
+proc sort data=zbior out=zbiors nodup;
+ by /*descending*/ x;
+run;
+
+/*
+A takze powtarzajacych sie wartosci klucza:
+*/
+
+proc sort data=zbior out=zbiors nodupkey;
+ by /*descending*/ x ; 
+run;
+
+
+data a;
+ input x y;
+ cards;
+ 1 2
+ 0 2
+ 1 3
+ 1 2
+ 9 8
+ ;
+run;
+
+
+proc sort data=a out=zbiors nodup;
+ by  x y;
+run;
+
+proc format;
+value numerfmt
+1 = 'jeden'
+2 = 'dwa'
+3 = 'trzy'
+;
+run;
+
+proc format FMTLIB;
+value  $ znakowy
+'K' = 'kobieta'
+'M' = 'mężczyzna'
+;
+run;
+
+data zb2;
+input lp plec $;
+format lp numerfmt. plec znakowy.;
+cards;
+1 K
+2 M
+3 K
+;
+run;
+
+
+
+data a;
+ input x1 x2 x3 x4 x5;
+ cards;
+ 1 2 3 3 5
+ 3 4 5 4 5
+ 4 5 5 4 5
+ ;
+run;
+
+/*
+Powiedzmy, ze do kazdej wartosci kazdej ze zmiennych X1,...,X5 chcemy dodac liczbe 100.
+*/
+
+data a100;
+ set a;
+ x1=100+x1;
+ x2=100+x2;
+ x3=100+x3;
+ x4=100+x4;
+ x5=100+x5;
+run;
+
+/* 
+Za pomoca tablic, takie zadanie wykonuje sie bardziej elegancko.
+
+
+dim()
+hbound()
+lbound()
+*/
+
+
+
+
+data a100;
+ set a;
+ array zmienne(*) x1-x5; 
+ do j=1 to dim(zmienne);
+  zmienne(j)=zmienne(j)+100;
+ end;
+ drop j;
+run;
+
+/* 
+Nalezy przy tym pamietac, ze elementy tablicy musza byc tego samego typu.
+
+Za pomoca tablic mozna deklarowac nowe zmienne.
+*/
+
+
+data a;
+ array z {3}$ z1 a u ('a','mama','w'); 
+run;
+
+/*
+Warto zwrocic uwage, ze jesli elementom tablicy przypisane
+ sa wartosci poczatkowe, to wszystkie elementy zachowuja sie 
+ jak gdyby byly deklarowane za pomoca instrukcji RETAIN.
+*/
+
+data b;
+ set a;
+ array tablica(3);
+ if _n_=1 then do j=1 to dim(tablica);
+                  tablica(j)=7;
+               end;
+ drop j; 
+run;
+
+
+/* 
+Uzyteczna odmiana tablic, 
+pokrywajaca sie w funkcjonalnosci z tablicami z innych 
+jezykow programowania wysokiego poziomu, sa tablice tymczasowe. 
+*/
+
+
+data a;
+ array tymcz (10) _temporary_;
+ do i=1 to dim(tymcz);
+  tymcz(i)=5*i;
+ end;
+ do i=1 to dim(tymcz);
+  x=tymcz(i);
+  output;
+ end;
+ drop i;
+run;
+
+
+data tab;
+array tabb{3} (1 2 3);
+dim = dim(tabb);
+hbound = hbound(tabb);
+lbound = lbound(tabb);
+sum = sum(of tabb(*));
+run;
+
+data premia;
+array premia{3} _temporary_ (0.12 0.5 0.7);
+pracownik = "pierwszy";
+wyplata = 1000;
+prem = wyplata *(premia(2));
+razem = wyplata+prem;
+run;

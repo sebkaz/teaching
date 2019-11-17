@@ -1,0 +1,185 @@
+/* 
+proc format lib=dane;
+value kwota
+low-2500 = 'mało'
+2500-3000 = 'średnio'
+3000-high = 'dużo'
+other = 'cos innego'
+missing = 'brak danych'
+;
+run;
+
+options fmtsearch=(dane)
+
+*/
+
+proc format;
+value kwota
+low-2500 = 'mało'
+2500-3000 = 'średnio'
+3000-high = 'dużo'
+OTHER = 'cos innego'
+MISSING = 'brak danych'
+;
+run;
+
+
+
+/* Prosta transpozycja z nowym zbiorem wynikowym
+
+Zwróć uwagę, że masz tu tylko zmienne numeryczne 
+ */
+
+data zb1;
+input lp rok miesiac dochod zmienna;
+label miesiac='miesiąc' dochod='dochód';
+cards;
+1 2006 1 500000 0 
+2 2006 2 530000 200000
+3 2006 3 480000 400000
+4 2007 1 530000 500000
+5 2007 2 570000 400000
+6 2007 3 550000 300000
+;
+run;
+proc print;
+run;
+
+
+
+proc transopse data=zb1 out=zb1T;
+run;
+proc print;
+run;
+
+/* można zmienić nazwy _name_ i pozbyć się _label_ */
+proc transpose data=zb1 name=zmienne out=zb2T (drop=_label_);
+run;
+proc print;
+run;
+
+/* Transpozycja po grupach 'by'
+
+- pamiętaj o posortowaniu zbioru
+ */
+proc transpose data=zb1 name=zmienne out=zb3T (drop=_label_);
+by rok;
+run;
+proc print;
+run;
+
+/* instrukcja 'var' pozwala wybrać nam zmienne, 
+które mają być transponowane
+
+*/
+
+proc transpose data=zb1 name=zmienne out=zb4T (drop=_label_);
+by rok;
+var miesiac dochod;
+run;
+proc print;
+run;
+
+/* 
+instrukcja id
+
+*/
+
+proc transpose data=zb1 label=etykiety name=zmienne out=zb5T;
+by rok;
+id miesiac;
+var dochod;
+run;
+
+proc print;
+run;
+
+proc transpose data=zb1 name=zmienne out=zb6T (drop=_label_)
+prefix=miesiac;
+by rok;
+id miesiac;
+var dochod;
+run;
+
+proc print;
+run;
+
+/* uwaga ! co jeśli zmienimy id na zmienną rok ? */
+proc transpose data=zb1 name=zmienne out=zb7T (drop=_label_);
+id rok;
+run;
+
+proc print;
+run;
+
+proc transpose data=zb1 name=zmienne out=zb7T (drop=_label_) let;
+id rok;
+run;
+
+proc print;
+run;
+
+/* jako ćwiczenie */
+proc transpose data=sashelp.class out=klasa;
+var Name Sex;
+where age = 14;
+run;
+
+data zb2;
+input lp1 lp2 plec $ nazwisko $ placa;
+label plec='płeć' placa='płaca';
+cards;
+1 1 K Domańska 2100
+2 2 K Kowal 2800
+3 3 K Nowak 3200
+4 1 M Górski 4200
+5 2 M Mazur 2500
+6 3 M Kowalski 1800
+;
+run;
+
+proc transpose data=zb2 out=zb2T;
+run;
+/* sprawdz log */
+
+proc transpose data=zb2 out=zb2T;
+var lp1 nazwisko;
+run;
+/* sprawdz log */
+
+
+
+/* Łączenie zbiorów jeszcze raz */
+
+data zb_1;
+ input zm zm1 zm2;
+ cards;
+ 1 110 210
+ 2 120 220
+ 3 130 230
+ 4 140 240 
+ ;
+run;
+
+data zb_2;
+ input zm zm1 zm3;
+ cards;
+ 1 10 310
+ 2 20 320
+ 3 30 330
+ 4 40 340 
+ ;
+run;
+
+
+proc sql ;
+create table wyn1 as 
+select * from zb_1 as z1, zb_2 as z2
+where z1.zm=z2.zm;
+quit;
+
+proc sql ;
+select * from zb_1
+union
+select * from zb_2;
+quit;
