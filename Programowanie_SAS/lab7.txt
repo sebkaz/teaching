@@ -5,7 +5,6 @@ low-2500 = 'mało'
 2500-3000 = 'średnio'
 3000-high = 'dużo'
 other = 'cos innego'
-missing = 'brak danych'
 ;
 run;
 
@@ -19,10 +18,8 @@ low-2500 = 'mało'
 2500-3000 = 'średnio'
 3000-high = 'dużo'
 OTHER = 'cos innego'
-MISSING = 'brak danych'
 ;
 run;
-
 
 
 /* Prosta transpozycja z nowym zbiorem wynikowym
@@ -171,6 +168,14 @@ data zb_2;
  ;
 run;
 
+data zb_3;
+input zm zm1 $;
+cards;
+1 a
+2 b
+3 c
+;
+run;
 
 proc sql ;
 create table wyn1 as 
@@ -183,3 +188,76 @@ select * from zb_1
 union
 select * from zb_2;
 quit;
+
+
+/* APPEND 
+
+modyfikowanie zbioru przez dodanie do niego elementow
+
+*/
+
+
+proc append base=zb_1 data=zb_2;
+run;
+
+proc append base=zb_1 data=zb_2 force;
+run; 
+
+proc print data=zb_1;
+run;
+
+
+data wyn1;
+set zb_1 zb_3;
+run;
+
+
+proc append base=zb_1 data=zb_3 force;
+run;
+proc print data=zb_1;
+run;
+
+/* marge 
+
+scalanie zbioru 
+pierwsza z pierwszego z pierwsza z drugiego itd 
+tzw one-to-one
+*/
+data wyn2;
+merge zb_1 zb_2;
+run;
+
+/* wartosci zmiennych powtarzajacych sie sa nadpisywane 
+a moze zmienic nazwy ?
+
+*/
+data wyn3;
+merge zb_1 zb_2 (rename=(zm1=zm4));
+run;
+
+%put _automatic_;
+%put &SYSTIME;
+
+proc print data=sashelp.cars(keep=Make origin EngineSize);
+	title "Utworzone &SYSTime &sysday";
+	where origin="Europe" and EngineSize between 2 and 4;
+	footnote "Created &systime &sysday, &sysdate9";
+run;
+
+
+%LET imie = "Sebastian";
+%LET nazwisko = "Zajac";
+
+
+%LET x=15;
+%LET y=10;
+%LET z=&x-&y;
+
+
+data a;
+i = &imie;
+n = &nazwisko;
+z=&z;
+run;
+proc print;
+run;
