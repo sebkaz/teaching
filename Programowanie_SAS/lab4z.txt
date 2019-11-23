@@ -1,0 +1,307 @@
+/* formaty dokładniej */
+proc format;
+value kwfmt
+low-2500 = 'mało'
+2500-3000 = 'średnio'
+3000-high = 'dużo'
+OTHER = 'cos innego'
+;
+run;
+
+data test_format;
+input lp imie $ kwota;
+format lp roman. imie kwota kwfmt.;
+cards;
+1 Jan 1800
+2 Anna 2500
+3 Stefan 3600
+4 Ela 2800
+5 Max .
+;
+run;
+
+proc print;
+run;
+
+
+
+%put _automatic_;
+
+%put &SYSTIME;
+
+proc print data=sashelp.cars(keep=Make origin EngineSize);
+	title "Utworzone &SYSTime &sysday";
+	where origin="Europe" and EngineSize between 2 and 4;
+	footnote "Created &systime &sysday, &sysdate9";
+run;
+
+
+%LET imie = "Sebastian";
+
+%LET nazwisko = "Zajac";
+
+
+%LET x=20;
+%LET y=10;
+%LET z=&x-&y;
+
+
+data a;
+i = &imie;
+n = &nazwisko;
+z = &z;
+run;
+
+proc print;
+run;
+
+
+/* Prosta transpozycja z nowym zbiorem wynikowym
+
+Zwróć uwagę, że masz tu tylko zmienne numeryczne 
+ */
+
+data zb1;
+input lp rok miesiac dochod zmienna;
+label miesiac='miesiąc' dochod='dochód';
+format lp roman.;
+cards;
+1 2006 1 500000 0 
+2 2006 2 530000 200000
+3 2006 3 480000 400000
+4 2007 1 530000 500000
+5 2007 2 570000 400000
+6 2007 3 550000 300000
+;
+run;
+proc print;
+run;
+
+
+proc transopse data=zb1 out=zb1T;
+run;
+
+proc print;
+run;
+
+/* można zmienić nazwy _name_ i pozbyć się _label_ */
+proc transpose data=zb1 name=zmienne  out=zb2T (drop=_label_);
+run;
+proc print;
+run;
+
+
+/* Transpozycja po grupach 'by'
+
+- pamiętaj o posortowaniu zbioru
+ */
+proc transpose data=zb1 name=zmienne out=zb3T (drop=_label_);
+by rok;
+run;
+proc print;
+run;
+
+/* instrukcja 'var' pozwala wybrać nam zmienne, 
+które mają być transponowane
+
+*/
+
+proc transpose data=zb1 name=zmienne out=zb4T (drop=_label_);
+by rok;
+var miesiac dochod;
+run;
+proc print;
+run;
+
+/* 
+instrukcja id
+
+*/
+
+proc transpose data=zb1 label=etykiety name=zmienne out=zb5T;
+by rok;
+id miesiac;
+var dochod;
+run;
+
+proc print;
+run;
+
+proc transpose data=zb1 name=zmienne out=zb6T (drop=_label_) prefix=miesiac; 
+by rok;
+id miesiac;
+var dochod;
+run;
+
+proc print;
+run;
+
+/* uwaga ! co jeśli zmienimy id na zmienną rok ? */
+proc transpose data=zb1 name=zmienne out=zb7T (drop=_label_);
+id rok;
+run;
+
+proc print;
+run;
+
+proc transpose data=zb1 name=zmienne out=zb7T (drop=_label_) let;
+id rok;
+run;
+
+proc print;
+run;
+
+
+
+data zb2;
+input lp1 lp2 plec $ nazwisko $ placa;
+label plec='płeć' placa='płaca';
+cards;
+1 1 K Domańska 2100
+2 2 K Kowal 2800
+3 3 K Nowak 3200
+4 1 M Górski 4200
+5 2 M Mazur 2500
+6 3 M Kowalski 1800
+;
+run;
+
+proc transpose data=zb2 out=zb2T;
+run;
+/* sprawdz log */
+
+proc transpose data=zb2 out=zb2T;
+var lp1 nazwisko;
+run;
+/* sprawdz log */
+
+
+/* proc FrEQ 
+
+proc freq data=zb_wejsc <opcje>
+<by zmienne_grupujace;>
+<tables kombinacja zmiennych;>
+<weight zmienna_wazaca>
+run;
+
+<opcje> 
+: Compress 
+: Nlevels (liczba poziomow dla wszystkich zmiennych tables)
+: noprint - brak wydruku w oknie output
+: page - kazda tablica w osobnej stronie
+
+<opcje tables>
+Missing - uwzglednia braki danych
+nocol - pomija procenty kolumnowe
+norow - pomija procenty wierszowe
+nofreq - pomija czestosci 
+noprocent - pomija udzialy procentowe
+out
+noprint
+
+*/
+data zb_f;
+input lp1 lp2 plec $ nazwisko $ placa;
+label plec='płeć' placa='płaca';
+cards;
+1 1 K Domańska 2100
+2 2 K Kowal 2800
+3 3 K Nowak 3200
+4 1 M Górski 4200
+5 2 M Mazur 2500
+6 3 M Kowalski 1800
+;
+run;
+
+proc freq data=zb_f;
+run;
+
+/* dla jednej zmiennej */
+proc freq data=zb_f;
+table plec;
+run;
+
+proc freq data=zb_f;
+/* table plec placa; */
+table plec / out=plec_t;
+table placa / out=placa_t;
+run;
+
+proc freq data=zb_f;
+tables plec*placa;
+run;
+
+proc freq data=zb_f;
+by plec;
+table placa*lp2;
+run;
+
+proc freq data=zb_f;
+table plec*placa*lp2;
+run;
+
+
+/* PROC MEANS 
+
+proc means data=zb_wejsc;
+by - zmienne klasyfikujace;
+class - zmienne klasyfikujace (nie wymaga sortowania i dla malych grup);
+freq zmienna z czestoscia;
+output <out= > lista_statystyk - N, MEAN, STD, MIN, MAX (NMISS, SUM, RANGE, VAR, MEDIAN, Qn);
+ways lista_liczb;
+
+*/
+
+
+proc means data=zb_f;
+run;
+
+/* z wyrzuceniem wynikow do tabeli SASOWEJ */
+
+proc means data=zb_f /* noprint */;
+output out=zb_f_means;
+run;
+
+data zb_m;
+input lp rok miesiac dochod zmiana;
+label miesiac="miesiąc" dochod='dochód';
+cards;
+1 2006 1 500000 0
+2 2006 2 520000 20000
+3 2006 3 480000	40000
+4 2007 1 530000 50000
+5 2007 2 570000 40000
+6 2007 3 550000 20000
+;
+run;
+
+proc means data=zb_m mean;
+by rok;
+var zmiana;
+output out=wyn_m mean=;
+format zmiana 8.2;
+run;
+
+
+proc means data=zb_m;
+class rok miesiac;
+output out=wyn_2 mean(dochod)=sredni_dochod;
+run;
+
+proc means data=zb_m nway noprint;
+class rok miesiac;
+output out=wyn_3 mean(dochod)=sredni_dochod;
+run;
+
+proc means data=zb_m mean;
+class rok miesiac;
+var dochod;
+ways 1 2;
+run;
+
+proc means data=zb_m mean;
+class rok miesiac;
+var dochod;
+types rok miesiac rok*miesiac;
+run;
+
