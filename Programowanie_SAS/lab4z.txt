@@ -305,3 +305,69 @@ var dochod;
 types rok miesiac rok*miesiac;
 run;
 
+/* ANALIZA STATYSTYCZNA */
+
+/*przygotowanie danych*/
+data dane;
+do id=1 to 3000;
+	x=rannor(1);
+	y=ranuni(1);
+	z=rannor(1)*10+10;
+	u=x; if id=100 then u=1000;
+	v=rannor(1)*rannor(1)*rannor(1);
+	stala=1;
+	output;
+end;
+run;
+/*przygotowanie danych*/
+
+
+*ogladanie;
+proc print data=dane(obs=10);
+run;
+
+*sql version
+proc sql outobs=50;
+select * from dane;
+quit;
+
+*podstawowe statystyki;
+proc means data=dane maxdec=3;
+var x y;
+run;
+
+*Troche wiecej i wspolczynnik zmiennosci i centyle i skrajne;
+proc univariate data=dane;
+var x y z u;
+id id;
+run;
+
+*wszystkie centyle;
+proc univariate data=dane noprint;
+var x y;
+id id;
+output out=centyle pctlpre=Px_ Py_ pctlpts=1 to 100 by 1;
+run;
+proc print;
+run;
+
+*czym różnią się rozkłady zmiennych x i u?;
+proc univariate data=dane;
+var x u;
+id id;
+run;
+
+proc gchart data=dane;
+vbar3d x / levels=10;
+vbar3d u / levels=10;
+run;
+quit;
+
+/*testy zodnosci z rozkładem*/
+proc univariate data=dane;
+var x u;
+id id;
+histogram  x u / normal;
+inset normal(sigma mean) / position=ne;
+run;
+
