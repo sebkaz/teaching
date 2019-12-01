@@ -305,6 +305,10 @@ var dochod;
 types rok miesiac rok*miesiac;
 run;
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 3808d351845b3165f4a35fc97c9f8722c46dea63
 /* ANALIZA STATYSTYCZNA */
 
 /*przygotowanie danych*/
@@ -326,11 +330,14 @@ run;
 proc print data=dane(obs=10);
 run;
 
+<<<<<<< HEAD
 *sql version
 proc sql outobs=50;
 select * from dane;
 quit;
 
+=======
+>>>>>>> 3808d351845b3165f4a35fc97c9f8722c46dea63
 *podstawowe statystyki;
 proc means data=dane maxdec=3;
 var x y;
@@ -371,3 +378,8 @@ histogram  x u / normal;
 inset normal(sigma mean) / position=ne;
 run;
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 3808d351845b3165f4a35fc97c9f8722c46dea63
