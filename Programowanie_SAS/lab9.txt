@@ -1,0 +1,482 @@
+/* Wczytywanie danych */
+
+DATA dane.outdata; 
+   INPUT age sex $ dept obs1 obs2 obs3; 
+   CARDS; 
+1 F 3 17 6 24
+1 M 1 19 25 7
+3 M 4 24 10 20
+3 F 2 19 23 8
+2 F 1 14 23 12
+2 M 5 1 23 9
+3 M 1 8 21 7
+1 F 1 7 7 14
+3 F 2 2 1 22
+1 M 5 20 5 2
+3 M 4 21 8 18
+1 M 4 7 9 25
+2 F 5 10 17 20
+3 F 4 21 25 7
+3 F 3 9 9 5
+3 M 3 7 21 25
+2 F 1 1 22 13
+2 F 5 20 22 5
+;
+proc print;
+run;
+
+DATA dane.outdata; 
+   INPUT age sex $ dept obs1 obs2 obs3; 
+   INFILE CARDS DLM=",";
+   CARDS; 
+1,F,3,17,6,24
+1,M,1,19,25,7
+3,M,4,24,10,20
+;
+proc print;
+run;
+
+
+%LET dir=/shared/home/szajac2@sgh.waw.pl/Przetwarzanie danych;
+%LET url=https://sebkaz.github.io/teaching/PrzetwarzanieDanych/data/polish_names.csv;
+
+filename test "&dir/test.csv";
+proc http
+ url='https://sebkaz.github.io/teaching/PrzetwarzanieDanych/data/polish_names.csv'
+ method="get" out=test;
+run;
+
+
+proc import
+ file=test
+ out=dane.imiona
+ dbms=csv
+ replace;
+run;
+
+data dane.testowy;
+infile "&dir/test.csv" dsd firstobs=2;
+input name $ sex $;
+run;
+
+filename sample "&dir/test.csv";
+data dane.testowy2;
+infile sample dsd firstobs=2;
+input name $ sex $;
+run;
+
+filename plik "&dir";
+data _null_;
+file plik('wynik.txt');
+set sashelp.class;
+put age weight height;
+run;
+
+proc freq data=sashelp.class;
+table age;
+run;
+
+proc freq data=sashelp.class;
+table age / nocum;
+run;
+
+proc freq data=sashelp.class;
+table age / nopercent nocum;
+run;
+
+proc freq data=sashelp.class;
+table sex *age;
+run;
+
+proc freq data=sashelp.class;
+table sex *age / list;
+run;
+
+proc freq data=sashelp.class;
+table sex *age / norow nocol nopercent;;
+run;
+
+proc freq data=sashelp.class;
+table sex *(age weight) / norow nocol nopercent;;
+run;
+
+Data example2;
+input pre $ post $ count;
+cards;
+Yes Yes 30
+Yes No 10
+No Yes 40
+No No 20
+;
+run;
+proc freq data=example2;
+tables pre*post;
+/* weight count; */
+run;
+
+
+data example1;
+input x y $ z;
+cards;
+6 A 60
+6 A 70
+2 A 100
+2 B 10
+3 B 67
+2 C 81
+3 C 63
+5 C 55
+;
+run;
+
+proc freq data = example1 ;
+tables y * x/chisq;
+output All out=temp_chi chisq;
+run; 
+
+
+data w2;
+a=1; output;
+a=.; output;
+run;
+
+proc freq data=w2 noprint;
+table a / out=dane.freq1 outcum;
+run;
+
+proc freq data=w2 noprint;
+table a / out=dane.freq2 missing ;
+run;
+
+Proc freq data=sashelp.heart;
+Tables deathcause;
+Run; 
+
+Proc freq data=sashelp.heart;
+Tables deathcause / missing;
+Run;
+
+Proc freq data=sashelp.heart order = FREQ;
+Tables deathcause / missing;
+Run;
+
+/*agregowanie z wykorzystaniem formatu*/
+proc format;
+value wiek
+low-13='Mały'
+13-high='Duży'
+;
+run;
+
+proc means data=sashelp.class noprint nway;
+class age;
+format age wiek.;
+var height;
+output out=stat mean(height)=sredni_wzrost;
+run;
+
+/* RAPORTOWANIE */
+proc contents data=dane.freq;
+run;
+
+proc print data=dane.freq;
+run;
+
+Title "tresc tytulu"; /* titlen n - nr lini wpisu*/
+footnote "tresc stopki";
+
+/* reset */
+Title;
+Footnote;
+
+options firstobs=1 obs=5 center date number ;
+title 'Wydruk CLass';
+proc print data=dane.imiona;
+run;
+
+/*tabulate*/
+
+Data test;
+Input T1 T2 T3 T4 T5 Age BU;
+Cards;
+1 5 2 3 4 3 3
+4 5 2 1 2 1 3
+3 4 4 3 2 3 2
+4 3 2 5 3 3 3
+1 2 4 2 1 2 2
+;
+Run;
+
+Proc tabulate data = test;
+Var T1;                                                                                           
+Table T1;           
+Run; /* domyslnie sumowanie */
+
+Proc tabulate data = test;
+Var T1;
+Table T1 * N;
+Run;
+
+Proc tabulate data = test;
+Var T1;
+Table T1 * (N SUM);
+Run;
+
+Proc Tabulate Data = test;
+Class Age;
+Var T1;
+Table Age, T1 * (N COLPCTN);
+Run;
+
+Proc Tabulate Data = test;
+Class Age;
+Var T1;
+Table T1, Age * (N ROWPCTN);
+Run;
+
+Proc Tabulate Data = test;
+Class Age;
+Var T1;
+Table Age, T1 = "Group I" * (N="Count" COLPCTN="%");
+Run;
+
+
+Proc Tabulate Data = test;
+Class Age;
+Var T1;                                                                               
+Keylabel N="Count" COLPCTN="%";
+Table Age, T1 = "Group I" * (N COLPCTN); 
+Run; 
+
+Proc Tabulate Data = test;
+Class Age;
+Var T1;
+Table Age=" ", T1 = "Group I" * (N="Count" COLPCTN="%") / box="Age";
+Run;
+
+
+/* total add*/
+Proc Tabulate Data = test;
+Class Age;
+Var T1;
+Table Age ALL = "Grand Total" , T1 = "Group I" * (N="Count" COLPCTN="%");
+Run;
+
+
+Proc format;                                                                                                                           
+value agefmt                                                                                                                           
+1 = 'Under 18'                                                                                                                       
+2 = '18 - 25'                                                                                                                         
+3 = 'Over 25';                                                                                                                       
+Run;                                                                                                                                   
+                                                                                                                                      
+Proc format;                                                                                                                           
+value bufmt                                                                                                                           
+1 = 'Analytics'                                                                                                                       
+2 = 'Technology'                                                                                                                     
+3 = 'Others';                                                                                                                         
+Run;
+                                                                                  
+Proc tabulate data = test;
+Format Age agefmt. BU bufmt.;
+Class Age BU;
+Var T1;                                                                                                                     
+Keylabel N="Count" ROWPCTN="%";
+Table T1="Group I",(Age * BU="Business Unit") * (N ROWPCTN * F=6.0); 
+Run; 
+
+
+Data test;
+length BU $18.;
+Input Location$ BU$ Gender$ Income;
+Cards;
+Delhi Analytics Male 5000
+Mumbai Tech Female 45000
+Delhi Analytics Male 37000
+Chennai Tech Male 33000
+Delhi Tech Male 5000
+Chennai Analytics Male 15000
+Mumbai Analytics Female 440000
+Delhi Analytics Female 5000
+Mumbai Tech Male 45000
+Delhi Analytics Female 37000
+Chennai Tech Female 33000
+Delhi Tech Female 5000
+Chennai Analytics Male 15000
+;                                                                                                                                     
+Run;                                                                         
+Proc tabulate data = test F=6.0;
+Class Location BU Gender;
+Var Income;
+Table Location=" "*BU=" ", Gender * Income=" "*(N="Count" ROWPCTN="%") / Box="Location BU";
+Run;
+
+/* save */
+Proc tabulate data = test out=test1;
+Format Age agefmt. BU bufmt.;
+Class Age BU;
+Var T1;
+Keylabel N="Count" ROWPCTN="%";
+Table T1="Group I",(Age * BU="Business Unit") * (N ROWPCTN * F=6.0);
+Run;
+
+
+proc tabulate data=sashelp.prdsale;
+class country;
+var actual;
+table country*actual*sum*f=numx12.2;
+run;
+
+proc tabulate data=sashelp.prdsale;
+class country;
+var actual;
+table sum*country*actual*f=numx12.2;
+run;
+
+
+proc tabulate data=sashelp.prdsale;
+class country year;
+var actual;
+table sum*country*actual*year*f=numx12.2;
+run;
+
+
+%LET save_report=/shared/home/szajac2@sgh.waw.pl/Przetwarzanie danych/zapis;
+
+ods listing close;
+ods pdf 
+file="&save_report/raport.pdf";
+proc tabulate data=sashelp.prdsale;
+class country;
+var actual;
+table country , actual;
+run;
+ods pdf close;
+ods listing;
+
+ods listing close;
+ods rtf 
+file="&save_report/rap.rtf";
+proc tabulate data=sashelp.prdsale;
+class country;
+var actual;
+table country , actual;
+run;
+ods rtf close;
+ods listing;
+
+
+ods listing close;
+ods html 
+path="&save_report/web/" (url=none)
+frame='index.html'
+page='page.html'
+contents='cont.html'
+body='body.html'
+style=statistical
+;
+proc tabulate data=sashelp.prdsale;
+class country;
+var actual;
+table country , actual;
+run;
+proc tabulate data=sashelp.prdsale;
+class country;
+var actual;
+table country , actual;
+run;
+ods html close;
+ods listing;
+
+/* makrozmienne */
+
+%let plec=F;
+options symbolgen;
+proc print data=sashelp.class;
+where sex="&plec";
+run;
+
+%let plec='F';
+proc print data=sashelp.class;
+where sex=&plec;
+run;
+
+%let plec=F;
+options symbolgen;
+title "Raport dla płci &plec";
+proc print data=sashelp.class;
+where sex="&plec";
+run;
+
+/*na etapie 1*/
+proc print data=sashelp.class;
+where sex=&plec;
+run;
+/*<=>*/
+proc print data=sashelp.class;
+where sex=F;
+run;
+
+
+%let wiek=12;
+proc print data=sashelp.class;
+where age=&wiek;
+run;
+
+
+%let a=1;
+%let b=2;
+%let c=&a+&b;
+%put &c;
+%let c=%eval(&a+&b);
+%put &c;
+
+%let a=1.6;
+%let b=2.6;
+%let c=%sysevalf(&a+&b);
+%put &c;
+
+/*%substr()*/
+/*%scan()*/
+/*%index()*/
+
+data w;
+a='Ala#ma#kota';
+b=scan(a,1,'#');
+run;
+%let a=Ala#ma#kota;
+%let b=%scan(&a,1,#);
+%put &b;
+
+%let a=Ala ma kota;
+%let b=%scan(&a,1,%str( ));
+%put &b;
+
+/* str, nrstr, nrbquote */
+
+%let a=%sysfunc(today(),yymmdd10.);
+%put &a;
+
+
+%macro raport(a,b);
+%if &a=12 %then %put Jest 12;
+%else %do;
+	%put Nie 12;
+%end;
+%mend;
+
+
+%raport(12,34);
+
+/*ods output*/
+/*ods trace on / listing;*/
+/*ods trace off;*/
+
+ods listing close;
+ods output Association=gini
+ParameterEstimates=bety;
+proc logistic data=sashelp.class;
+model sex=age height weight;
+run;
+ods output close;
+ods listing;
