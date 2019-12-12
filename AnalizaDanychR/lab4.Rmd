@@ -1,0 +1,376 @@
+---
+title: "Laboratorium 4"
+author: "Sebastian Zając"
+date: "21 12 2019"
+output: html_document
+---
+
+
+## Shiny app
+
+Pokazywanie wyników Twoich analiz i modeli w  R Studio raczej nikogo nie zachwycą. Nauczyłeś się już jak produkować stronę HTML (a nawet PDF) za pomocą języka Markdown. Świetnie ! Ale to nadal statyczne strony z wynikami. A jeśli ktoś zechce zmienić jakiś parametr Twoich wykresów, albo coś zagregować "on line" co w tedy zrobisz ? 
+
+Jednym z ciekawych rozwiązań, które możesz w pełni zrobić w R Studio jest wykorzystanie pakietu Shiny. Pakiet ten pozwala stworzyć aplikację internetową w której w dynamiczny sposób możesz sterować wszystkim co tylko zechcesz udostępnić użytkownikowi. Zamiast tworzyć statystyczną stronę pakiet ten generuje cały serwer www za Ciebie.
+
+Galerię ciekawych przykładów  możesz znaleźć na [stronie aplikacji](https://shiny.rstudio.com/gallery/). Znajdziesz tam również informację jak pisać aplikacje w Shiny. 
+
+## Zaczynamy
+
+### Szablon aplikacji w Shiny
+
+Aplikację Shiny warto rozłożyć na dwa podstawowe składniki. 
+
+1. Pierwszy odpowiedzialny za interfejs użytkownika (UI), który standardowo zapisuej się do pliku `ui.R`. 
+2. Drugi plik `server.R` pozawala określić sposób przetwarzania danych Twojej aplikacji.
+
+
+Szablony tych plików możesz "wyklikać" w menu `File -> New File -> Shiny Web App...`.
+
+```{r UI1, eval=FALSE, message=FALSE, warning=FALSE, include=TRUE, paged.print=TRUE}
+
+# PLIK ui.R
+library(shiny)
+
+# Define UI for application that draws a histogram
+shinyUI(fluidPage(
+
+    # Application title
+    titlePanel("Old Faithful Geyser Data"),
+
+    # Sidebar with a slider input for number of bins
+    sidebarLayout(
+        sidebarPanel(
+            sliderInput("bins",
+                        "Number of bins:",
+                        min = 1,
+                        max = 50,
+                        value = 30)
+        ),
+
+        # Show a plot of the generated distribution
+        mainPanel(
+            plotOutput("distPlot")
+        )
+    )
+))
+```
+
+```{r Server1, eval=FALSE, message=FALSE, warning=FALSE, include=TRUE, paged.print=TRUE}
+
+# server.R
+library(shiny)
+
+# Define server logic required to draw a histogram
+shinyServer(function(input, output) {
+
+    output$distPlot <- renderPlot({
+
+        # generate bins based on input$bins from ui.R
+        x    <- faithful[, 2]
+        bins <- seq(min(x), max(x), length.out = input$bins + 1)
+
+        # draw the histogram with the specified number of bins
+        hist(x, breaks = bins, col = 'darkgray', border = 'white')
+
+    })
+
+})
+
+```
+
+Uruchom aplikację zielonym przyciskiem `Run App`.
+
+Czy taka wersja dynamicznego histogramu nie jest lepsza niż jego statyczna wersja ? Czy widzisz już jakie możliwości daje Ci ta prosta aplikacja ? 
+
+
+**Uprośćmy nieco kod**
+
+Server zostawmy bez logiki przetwarzania.
+
+```{r Server2, eval=FALSE, message=FALSE, warning=FALSE, include=TRUE, paged.print=TRUE}
+
+# server.R
+library(shiny)
+
+# server logic
+shinyServer(function(input, output) {
+
+})
+
+```
+
+
+Natomiast w interfejsie zostawmy tylko tytuł oraz dwa elementy `p` oznaczające paragraf.
+
+```{r UI2, eval=FALSE, message=FALSE, warning=FALSE, include=TRUE, paged.print=TRUE}
+
+# PLIK ui.R
+library(shiny)
+
+# Define UI for application that draws a histogram
+shinyUI(fluidPage(
+  titlePanel("Twoja aplikacja Shiny"),
+  sidebarLayout(
+    sidebarPanel(
+      p("paragrag w lewym panelu")
+    ),
+    mainPanel(
+      br(),
+      p("Paragraf w prawym panelu")
+    )
+  )
+))
+```
+
+
+
+Jeśli jesteś ciekaw jak wdrożyć aplikację na swój serwer przeczytaj o tym [tutaj](https://rstudio.com/products/shiny/shiny-server/).
+
+Sprawdź, też od razu informacje z [tutoriala](https://shiny.rstudio.com/tutorial/written-tutorial/lesson1/) 
+
+
+### Niech się liczy
+
+Powyższy kod nie robi nic (nawet przykład z histogramem był ciekawszy ;) ). 
+
+Spróbujmy zbudować aplikację z wykorzystaniem modelowania. Zacznijmy od umieszenia wykresu i opisu modelu liniowego. W ui podamy gdzie dane elementy mają się pojawić, a w server ustalimy jak mają się obliczać. 
+
+
+W panelu głównym wykorzystamy `plotOutput("nazwa_wykresu")`, który wskaże gdzie pojawi się wykres o odpowiedniej nazwie oraz `verbatimTextOutput("model")` w którym będą informacje o modelu.
+
+Inne funkcje obsadzające wykres, tabelę, stronę html, opis itp zawsze kończą się słowem `Output`.
+
+
+```{r UI3, eval=FALSE, message=FALSE, warning=FALSE, include=TRUE, paged.print=TRUE}
+
+# PLIK ui.R
+library(shiny)
+
+shinyUI(fluidPage(
+  titlePanel("Pierwszy model"),
+  sidebarLayout(
+    sidebarPanel(
+      p("Tutaj jest lewy panel")
+    ),
+    mainPanel(
+      plotOutput("trend"),
+      verbatimTextOutput("model")
+    )
+  )
+))
+```
+
+
+Ze względu, iż w kodzie używamy obiektu `trend` oraz `model` ich definicje musimy podać w pliku servera. 
+
+```{r Server3, eval=FALSE, message=FALSE, warning=FALSE, include=TRUE, paged.print=TRUE}
+
+library(PogromcyDanych) # stąd weźmiemy dane 
+library(ggplot2) # a to będzie potrzebne dla wykresu
+
+shinyServer(function(input, output) {
+  
+  output$trend = renderPlot({
+    przyjaciele <- serialeIMDB[serialeIMDB$serial == "Friends", ]
+
+    ggplot(przyjaciele, aes(id, ocena, size=glosow, color=sezon)) +
+      geom_point() + xlab("Numer odcinka")
+  })
+
+  output$model = renderPrint({
+    przyjaciele <- serialeIMDB[serialeIMDB$serial == "Friends", ]
+
+    summary(lm(ocena~id, przyjaciele))
+  })
+})
+
+```
+
+
+Mamy już info i wykres. Teraz zajmiemy się kontrolą wyświetlanych elementów. 
+
+### Dynamika i kontrola elementów
+
+Stworzymy rozwijalną listę wyboru, gdzie określimy jakie wartości będą dostępne do wyboru. Wykorzystamy do tego funkcję `selectInput()`. Dodatwkowo ustalimy co ma być wybrane jako element domyślny i do jakiego obiektu zapiszemy wybór użytkownika. 
+
+```{r UI4, eval=FALSE, message=FALSE, warning=FALSE, include=TRUE, paged.print=TRUE}
+
+# PLIK ui.R
+
+library(shiny)
+library(PogromcyDanych)
+
+nazwySeriali <- sort(levels(serialeIMDB$serial))
+
+shinyUI(fluidPage(
+  titlePanel("Oceny kolejnych odcinków seriali'"),
+  sidebarLayout(
+    sidebarPanel(
+      selectInput(inputId = "wybranySerial", 
+                  label = "Wybierz serial do analizy",
+                  choices = nazwySeriali,
+                  selected = "Friends"),
+      checkboxInput(inputId = "liniaTrendu",
+                    label = "Czy zaznaczyć linię trendu?",
+                    value = TRUE)
+    ),
+    mainPanel(
+      plotOutput("trend"),
+      verbatimTextOutput("model")
+    )
+  )
+))
+
+```
+
+Teraz musimy poprawić plik serwera i dodać do niego jak rozumiany ma być parametr `input`. Nazwy zmiennych określone są w `InputID`. Dlatego uważaj przy ich przepisywaniu. 
+
+```{r Server4, eval=FALSE, message=FALSE, warning=FALSE, include=TRUE, paged.print=TRUE}
+
+library(PogromcyDanych)
+library(ggplot2)
+
+shinyServer(function(input, output) {
+  output$trend = renderPlot({
+    serial <- serialeIMDB[serialeIMDB$serial == input$wybranySerial, ]
+
+    pl <- ggplot(serial, aes(id, ocena, size=glosow, color=sezon)) +
+      geom_point() + xlab("Numer odcinka")
+    if (input$liniaTrendu) {
+      pl <- pl + geom_smooth(se=FALSE, method="lm", size=3)
+    }
+    pl
+  })
+
+  output$model = renderPrint({
+    serial <- serialeIMDB[serialeIMDB$serial == input$wybranySerial, ]
+
+    summary(lm(ocena~id, serial))
+  })
+})
+
+```
+
+### Wersja troszkę podrasowana
+
+Sporo już potrafisz i wszystko zależy od Twojej wyobraźni. Jak widzisz w dość prosty sposób możesz stworzyć dynamiczne raportowanie, które zrobi wrażenie na nie jednym odbiorcy. Pozostałe możliwości możesz sprawdzić w internecie (jest ich bardzo dużo).
+
+Jak przykład możesz np zrobić takie modyfikacje. 
+
+```{r UI5, eval=FALSE, message=FALSE, warning=FALSE, include=TRUE, paged.print=TRUE}
+
+# PLIK ui.R
+library(shiny)
+library(PogromcyDanych)
+
+nazwySeriali <- sort(levels(serialeIMDB$serial))
+
+shinyUI(fluidPage(
+  tags$head(tags$style(HTML("
+                            .well {
+                            background-color: #dd9999!important;
+                            width: 200px;
+                            }
+                            "))),
+  titlePanel("Oceny kolejnych odcinków seriali"),
+  sidebarLayout(
+    sidebarPanel(
+      selectInput("wybranySerial", 
+                  label = "Wybierz serial do analizy",
+                  choices = nazwySeriali,
+                  selected = "Friends"),
+      checkboxInput("liniaTrendu",
+                    "Czy zaznaczyć linię trendu?",
+                    value = TRUE),
+      htmlOutput("listaOdcinkow")
+    ),
+    mainPanel(
+      tabsetPanel(
+        tabPanel("Wykres", 
+                 p("Tak wyglądają oceny kolejnych odcinków serialu"), 
+                 plotOutput("trend")),
+        tabPanel("Model",
+         p("Wyniki dpasowania modelu liniowego dla tego serialu."),
+         verbatimTextOutput("model")
+        )    
+      )
+    )
+  )
+))
+```
+
+
+oraz 
+
+```{r Server5, eval=FALSE, message=FALSE, warning=FALSE, include=TRUE, paged.print=TRUE}
+
+library(PogromcyDanych)
+library(ggplot2)
+
+shinyServer(function(input, output, session) {
+  tylkoWybranySerial <- reactive({
+    serialeIMDB[serialeIMDB$serial == input$wybranySerial, ]
+  })
+
+  output$listaOdcinkow <- renderUI({ 
+    serial <- tylkoWybranySerial()
+
+    selectInput("odcinki", "Odcinki w serialu", as.character(serial$nazwa) )
+  })
+
+  output$trend = renderPlot({
+    serial <- tylkoWybranySerial()
+
+    pl <- ggplot(serial, aes(id, ocena, size=glosow, color=sezon)) +
+      geom_point() + xlab("Numer odcinka")
+    if (input$liniaTrendu) {
+      pl <- pl + geom_smooth(se=FALSE, method="lm", size=3)
+    }
+    pl
+  })
+
+  output$model = renderPrint({
+    serial <- tylkoWybranySerial()
+
+    summary(lm(ocena~id, serial))
+  })
+})
+
+
+```
+
+
+## Bazy danych 
+
+Jedna z najprostrzych baz danych SQL to SQLite. Opiera się ona o jeden plik w którym zawarte są wszystkie informacje. Dla małych treningowych danych nadaje się idealnie. W R możesz skorzystać z pakietu `RSQLite`. 
+
+- Wczytaj funkcję łączącą się z bazą `dbDriver()`
+- połącz się z bazą `dbConnect()` - to tylko ścieżka do pliku
+- Wykonaj operacje na bazie 
+- zakończ połączenie `dbDisconnect()`
+
+```{r baza}
+library("RSQLite")
+sterownik <- dbDriver("SQLite")
+polaczenie <- dbConnect(sterownik, "zabawka.db")
+
+```
+
+
+Utworz prostą tabelę
+
+```{r  tabela}
+dbExecute(polaczenie, "Create table test ('id', 'test1', 'test2') ")
+dbExecute(polaczenie, "insert into test values (1,2,3),(2,6,4)")
+```
+
+Wykonaj proste polecenie SQL 
+
+```{r testowy}
+testowy <- dbGetQuery(polaczenie, "select * from test")
+
+testowy
+```
+
+
+
