@@ -1,0 +1,488 @@
+/* Regular Expression */
+
+/*czy coś jest numerem telefonu*/
+/*wykrywanie nietypowych wartości*/
+
+data test6;
+length phone $20;
+input phone $20.;
+pattern = "/\d{9}/";
+patternID = prxparse(pattern);
+call prxsubstr(patternID, phone, position, length);
+if position = 0 then output;
+cards;
+a227335489
+22733548
+227335489
+oto numer 22733548
+podajê 501111222
+; 
+run;
+
+
+
+
+data test1;
+street='Luebin, Ulilca Keopalniana 2 m 8';
+pattern = "/\d+ m \d+/";
+patternID = prxparse(pattern);
+length match $80 ;
+ call prxsubstr(patternID, street, position, length);
+	if position ^= 0 then do;
+      match = substr(street, position, length);
+	  substr(street, position, length)='';
+	end;
+run;
+
+%macro testowanie( tekst, wyr,dt=temp);
+data &dt;
+street=&tekst;
+pattern = &wyr;
+patternID = prxparse(pattern);
+length match $80 ;
+ call prxsubstr(patternID, street, position, length);
+	if position ^= 0 then do;
+      match = substr(street, position, length);
+	  substr(street, position, length)='';
+	end;
+run;
+proc print;
+run;	
+
+%mend;
+
+
+%testowanie("Luebin, Ulilca Keopalniana 2 m 8","/\d+ m \d+/");
+%testowanie("Luebin, Ulilca Keopalniana 2 m 8","/ Ulilca|ulica|ul  /", dt=temp2);
+%testowanie("Luebin, Ulilca Keopalniana 2 m 8","/ Ulilca \w+ /");
+%testowanie("Luebin, Ulilca Keopalniana 2/8","/\d+\/\d+/");
+%testowanie('Luebin, Ulilca Keopalniana 2/8',"/\w+,/");
+
+
+
+
+
+
+/* raport wykresowy */
+ods listing close;
+ods html 
+path='/shared/home/szajac2@sgh.waw.pl/PD/raport'
+(url=none) body='raport.html'
+style=statistical;
+title "wykres rozproszenia";
+proc gplot data=sashelp.class;
+plot weight*height=age;
+run;
+quit;
+
+symbol v=star i=join;
+title "wykres liniowy";
+proc gplot data=sashelp.air;
+plot air*date;
+run;
+quit;
+
+
+title "wykres kołowy";
+proc gchart data=sashelp.class;
+pie3d age / type=mean 
+sumvar=weight;
+run;
+quit;
+
+title "wykres słupkowy";
+proc gchart data=sashelp.class;
+vbar3d age / type=percent;
+run;
+quit;
+
+data fala;
+do x=-2 to 2 by 0.05;
+	do y=-2 to 2 by 0.05;
+		z=sin(x*x+y*y);
+		output;
+	end;
+end;
+run;
+title "wykres 3d";
+proc g3d data=fala;
+scatter x*y=z / NONEEDLE;
+run;
+quit;
+
+title "wykres mapa";
+proc gmap map=maps.poland
+          data=maps.poland2;
+  id id;
+  prism id;
+run;
+quit;
+
+ods html close;
+ods listing;
+
+/*analiza struktury*/
+%let dir=/shared/home/szajac2@sgh.waw.pl/dane;
+libname wej '/shared/home/szajac2@sgh.waw.pl/wej' compress=yes;
+
+/*przygotowanie danych*/
+data wej.dane;
+do id=1 to 3000;
+	x=rannor(1);
+	y=ranuni(1);
+	z=rannor(1)*10+10;
+	u=x; if id=100 then u=1000;
+	v=rannor(1)*rannor(1)*rannor(1);
+	stala=1;
+	output;
+end;
+run;
+/*przygotowanie danych*/
+
+
+*ogladanie;
+proc print data=wej.dane(obs=10);
+run;
+
+*podstawowe statystyki;
+proc means data=wej.dane maxdec=3;
+var x y;
+run;
+
+*Troche wiecej i wspolczynnik zmiennosci i centyle i skrajne;
+proc univariate data=wej.dane;
+var x y z u;
+id id;
+run;
+
+
+/*testy zodnosci z rozkładem*/
+proc univariate data=wej.dane;
+var x u;
+id id;
+histogram  x u / normal;
+inset normal(sigma mean) / position=ne;
+run;
+
+/*ods graphics*/
+ods listing close;
+ods html path="&dir" body='univariate.html' style=statistical gpath="&dir" image_dpi=300;
+ods graphics on;
+proc univariate data=wej.dane;
+var x u;
+id id;
+ppplot;
+cdfplot;
+histogram  x u / normal;
+probplot x u / normal;
+qqplot x u / normal;
+run;
+ods graphics off;
+ods html close;
+ods listing;
+
+
+/*wykres prawdopodobieñstwa samodzielnie*/
+goptions reset=all;
+symbol v=star;
+%let zbior=wej.dane;
+%let zm=x;
+%let zm=v;
+proc sort data=&zbior out=op;
+by &zm;
+run;
+data w;
+set op nobs=il;
+Quantile=probit(_n_/(il+0.0001));
+Normal=Quantile;
+ProbabilityNormal=probnorm(&zm);
+ProbabilityEmprirical=_n_/(il+0.0001);
+d=abs(ProbabilityNormal-ProbabilityEmprirical);
+run;
+proc gplot data=w;
+plot (&zm Normal)*Quantile / overlay legend;
+plot (ProbabilityNormal ProbabilityEmprirical)*&zm / overlay legend;
+run;
+quit;
+
+/*statystyka D*/
+proc univariate data=wej.dane;
+var &zm;
+id id;
+histogram  &zm / normal;
+inset normal(sigma mean) / position=ne;
+run;
+proc sql;
+select max(d) from w;
+quit;
+
+
+*wartości nietypowe;
+proc means data=wej.dane noprint nway;
+var u;
+output out=obcinanie(drop=_type_ _freq_) p1()=p1 p99()=p99;
+run;
+proc sql noprint;
+select put(p1,best12.-L),put(p99,best12.-L) into :p1,:p99 from obcinanie;
+quit;
+%put &p1***&p99;
+proc gchart data=wej.dane;
+vbar3d u / levels=10;
+where u between &p1 and &p99;
+run;
+quit;
+
+
+
+*funkcje statystyczne;
+/*istnieje wiele wygodnych funkcji
+statystycznych ktore mozemy wykorzystywac w datastepach
+probt - dystrybuanta rozkladu t-studenta,
+probnorm - dystrybuanta normalnego rozkladu
+standaryzowanego,
+probit - odwrotnosc probnorm - kwartyl standaryzowanego rozkladu normalnego,
+tinv - odwrotnosc probit - kwartyl rozkladu t-studenta.
+*/
+
+
+*wykresy lodyga i pudelkowy;
+goptions reset=all;
+symbol interpol=boxt10 /* box plot              */
+       co=blue         /* box and whisker color */
+       bwidth=4        /* box width             */
+       value=square    /* plot symbol           */
+       cv=red          /* plot symbol color     */
+       height=2;       /* symbol height         */
+proc gplot data=wej.dane;
+plot x*stala;
+run;
+quit;
+
+
+ods listing close;
+ods html path="&dir" body='boxplot.html' style=statistical gpath="&dir" image_dpi=300;
+ods graphics on;
+proc boxplot data=wej.dane;
+   plot x*stala /
+      boxstyle = schematic
+      nohlabel;
+run;
+proc sgplot data=wej.dane;
+  vbox x / category=stala;
+  yaxis grid;
+  xaxis display=(nolabel);
+run;
+ods graphics off;
+ods html close;
+ods listing;
+
+
+
+/*przygotowanie danych*/
+data wej.dane_w;
+do id=1 to 3000;
+	x=rannor(1);
+	grupa=int(id/1501);
+	if grupa=0 then y=rannor(1)*10+20; else y=rannor(1)*10+21;
+	z=rannor(1)*10+10;
+	u=x; if id=100 then u=1000;
+	v=rannor(1)*rannor(1)*rannor(1);
+	stala=1;
+	output;
+end;
+run;
+/*przygotowanie danych*/
+
+
+/*funkcje gestości*/
+data funkcja_gestosci;
+	do x = -4 to 4 by 0.1;
+	   	pdf = PDF('NORMAL',x,0,1);
+		cdf = CDF('NORMAL',x,0,1);
+		output;
+	end;     
+run;
+goptions reset=all;
+symbol v=none i=join;
+proc gplot data=funkcja_gestosci;
+plot (pdf cdf)*x / overlay legend;
+run;
+quit;
+
+
+*przedzialy ufnosci;
+proc means data=wej.dane_w
+n mean clm maxdec=3 alpha=0.05;
+var x;
+run;
+/* poprawnie: przedziały pokrywają wartość średnią */
+/* nipoprawnie: średni należy do przedziału */
+
+*test dla sredniej;
+proc univariate data=wej.dane_w
+mu0=10 alpha=0.05;
+var z;
+run;
+
+*test dla sredniej tylko mu=0;
+proc means data=wej.dane_w
+n mean probt maxdec=3 alpha=0.05;
+var x;
+run;
+
+data wej.temp;
+set wej.dane_w;
+z=z-10;
+keep z;
+run;
+
+proc means data=wej.temp
+n mean probt maxdec=3 alpha=0.01;
+var z;
+run;
+
+/*założenia:*/
+/*próba posiada rozkład normalny*/
+/*albo próba jest dostatecznie duża, >30obs*/
+
+
+*test jednostornny i dwustronny;
+%let m0=10;
+proc means data=wej.dane_w noprint;
+var z;
+output out=m n=n mean=m stderr=b;
+run;
+
+data w;
+set m;
+t=(m-&m0)/b;
+df=n-1;
+prl=probt(t,df);
+prp=1-prl;
+pr=2*min(prl,prp);
+put "H0: mu>=&m0 " prl pvalue7.4;
+put "H0: mu<=&m0 " prp pvalue7.4;
+put "H0: mu=&m0 " pr pvalue7.4;
+run;
+
+/*jaka minimalna wielkośc próby albo jaka moc*/
+proc power plotonly;
+onesamplemeans test=t dist=normal
+	alpha=0.01 0.05
+	mean = 10
+	stddev = 10
+	ntotal = 5 to 60 by 5
+	power = .;
+plot x=n;
+run;
+
+proc power plotonly;
+onesamplemeans test=t dist=normal
+	alpha=0.01 0.05
+	mean = 10
+	stddev = 10
+	ntotal = .
+	power = 0.1 to 1 by 0.1;
+plot x=power;
+run;
+
+proc power;
+onesamplemeans test=t dist=normal
+	alpha=0.01 0.05
+	mean = 10
+	stddev = 10
+	ntotal = .
+	power = 0.9;
+run;
+
+
+
+*test ogolny dla dwoch srednich;
+proc sort data=wej.dane_w out=s;
+by grupa;
+run;
+proc univariate data=s normal;
+var y;
+by grupa;
+probplot y / normal 
+(mu=est sigma=est w=1 color=blue);
+run;
+proc boxplot data=wej.dane_w;
+   plot y*grupa /
+      boxstyle = schematic
+      nohlabel;
+run;
+proc ttest data=wej.dane_w;
+class grupa;
+var y;
+run;
+/*mocniejszy test jest dla zalożenia równości wariancji*/
+
+*testy nieparametryczne;
+proc npar1way data=wej.dane_w wilcoxon median;
+class grupa;
+var y;
+*exact;
+run;
+
+
+/*twierdzenia graniczne w praktyce*/
+
+/*metoda 1*/
+%let rozklad=ranuni(1)*10;
+%let n_prob=1000;
+%let ile_srednich=40;
+data wej.test;
+array s(&ile_srednich) sr1-sr&ile_srednich;
+do ile_prob=1 to &n_prob;
+	do p=1 to &ile_srednich;
+		s(p)=0;
+		do n=1 to p;
+			s(p)=s(p)+&rozklad;
+		end;
+		s(p)=s(p)/p;
+	end;
+	output;
+end;
+keep sr1-sr&ile_srednich;
+run;
+proc gchart data=wej.test;
+vbar3d sr1-sr&ile_srednich / levels=15;
+run;
+quit;
+/*metoda 1*/
+
+/*metoda 2*/
+%let n_populacji=3000;
+%let ile_prob=100;
+%let max_n=30;
+data populacja;
+do i=1 to &n_populacji;
+	x=&rozklad;
+	output;
+end;
+drop i;
+run;
+%macro rob_srednie;
+%do n=5 %to &max_n;
+	data n&n;
+	length sr&n 8;
+	delete;
+	run;
+	%do p=1 %to &ile_prob;
+		proc surveyselect data=populacja n=&n noprint out=p&p;
+		run;
+		proc sql;
+		insert into n&n select avg(x) from p&p;
+		quit;
+	%end;
+%end;
+%mend;
+%rob_srednie;
+data wej.test2;
+set n5-n&max_n;
+run;
+proc gchart data=wej.test2;
+vbar3d sr5-sr&max_n / levels=15;
+run;
+quit;
