@@ -1,0 +1,57 @@
+---
+title: "Egzamin"
+author: "Sebastian Zając"
+date: "22 12 2019"
+output: html_document
+---
+
+## Pytnia
+
+1. Ze względu na formę dane dzielimy na: 
+  a. ustrukturyzowane i nieustrukturyzowane
+  b. jawne i tajne
+  c. zakodowane i rozkodowane
+  d. rozproszone i scalone
+2. Modele przetwarzania danych to:
+  a. Model tradycyjny, OLTP
+  b. OLAP, OLTP
+  c. DBMS, OLTP
+  d. DBMS, OLAP
+3. Ze względu na cel metody eksploracji dzielimy na:
+  a. Asocjacje, regresje, klasyfikacje, grupowanie
+  b. predykcyjne, deskrypcyjne
+4. Aby zainstalować pakiet _shiny_ użył\\ła byś:
+  a. `library(shiny)`
+  b. `install.packages("shiny")`
+  c. `install.shiny()`
+  d. `install(shiny)`
+5. Wektory i tablice w języku `R` numerujemy od:
+  a. 0
+  b. 1
+  c. 2
+  d. 3
+6. Podstawowe typy zmiennych reprezentowane są w R jako:
+  a. klasa
+  b. ramka danych
+  c. wektor
+  d. słownik
+7. jakiego typu zmienną będzie wektor `c(1, 2, TRUE, "Napis")`
+  a. typ mieszany
+  b. ten wektor nie jest poprawny
+  c. typ boolean
+  d. typ intiger
+8. Do wyszczególnienia kolumny o nazwie `plec` z ramki danych `klienci` użyjesz:
+  a. `klienci$plec`
+  b. `plec[klienci]`
+  c. `klienci{plec}`
+  d. żadna z powyższych
+9. Wymień dwa przykłady statystyki opisowej 
+  a. 
+  b. 
+10. Test normalności rozkładu zmiennej sprawdzisz za pomocą:
+  a. testu t-studenta
+  b. testu Shapiro-Wilka
+  c. Testu średniej dla próby
+  d. Testy wariancji
+  
+  
