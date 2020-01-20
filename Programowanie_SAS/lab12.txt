@@ -1,0 +1,47 @@
+%LET dir=/shared/home/szajac2@sgh.waw.pl/PD/egzamin;
+
+
+
+%LET urlprod1=https://sebkaz.github.io/teaching/PrzetwarzanieDanych/data/prod1.csv;
+%LET urlprod2=https://sebkaz.github.io/teaching/PrzetwarzanieDanych/data/prod2.csv;
+%LET urlprod3=https://sebkaz.github.io/teaching/PrzetwarzanieDanych/data/prod3.csv;
+%LET urlprod4=https://sebkaz.github.io/teaching/PrzetwarzanieDanych/data/prod4.csv;
+%LET urlprod5=https://sebkaz.github.io/teaching/PrzetwarzanieDanych/data/prod5.csv;
+
+%LET urlt1=https://sebkaz.github.io/teaching/PrzetwarzanieDanych/data/transactions1.csv;
+%LET urlt2=https://sebkaz.github.io/teaching/PrzetwarzanieDanych/data/transactions2.csv;
+%LET urlt3=https://sebkaz.github.io/teaching/PrzetwarzanieDanych/data/transactions3.csv;
+%LET urlt4=https://sebkaz.github.io/teaching/PrzetwarzanieDanych/data/transactions4.csv;
+%LET urlt5=https://sebkaz.github.io/teaching/PrzetwarzanieDanych/data/transactions5.csv;
+%LET urlt6=https://sebkaz.github.io/teaching/PrzetwarzanieDanych/data/transactions6.csv;
+
+
+filename t1 "&dir/tran1.csv";
+
+proc http
+ url="&urlt1"
+ method="get" out=t1;
+run;
+
+proc import
+ file=t1
+ out=dane.tran1_test
+ dbms=csv
+ replace;
+ delimiter=';';
+ run;
+
+filename t2 "&dir/tran2.csv";
+
+proc http
+ url="&urlt2"
+ method="get" out=t2;
+run;
+
+proc import
+ file=t2
+ out=dane.tran2
+ dbms=csv
+ replace;
+ delimiter=';';
+ run;
