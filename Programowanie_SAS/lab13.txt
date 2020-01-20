@@ -1,0 +1,229 @@
+/* 1. aby uzyskac wzror wyjsciowy w puste miejsce trzeba wpisac ? 
+*/
+
+
+proc univariate data=sashelp.class;
+var age;
+--------- out= wynik mean()=srednia;
+run;
+
+* table, array, ootput, out ;
+
+/* 2 jaka wartosc w kolumnie ? */
+
+data a;
+tekst = "To jest SGH";
+a = compress(tekst, 's');
+run;
+
+
+/* Jaka wartość znajdzie się w kolumnie c po uruchomieniu poniższego kodu? */
+data w;
+a = mdy(12,06,2018);
+b = mdy(02,08,2019);
+c = intck('month',a,b,'disc');
+run;
+
+
+/* Ile obserwacji ma zbiór w po uruchomieniu poniższego kodu? */
+
+data w;
+set sashelp.class nobs=a end=b;
+if _n_ gt 10;
+run;
+
+
+/* Jaką linię kodu należy wstawić w zaznaczone miejsce, by w zbiorze wynikowym znalazły się tylko rekordy, gdzie imię zaczyna się od litery J? (zbiór w ma być niepusty) */
+
+data w;
+set sashelp.class;
+______________
+run;
+
+
+/* 
+where name like 'J*';
+where name like J*;
+where name like 'J%';
+where name like J%;
+*/
+
+
+/* Ile obserwacji znajdzie się w zbiorze wynikowym?  */
+
+
+data w;
+set sashelp.class;
+do i = 1 to 2;
+  do j = 2 to 4 by 2;
+    output;
+  end;
+end;
+run;
+
+
+data _null_;
+a = 3;
+a = 4; 
+output
+a = 5;
+run;
+
+
+/* Jakie są wartości w kolumnach zm1, zm2 i zm3 w zbiorze wynikowym? ; 
+data w;
+x1 = ' 123 '; x2 = 'abc #'; x3 = 'wyraz';
+zm1 = cat(of x2-x3)||x1;
+zm2 = catt(x1,x2);
+zm3 = catx('*',of x1-x3);
+run;
+
+/* Jaka jest liczba kolumn, liczba obserwacji i wartość w kolumnie stat w ostatniej obserwacji w zbiorze wynik? 
+*/
+
+
+proc sort data=sashelp.class out=s;
+by sex;
+data wynik;
+set s;
+by sex;
+retain stat;
+if first.sex then stat=999;
+stat=min(stat,age);
+if last.sex;
+keep sex stat;
+run;
+
+
+
+/* Ile wierszy znajdzie się w zbiorze stat? Jaka będzie wartość age w ostatnim wierszu? */
+
+proc format;
+value zakresy
+low - 55 = 'Low'
+55 - high = 'High';
+run;
+proc means data=sashelp.class noprint nway;
+class height;
+var age;
+format height zakresy.;
+output out=stat n()=age;
+run;
+
+/* Jakie instrukcje należy wstawić w zaznaczone miejsca, by otrzymać tabelę częstości dla  płci, z testem częstości (czy proporcje chłopców i dziewczynek w klasie są równe) i wykresem skumulowanej częstości? 
+
+*/
+
+proc freq data = sashelp.class;
+____________________________________________________
+run;
+
+/* 
+tables plec/ binomial (p=0.5) plots=cumfreqplot;
+tables sex / test p=0.5 plots=cumfreqplot;
+tables sex / binomial (p=0.5) plots=cumfreqplot;
+tables sex / binomial p=0.5 plot cumulative;
+
+*/
+
+/* Ile wierszy i kolumn znajdzie się w zbiorze stat? Jaka będzie wartość w pierwszym wierszu ostatniej kolumny?
+*/
+
+proc means data=sashelp.class(obs=6) noprint;
+class sex age;
+ways 1;
+var weight;
+output out=stat n()=ile;
+run;
+
+
+/* 
+Jakie instrukcje należy wstawić w zaznaczone miejsca, by wylosować próbkę 6 obserwacji ze zbioru sashelp.class? Losowanie warstwowe (po sex) bez zwracania, równoliczne grupy obserwacje reprezentujące warstwy.
+*/
+
+
+proc surveyselect 
+  data=w
+  out=sample
+  ___________
+  ___________
+  noprint;
+___________
+run;
+
+
+/* 
+ method=urs 2) n=3 3) strata sex / alloc=prop;
+
+ method=srs 2) n=6 3) strata sex / alloc=prop;
+
+ method=srs 2) n=3 3) strata sex;
+
+ 1) method=srs 2) n=6 3) strata sex;
+
+ */
+
+ /* Jakie instrukcje należy wstawić w zaznaczone miejsca, by dla zmiennej age narysować wykres gęstości rozkładu normalnego wraz z wykresem wygładzonym jądrowo?
+
+*/
+
+proc univariate data=sashelp.class;
+var age;
+__________________________
+run;
+
+
+/* 
+histogram age / plot=normal plot=kernel;
+histogram age / normal seed;
+histogram age / normal kernel;
+normal age / histogram kernel;
+*/
+
+MERGE zbiorów, proc FREQ z instrukcją CLASS, proc MEANS z instrukcją BY
+FULL JOIN zbiorów, proc FREQ z instrukcją BY, proc MEANS z instrukcją CLASS
+MERGE zbiorów, proc FREQ z instrukcją BY, proc MEANS z instrukcją BY
+MERGE zbiorów, proc FREQ z instrukcją CLASS, proc MEANS z instrukcją CLASS
+
+
+
+
+Ile kolumn i wierszy zawierał będzie zbiór wynikowy?
+%macro m1(where);
+  sashelp.class(where=(&where.))
+%mend;
+%macro m2;
+  data wynik;
+  set
+    %do i=12 %to 13;
+      %m1(age eq &i)
+    %end;
+  ;
+  run;
+%mend;
+%m2;
+
+
+
+Jaka jest wartość makrozmiennej wynik?
+%let zm1=SAS;
+%let zm2=data;
+%let SAS=zm2;
+%let wynik=&&&&&zm1;
+%put &wynik;
+
+
+Za pomocą jakiej funkcji zamienia się wartości numeryczne na tekstowe?
+
+
+Która z poniższych linii kodu jest poprawnie zakomentowana?
+
+--proc sort
+
+/proc sort/
+
+/*proc sort*/
+
+"proc sort"
+
+
