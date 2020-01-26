@@ -1,53 +1,71 @@
 ---
-title: "cw4 - Systemy rekomendacyjne"
-output: html_document
+title: "cw4 - API w pythonie"
+output: 
+  html_document: 
+    theme: journal
 ---
 
+## API jako serwis www
 
-## Inteligencja zbiorowa
-
-Jak już dowiedzieliśmy się na wykładzie (prawda, że pamiętasz ?) Netflix to internetowa wypozyczalnia płyt DVD umożliwiająca wybór filmów. Pod koniec 2006 firma ta poinformowała o nagrodzie w wysokości 1 mln dolarów dla pierwszej osoby, która poprawi dokładność systemu rekomendacji o $10\%$. Dodatkowo każdy lider raz do roku otrzyma 50 tyś dolarów. Najlepszy zespół otrzymał wynik $7\%$. Korzystając z danych dotyczących filmów, które spodobały się poszczególnym klientom, firma rekomenduje filmy pozostałym klientom. Wykorzystując zebrane dane oraz zaawansowane algorytmy firma stworzyła nowe możliwości biznesowe w celu lepszego zrozumienia klientów i użytkowników. 
+Korzystając z bazy danych [pobierz bazę](/data/chinook.db) stowrzymy servis www, który w zależności od wysłanego żądania (adres http) pobierze dane z bazy i prześle je w postaci JSON'a.
 
 
-[dane](data/recomendation.py).
+Zweryfikuj czy potrafisz uruchomić i załadować wszyskie potrzebne boblioteki. 
 
-```python
-from recomendations import critics, sim_distance, sim_manhatan, sim_pearson, topMatches
-
-critics['Lisa Rose']['Kobieta w błękitnej wodzie']
-```
-### Znajdowanie podobnych użytkowników
-
-Jak podobni są do siebie ludzie oceniający ?
-
-- Porównaj każdego z każdym i określ `miarę podobieństwa`. np odległość Euklidesowa, bądź korelacja Pearsona
-
-```python
-from math import sqrt
-
-sqrt(pow(5-4, 2)+ pow(4-1, 2))
-```
-Zwykła odległość będzie wskazywała duże wartości dla oddalonych od siebie osób - czyli o różnych preferencjach. 
-
-Aby zmienić wartości warto dokonać transformacji: 
-
-$1/(1+ \text{euclid})$
-
-Zauważ, że wyniki zawsze będą z przedziału $[0, 1]$ gdzie $1$ oznacz pełną zgodność w ocenach
-```python
-1/(1+sqrt(pow(5-4, 2)+ pow(4-1, 2)))
+```{python,eval=FALSE}
+from flask import Flask, request
+from flask_restful import Resource, Api
+from sqlalchemy import create_engine
+from json import dumps
+from flask_jsonpify import jsonify
 ```
 
-```python
-sim_distance(critics,'Lisa Rose', 'Gene Seymour')
+Jeżeli nie masz jakiegoś pakietu doinstaluj go 
+```{python, eval=FALSE}
+# tylko w środowisku Jupyter 
+!pip install flask
+# lub w konsoli 
+pip install <biblioteka>
 ```
 
->> policzmy odłegłości dla wszystkich 
+Uruchom konsolę "CMD" i zweryfikuj czy działa polecenie 
 
-```python
-distance = {}
-for el in critics:
-    distance[el] = [(sim_distance(critics, el, other), other) for other in critics if other!=el]
-    
-print(distance)
+
+```{bash, eval=FALSE}
+python -V
 ```
+
+W programie notepad++ stwórz plik `serwer.py`. Na początku pliku umieść zweryfikowany kod ładujący biblioteki. 
+
+Stwórz zmienne: 
+```{python, eval=FALSE}
+db_connect = create_engine('sqlite:///chinook.db')
+app = Flask(__name__)
+api = Api(app)
+```
+
+Pierwsze zapytani obsługiwać będzie odpowiedznia klasa: 
+
+```{python, eval=FALSE}
+class Employees(Resource):
+    def get(self):
+        conn = db_connect.connect() # connect to database
+        query = conn.execute("select * from employees") 
+        return {'employees': [i[0] for i in query.cursor.fetchall()]} 
+```
+
+Dodaj ścieżkę do API i kod do uruchomienia serwera.
+
+```{python,eval=FALSE}
+api.add_resource(Employees, '/employees') # Route_1
+
+if __name__= '__main__":
+  app.run(port='5002')
+```
+
+Brawo właśnie napisałeś swoje pierwsze api. Zweryfikuj je jak działa. 
+
+
+
+## Perceptron
+
