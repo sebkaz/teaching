@@ -305,35 +305,19 @@
                     </div>
                 </div>
             </div>
-            <!-- Zad 2  -->
-            <div class="card">
-                <div class="card-header" id="headingTwo">
-                    <h2 class="mb-0">
-                        <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                            #2 Napisać kod tworzący nawą bibliotekę CARSXLSX typu EXCEL wskazującej na dane w pliku „c:\data\cars.xlsx”.
-                        </button>
-                    </h2>
-                </div>
-                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
-                    <div class="card-body">
-                        <code>LIBNAME carsxlsx excel ”c:\data\cars\cars.xlsx”;
-                        </code>
-                        <p>Uwaga! w przypadku systemów 64bit silnik EXCEL trzeba zmienić na PCFILES</p>
-                    </div>
-                </div>
-            </div>
+
             <div class="card">
                 <div class="card-header" id="headingThree">
                     <h2 class="mb-0">
                         <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                            #3 Napisać kod tworzący nową bibliotekę ALL będącą konkatenacją bibliotek DANE I CARSXLS z poprzednich ćwiczeń.
+                            #2 Napisać kod tworzący nową bibliotekę ALL będącą konkatenacją bibliotek DANE I WORK z poprzednich ćwiczeń.
                         </button>
                     </h2>
                 </div>
                 <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
                     <div class="card-body">
                         <code>
-                            LIBNAME ALL (dane, carsxls);
+                            LIBNAME ALL (dane, work);
                             <br>
                             LIBNAME ALL ('C:/dane', 'C:/inny_katalog');
                             </code>
