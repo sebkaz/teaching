@@ -1,0 +1,274 @@
+Libname dane '/home/10sasdemo01/sasuser.viya/SZ00001/';
+
+
+data dane.t1; * uswtawiamy miejsce docelowe;
+set sashelp.cars; * petla glowna;
+run;
+
+data zbior;
+do i=1 to 10;
+x=i+2; 
+output;
+end;
+drop i;
+run;
+
+data dane.t2;
+set zbior;
+x = x+100;
+run;
+
+proc print;
+run;
+
+data w;
+a = 1;
+output;
+a = '1';
+output;
+run;
+proc print;
+run;
+
+data _null_;
+a = 1;
+put 'a= ' a;
+put a;
+run;
+
+data _null_;
+a = 3;
+put 'wektor PDV = ' _all_;
+run;
+
+data _null_;
+set dane.t2;
+put 'wektor PDV = ' _all_;
+put _error_ ;
+put _N_;
+run;
+
+/* zmienne */
+data dane.zmienne;
+length txt1 txt2 $12;
+length n1 n2 n3 3;
+txt1= "Sebastian Zając";
+n1 = 123;
+run;
+
+proc print data=dane.zmienne;
+run;
+
+data dane.ret_test;
+retain a 0;
+length b $5;
+b='to jest bardzo dlugi napis';
+a = a+1;
+put a;
+put _all_;
+run;
+
+proc print;
+run;
+
+data dane.Example;
+ input profit;
+ datalines;
+ 12
+ 54
+ 14
+ 44
+ 45
+ ;
+run;
+
+data example1;
+ retain cum_sum 0;
+ set dane.example;
+ cum_sum=cum_sum+profit;
+run;
+
+proc print data= example1;
+run;
+
+data _null_;
+length wiersz 8;
+set sashelp.class;
+wiersz = wiersz +1;
+put wiersz;
+run;
+ /* A teraz inaczej */
+ 
+data _null_;
+length wiersz 8;
+retain wiersz 0;
+set sashelp.class;
+wiersz = wiersz +1;
+put wiersz;
+run;
+
+
+proc sort data=sashelp.bmimen out=dane.bmi;
+ by age;
+run;
+
+data underweight;
+ length underweight $3.;
+ set dane.bmi;
+ by age;
+ retain underweight;
+
+ if first.age then
+  underweight="NO";
+
+ if bmi lt 18.5 then
+  underweight="YES";
+
+ if last.age then
+  output;
+run;
+proc print data=underweight(firstobs=215 obs=225);
+run;
+
+
+data example3;
+ do i=1 to 20;
+  month=rand('integer', 1, 12);
+  sales=rand('integer', 1, 100);
+  output;
+ end;
+ drop i;
+run;
+
+proc sort data=example3;
+ by month;
+quit;
+
+data cum_sum;
+ set example3;
+ by month;
+ retain cum_sum;
+
+ if first.month then
+  cum_sum=sales;
+ else
+  cum_sum=cum_sum + sales;
+run;
+
+/* Filtrowanie */ 
+
+data b;
+set sashelp.class;
+x = weight;
+keep sex height x;
+run;
+
+data c;
+set sashelp.class;
+drop sex height;
+run;
+
+proc sql;
+create table dane.sex_h as 
+select sex, height 
+from sashelp.class;
+quit;
+
+
+data b;
+set sashelp.class(keep=sex height);
+x = weight;
+run;
+
+proc sql;
+create table dane.sex_h as 
+select sex, height 
+from sashelp.class
+where height > 60;
+quit;
+proc print data=dane.sex_h;
+run;
+
+data b;
+set sashelp.class;
+where height > 60;
+run;
+
+data dane.boys(where=(sex='M')) dane.girls(where=(sex='F'));
+set sashelp.class;
+run;
+
+data ren;
+set sashelp.class;
+x = sex;
+rename sex=plec age=wiek;
+run;
+
+data ren;
+set sashelp.class(rename=(sex=plec));
+x = sex;
+run;
+
+proc sql;
+create table dane.sex_h as 
+select sex as plec, height as wzrost 
+from sashelp.class
+where height > 60;
+quit;
+proc print data=dane.sex_h;
+run;
+
+
+/* zadanie 
+
+
+*/
+
+data a;
+x=date();
+y=today();
+t=time();
+dt=datetime();
+
+
+format x y date9. t time9. dt datetime18. ;
+run;
+
+data a;
+dt=datetime();
+dp=datepart(dt);
+tp=timepart(dt);
+format dt datetime18.
+dp date9.
+tp time9. ; 
+run;
+
+data a;
+d=today();
+year = year(d);
+quarter = qtr(d);
+month = month(d);
+day = day(d);
+week = week(d);
+weekday = weekday(d);
+format d date9.; 
+run;
+
+data a;
+t = time();
+h = hour(t);
+m = minute(t);
+s = second(t);
+format t time9.;
+run;
+
+data a;
+d = mdy(10,10,2019);
+dt = dhms(d,19,20,34);
+t =hms(13,42,13);
+format d date9. t time9. dt datetime18. ;
+run;
+
+
+
+
