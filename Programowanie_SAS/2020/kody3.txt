@@ -1,0 +1,210 @@
+%let path = /home/10sasdemo01/sasuser.viya/SZ00001;
+
+LIBNANE dane "&path";
+
+TITLE 'to jest raport';
+data june;
+set dane.admitjune;
+where age>39;
+run;
+proc print data=june;
+run;
+
+proc contents data=dane.amounts;
+run;
+
+/* info o calej bibliotece */
+proc contents data=dane._all_ NODS;
+run;
+
+FILENAME csv_file "/home/10sasdemo01/sasuser.viya/SZ00001/boot.csv";
+PROC import datafile=csv_file 
+dbms=csv out=dane.boot_csv
+replace;
+getnames=no;
+run;
+proc print;
+run;
+
+OPTIONS obs=5;
+filename excel "&path./boots.xlsx";
+proc import datafile=excel
+dbms=xlsx
+out=work.bootsales
+replace;
+sheet=boot;
+getnames=yes;
+run;
+proc print;
+run;
+
+/* wszystkie wartosci */
+OPTIONS obs=max;
+filename excel "&path./boots.xlsx";
+proc import datafile=excel
+dbms=xlsx
+out=work.bootsales
+replace;
+sheet=boot;
+getnames=yes;
+run;
+proc print;
+run;
+
+/* podpiecie pliku excela pod biblioteke */
+LIBNAME certxl xlsx "&path./boots.xlsx";
+
+LIBNAME certxl xlsx "&path./exercise.xlsx";
+
+data certxl.first;
+set sashelp.air;
+run;
+
+data result;
+	set work.bootsales;
+	where region='South America' OR region='Canada';
+run;
+
+proc print data=result;
+	title 'South America and Canada';
+	footnote 'opracowanie wlasne';
+run;
+
+
+data work.drug1h(drop=placebo);
+set dane.cltrials(drop=triglyc uric); 
+if placebo='YES';
+run;
+proc print data=drug1h; run;
+
+
+
+
+data usa5;
+set dane.usa(keep=manager wagerate);
+if _n_=5 then output;
+run;
+proc print data=usa5;
+run;
+
+
+data empty full; 
+set dane.usa; 
+output full;
+run;
+
+proc print data=dane.admit;
+title 'testowy raport';
+footnote 'jakiesj info'; 
+var age height weight fee;
+run;
+
+proc print data=dane.admit noobs; 
+var age height weight fee;
+run;
+
+
+proc print data=dane.reps; 
+id idnum lastname;
+run;
+
+
+/* where
+Symbol
+= or eq
+^= or ne  
+> or gt
+< or lt
+>= or ge
+<= or le
+
+where firstname CONTAINS 'Jon';
+where firstname ? 'Jon';
+
+AND &
+OR |
+
+where actlevel in ('LOW','MOD'); 
+where fee in (124.80,178.20);
+ */
+
+proc print data=dane.admit;
+var age height weight fee; 
+where age>30;
+run;
+
+options firstobs=10; 
+proc print data=dane.heart;
+run;
+
+options firstobs=2 obs=5; 
+proc print data=dane.heart;
+run;
+
+proc print data=dane.heart(
+firstobs=10 obs=20);
+run;
+
+
+
+
+/* 
+SAS DATA VALUE 
+===============
+is a value that 
+represents the number of days 
+between January 1, 1960, and a specified date. 
+SAS can perform calculations on 
+dates ranging from 1582 C.E. to 19,900 
+C.E.. 
+Dates before January 1, 1960, 
+are negative numbers; 
+dates after are positive numbers.
+*/
+
+/*
+ SAS TIME VALUE
+===============
+is a value representing the
+number of seconds since 
+midnight of the 
+current day. 
+SAS time values are 
+between 0 and 86400.
+*/
+/*
+SAS DATATIME VALUE
+===================
+is a value representing
+the number of seconds 
+between January 1, 1960, 
+and an hour/ minute/second 
+within a specified date. 
+SAS makes adjustments for 
+leap years, but ignores 
+leap seconds. 
+SAS does not make 
+adjustments for daylight 
+saving time.
+*/
+
+data test;
+set dane.temp; 
+TotDay=enddate-startdate;
+keep Address Startdate Enddate TotDay;
+run;
+proc print data=work.test; run;
+
+data a;
+dzis = today();
+d = intnx('week', dzis, -5,"B");
+count = intck('day', d, dzis);
+format d dzis date9.;
+run;
+
+/* zadanie 
+
+Za pomocą fukcji oraz własnych 
+obliczeń oblicz swój wiek w latach,
+ miesiącach i dniach.
+*/
