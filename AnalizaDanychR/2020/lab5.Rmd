@@ -1,0 +1,104 @@
+---
+title: "Laboratorium 5"
+author: "Sebastian Zając"
+date: "22 12 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+```
+## Dane 
+```{r}
+df <- read.csv('https://sebastianzajac.pl/data/Salary_Data.csv')
+```
+
+
+## Prosty model 
+
+```{r}
+model1 = lm(Salary ~ YearsExperience, data = df)
+
+summary(model1)
+```
+
+```{r}
+ggplot() +
+  geom_point(aes(x = df$YearsExperience, y = df$Salary),
+             colour = 'red') +
+  geom_line(aes(x = df$YearsExperience, y = predict(model1, df)),
+            colour = 'blue') +
+  ggtitle('Salary vs Experience') +
+  xlab('Years of experience') +
+  ylab('Salary')
+```
+
+### Podział danych
+
+```{r}
+library(caTools)
+set.seed(123)
+
+split <- sample.split(df$Salary, SplitRatio=2/3)
+train_set <-subset(df, split==TRUE)
+test_set <- subset(df, split=FALSE)
+```
+
+```{r}
+model2 = lm(Salary ~ YearsExperience, data = train_set)
+
+summary(model2)
+```
+
+Jeśli przeskkalujemy zmienną to możemy otrzymać inne wyniki:
+
+```{r}
+tr_set_scaled = data.frame(scale(train_set))
+test_set_scaled = data.frame(scale(test_set))
+```
+
+```{r}
+model3 = lm(Salary ~ YearsExperience, data = tr_set_scaled )
+
+summary(model2)
+```
+
+## Co powiesz przy analizie takich danych ? 
+
+```{r}
+df2 <- read.csv('https://sebastianzajac.pl/data/50_Startups.csv')
+```
+
+### Czy ze wszsytkich zmiennych możesz wygenerować model regresji liniowej ? 
+```{r}
+df2$State = factor(df2$State,
+                       levels = c('New York', 'California', 'Florida'),
+                       labels = c(1, 2, 3))
+
+# Podział jeszcze raz
+library(caTools)
+set.seed(123)
+split_2 = sample.split(df2$Profit, SplitRatio = 0.8)
+training_set_2 = subset(df2, split_2 == TRUE)
+test_set_2 = subset(df2, split_2 == FALSE)
+```
+
+Teraz można zrobić model dla wszystkich zmiennych: 
+
+```{r}
+regressor_2= lm(formula = Profit ~ .,
+               data = training_set_2)
+
+summary(regressor_2)
+```
+
+Oraz wyprodukować predykcję 
+
+```{r}
+y_pred_2 = predict(regressor_2, newdata = test_set_2)
+```
+
+>>> Zadanie - wykonaj wykres regresji liniowej dla wybranej zmiennej. 
+
+

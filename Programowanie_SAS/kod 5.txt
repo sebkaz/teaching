@@ -1,0 +1,246 @@
+libname dane '/home/10sasdemo01/sasuser.viya/SZ00001' ;
+
+proc print; run;
+
+proc print data=dane.insure;
+run;
+
+proc print data=dane.insure;
+var name policy balancedue;
+where pctinsured < 100;
+sum balancedue;
+
+run;
+
+proc sort data=dane.admit out=work.admit;
+by actlevel;
+run;
+
+proc print data=work.admit;
+var age height weight fee; 
+where age>30;
+sum fee;
+by actlevel;
+id actlevel;
+run;
+
+TITLE;
+FOOTNOTE ;
+/*
+TITLE<n> 'text';
+FOOTNOTE<n> 'text';
+
+n = 1 to 10
+
+n is a number from 1 to 10 that specifies the 
+title or footnote line, and 'text' is the actual 
+title or footnote to be displayed. The maximum title
+ or footnote length depends on your operating 
+environment and on the value of the LINESIZE= option.
+The keyword TITLE is equivalent to TITLE1. Likewise, 
+FOOTNOTE is equivalent to FOOTNOTE1. If you do not 
+specify a title, the default title is The SAS System.
+ No footnote is printed unless you specify one
+
+*/
+
+
+title1 'Heart Rates for Patients with:'; 
+title3 'Increased Stress Tolerance Levels';
+proc print data=dane.stress;
+var resthr maxhr rechr;
+where tolerance='I'; 
+run;
+
+footnote1 'Data from Treadmill Tests'; 
+footnote3 '1st Quarter Admissions'; 
+proc print data=dane.stress;
+var resthr maxhr rechr;
+where tolerance='I'; 
+run;
+
+title1 'Heart Rates for Patients with'; 
+title3 'Participation in Exercise Therapy'; 
+footnote1 'Data from Treadmill Tests'; 
+footnote3 '1st Quarter Admissions';
+proc print data=dane.therapy;
+var swim walkjogrun aerclass; 
+run;
+title2 'Report for March'; 
+proc print data=dane.therapy; 
+run;
+
+title1;
+title3;
+footnote1;
+footnote3;
+
+title;
+
+proc print data=dane.therapy label; 
+label walkjogrun='Walk/Jog/Run';
+run;
+
+proc print data=dane.admit label;
+var actlevel height weight; 
+label 
+actlevel='Activity Level'
+height='Height in Inches'
+weight='Weight in Pounds';
+run;
+
+data dane.paris;
+set dane.laguardia;
+where dest='PAR' and (boarded=155 or boarded=146); 
+label date='Departure Date';
+run;
+
+data dane.paris;
+set dane.laguardia;
+where dest='PAR' and boarded in (155,146); 
+label date='Departure Date';
+run;
+
+proc print data=dane.paris label;
+var date dest boarded;
+run;
+
+/* fast excel 
+Proc import 
+libname nazwa xlsx 'plik.xlsx'
+*/
+
+libname  newF xlsx '/home/10sasdemo01/sasuser.viya/SZ00001/nowy_excel.xlsx';
+data newF.akrusz1;
+set sashelp.class;
+where age>14;
+run;
+
+
+/* proc SQL */
+
+proc print data=sashelp.class;
+run;
+
+proc sql;
+select * from sashelp.class;
+quit;
+
+proc sql;
+select name, age from sashelp.class;
+quit;
+
+proc print data=sashelp.class;
+var name age;
+run;
+
+proc sql;
+select name, height as 'height inches'n,
+(height*2.54) as height_in_cm
+from sashelp.class;
+run;
+
+proc sql;
+create table testowa as 
+select name, height as 'height inches'n,
+(height*2.54) as height_in_cm
+from sashelp.class;
+run;
+
+/* 
+proc sql;
+select columns
+from table 
+where expression
+group by column
+having expression
+order by column
+quit;
+*/
+
+proc sql feedback;
+select * from sashelp.class;
+quit;
+
+proc sql outobs=7;
+select * from sashelp.class;
+quit;
+
+proc sql; 
+select name, height as height_old,
+(height*2.54) as height_in_cm,
+CALCULATED height_in_cm/2.54 as height
+from sashelp.class;
+quit;
+
+proc sql;
+select distinct name 
+from sashelp.class;
+quit;
+
+proc sql ;
+create table test(drop=make model) as 
+select * from sashelp.cars;
+quit;
+
+/* funkcje */
+
+data czas;
+x = today();
+z = '10OCT2020'd;
+y = year(x);
+y2 = month(z);
+format x z date9.;
+run;
+proc print; run;
+
+data rok50;
+set sashelp.air;
+where date > '01JAN50'd;
+run;
+
+data test2;
+set sashelp.air;
+* rok = year(date);
+where year(date) = 1950;
+run;
+
+data liczby;
+length a 8.;
+a = 34.5434;
+b = floor(a);
+c = ceil(a);
+d = int(a);
+e = round(a,2);
+f = abs(a);
+g = exp(a);
+h = round(log(a),0.01);
+i = round(log10(a),0.1);
+j = sqrt(a);
+k = sign(a);
+sin = sin(a);
+cos = cos(a);
+
+label a='edytowana liczba' 
+b = 'l int w dol'
+c = 'l int w gore'
+;
+run;
+proc print label;run;
+
+data agregacje;
+x1 = 34.23;
+x2 = 12.453;
+x3 = 43.2323;
+suma = sum(x1,x2);
+suma3 = sum(of x1-x3);
+max = max(x1,x2);
+min = min(x1,x2);
+mean = mean(x1,x2);
+var = var(x1,x2);
+sd = std(x1,x2);
+sd2 = sd**2;
+nmis = nmiss(x1,x2);
+range = range(x1,x2);
+run;
+proc print label;run;
