@@ -1,210 +1,279 @@
-%let path = /home/10sasdemo01/sasuser.viya/SZ00001;
+Libname dane '/home/10sasdemo01/sasuser.viya/SZ00001/';
 
-LIBNANE dane "&path";
 
-TITLE 'to jest raport';
-data june;
-set dane.admitjune;
-where age>39;
-run;
-proc print data=june;
+data dane.t1; * uswtawiamy miejsce docelowe;
+set sashelp.cars; * petla glowna;
 run;
 
-proc contents data=dane.amounts;
+data zbior;
+do i=1 to 10;
+x=i+2; 
+output;
+end;
+drop i;
 run;
 
-/* info o calej bibliotece */
-proc contents data=dane._all_ NODS;
+data dane.t2;
+set zbior;
+x = x+100;
 run;
 
-FILENAME csv_file "/home/10sasdemo01/sasuser.viya/SZ00001/boot.csv";
-PROC import datafile=csv_file 
-dbms=csv out=dane.boot_csv
-replace;
-getnames=no;
+proc print;
+run;
+
+data w;
+a = 1;
+output;
+a = '1';
+output;
 run;
 proc print;
 run;
 
-OPTIONS obs=5;
-filename excel "&path./boots.xlsx";
-proc import datafile=excel
-dbms=xlsx
-out=work.bootsales
-replace;
-sheet=boot;
-getnames=yes;
+data _null_;
+a = 1;
+put 'a= ' a;
+put a;
 run;
+
+data _null_;
+a = 3;
+put 'wektor PDV = ' _all_;
+run;
+
+data _null_;
+set dane.t2;
+put 'wektor PDV = ' _all_;
+put _error_ ;
+put _N_;
+run;
+
+/* zmienne */
+data dane.zmienne;
+length txt1 txt2 $12;
+length n1 n2 n3 3;
+txt1= "Sebastian Zając";
+n1 = 123;
+run;
+
+proc print data=dane.zmienne;
+run;
+
+data dane.ret_test;
+retain a 0;
+length b $5;
+b='to jest bardzo dlugi napis';
+a = a+1;
+put a;
+put _all_;
+run;
+
 proc print;
 run;
 
-/* wszystkie wartosci */
-OPTIONS obs=max;
-filename excel "&path./boots.xlsx";
-proc import datafile=excel
-dbms=xlsx
-out=work.bootsales
-replace;
-sheet=boot;
-getnames=yes;
-run;
-proc print;
+data dane.Example;
+ input profit;
+ datalines;
+ 12
+ 54
+ 14
+ 44
+ 45
+ ;
 run;
 
-/* podpiecie pliku excela pod biblioteke */
-LIBNAME certxl xlsx "&path./boots.xlsx";
-
-LIBNAME certxl xlsx "&path./exercise.xlsx";
-
-data certxl.first;
-set sashelp.air;
+data example1;
+ retain cum_sum 0;
+ set dane.example;
+ cum_sum=cum_sum+profit;
 run;
 
-data result;
-	set work.bootsales;
-	where region='South America' OR region='Canada';
+proc print data= example1;
 run;
 
-proc print data=result;
-	title 'South America and Canada';
-	footnote 'opracowanie wlasne';
+data _null_;
+length wiersz 8;
+set sashelp.class;
+wiersz = wiersz +1;
+put wiersz;
 run;
-
-
-data work.drug1h(drop=placebo);
-set dane.cltrials(drop=triglyc uric); 
-if placebo='YES';
-run;
-proc print data=drug1h; run;
-
-
-
-
-data usa5;
-set dane.usa(keep=manager wagerate);
-if _n_=5 then output;
-run;
-proc print data=usa5;
+ /* A teraz inaczej */
+ 
+data _null_;
+length wiersz 8;
+retain wiersz 0;
+set sashelp.class;
+wiersz = wiersz +1;
+put wiersz;
 run;
 
 
-data empty full; 
-set dane.usa; 
-output full;
+proc sort data=sashelp.bmimen out=dane.bmi;
+ by age;
 run;
 
-proc print data=dane.admit;
-title 'testowy raport';
-footnote 'jakiesj info'; 
-var age height weight fee;
+data underweight;
+ length underweight $3.;
+ set dane.bmi;
+ by age;
+ retain underweight;
+
+ if first.age then
+  underweight="NO";
+
+ if bmi lt 18.5 then
+  underweight="YES";
+
+ if last.age then
+  output;
 run;
-
-proc print data=dane.admit noobs; 
-var age height weight fee;
-run;
-
-
-proc print data=dane.reps; 
-id idnum lastname;
-run;
-
-
-/* where
-Symbol
-= or eq
-^= or ne  
-> or gt
-< or lt
->= or ge
-<= or le
-
-where firstname CONTAINS 'Jon';
-where firstname ? 'Jon';
-
-AND &
-OR |
-
-where actlevel in ('LOW','MOD'); 
-where fee in (124.80,178.20);
- */
-
-proc print data=dane.admit;
-var age height weight fee; 
-where age>30;
-run;
-
-options firstobs=10; 
-proc print data=dane.heart;
-run;
-
-options firstobs=2 obs=5; 
-proc print data=dane.heart;
-run;
-
-proc print data=dane.heart(
-firstobs=10 obs=20);
+proc print data=underweight(firstobs=215 obs=225);
 run;
 
 
-
-
-/* 
-SAS DATA VALUE 
-===============
-is a value that 
-represents the number of days 
-between January 1, 1960, and a specified date. 
-SAS can perform calculations on 
-dates ranging from 1582 C.E. to 19,900 
-C.E.. 
-Dates before January 1, 1960, 
-are negative numbers; 
-dates after are positive numbers.
-*/
-
-/*
- SAS TIME VALUE
-===============
-is a value representing the
-number of seconds since 
-midnight of the 
-current day. 
-SAS time values are 
-between 0 and 86400.
-*/
-/*
-SAS DATATIME VALUE
-===================
-is a value representing
-the number of seconds 
-between January 1, 1960, 
-and an hour/ minute/second 
-within a specified date. 
-SAS makes adjustments for 
-leap years, but ignores 
-leap seconds. 
-SAS does not make 
-adjustments for daylight 
-saving time.
-*/
-
-data test;
-set dane.temp; 
-TotDay=enddate-startdate;
-keep Address Startdate Enddate TotDay;
+data example3;
+ do i=1 to 20;
+  month=rand('integer', 1, 12);
+  sales=rand('integer', 1, 100);
+  output;
+ end;
+ drop i;
 run;
-proc print data=work.test; run;
 
-data a;
-dzis = today();
-d = intnx('week', dzis, -5,"B");
-count = intck('day', d, dzis);
-format d dzis date9.;
+proc sort data=example3;
+ by month;
+quit;
+
+data cum_sum;
+ set example3;
+ by month;
+ retain cum_sum;
+
+ if first.month then
+  cum_sum=sales;
+ else
+  cum_sum=cum_sum + sales;
 run;
+
+/* Filtrowanie */ 
+
+data b;
+set sashelp.class;
+x = weight;
+keep sex height x;
+run;
+
+data c;
+set sashelp.class;
+drop sex height;
+run;
+
+proc sql;
+create table dane.sex_h as 
+select sex, height 
+from sashelp.class;
+quit;
+
+
+data b;
+set sashelp.class(keep=sex height);
+x = weight;
+run;
+
+proc sql;
+create table dane.sex_h as 
+select sex, height 
+from sashelp.class
+where height > 60;
+quit;
+proc print data=dane.sex_h;
+run;
+
+data b;
+set sashelp.class;
+where height > 60;
+run;
+
+data dane.boys(where=(sex='M')) dane.girls(where=(sex='F'));
+set sashelp.class;
+run;
+
+data ren;
+set sashelp.class;
+x = sex;
+rename sex=plec age=wiek;
+run;
+
+data ren;
+set sashelp.class(rename=(sex=plec));
+x = sex;
+run;
+
+proc sql;
+create table dane.sex_h as 
+select sex as plec, height as wzrost 
+from sashelp.class
+where height > 60;
+quit;
+proc print data=dane.sex_h;
+run;
+
 
 /* zadanie 
 
-Za pomocą fukcji oraz własnych 
-obliczeń oblicz swój wiek w latach,
- miesiącach i dniach.
+przeliczyc sashelp.class -> wzrost i wage na metry i kg. Nazwy zmiennych uzupelnij 
+w jezyku polskim. 
+Zbior podziel na Kobiety i Mezczyzn.
+ 
+Jak uzywac between oraz jak wskazac w where wartosc brakow danych.
+
 */
+
+data a;
+x=date();
+y=today();
+t=time();
+dt=datetime();
+
+
+format x y date9. t time9. dt datetime18. ;
+run;
+
+data a;
+dt=datetime();
+dp=datepart(dt);
+tp=timepart(dt);
+format dt datetime18.
+dp date9.
+tp time9. ; 
+run;
+
+data a;
+d=today();
+year = year(d);
+quarter = qtr(d);
+month = month(d);
+day = day(d);
+week = week(d);
+weekday = weekday(d);
+format d date9.; 
+run;
+
+data a;
+t = time();
+h = hour(t);
+m = minute(t);
+s = second(t);
+format t time9.;
+run;
+
+data a;
+d = mdy(10,10,2019);
+dt = dhms(d,19,20,34);
+t =hms(13,42,13);
+format d date9. t time9. dt datetime18. ;
+run;
+
+
+
+

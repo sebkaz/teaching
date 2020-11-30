@@ -1,0 +1,3 @@
+- notatki z opisem modelowania 
+- notatnik z metodami ml 
+- zdefiniować zajecia z liczeniem statystyk dla modeli 

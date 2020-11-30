@@ -1,0 +1,297 @@
+libname dane '/home/10sasdemo01/sasuser.viya/SZ00001';
+
+
+data _NULL_;
+liczba = 5;
+put liczba=;
+put liczba 3.1;
+put liczba commax3.2;
+put liczba roman.;
+put liczba wordf6.;
+run;
+
+/* <$>nazwa<w>.<d>
+$ - wiadomo 
+nazwa - wiadomo 
+w - max liczba znakow
+d - dl czesci dziesietnej
+ */
+
+data zb1;
+input lp rok miesiac $ dochod;
+format lp ROMAN. miesiac $10. dochod comma10.2;
+cards;
+1 2019 styczeń 500000
+2 2019 luty 543400
+3 2019 marzec 430000
+4 2018 styczeń 542000
+5 2018 luty 309877
+6 2018 marzec 660000
+;
+run;
+proc print;run;
+
+proc print data=zb1;
+
+format dochod DOLLAR10.2;
+by descending rok ;
+var miesiac dochod;
+run;
+
+proc format;
+value numerfmt
+1 = 'jeden'
+2 = 'dwa'
+3 = 'trzy'
+;
+run;
+
+proc  format;
+value $znakowy
+'K' = 'Kobieta'
+'M' = 'Mężczyzna'
+;
+run;
+
+data zb2;
+input lp plec $;
+cards;
+1 K
+2 M
+3 K
+;
+run;
+
+data zb2_f;
+set zb2;
+format lp numerfmt. plec $znakowy. ;
+run;
+
+proc format lib=dane;
+value kwota
+low-2500 = 'malo'
+2500-3000 = 'srednio'
+3000-high = 'duzo'
+other = 'cos innego'
+;
+run;
+
+options fmtsearch=(dane);
+
+
+data zb3;
+input lp;
+cards;
+1000
+2500
+2760
+3000
+3102
+10000
+.
+;
+run;
+
+proc print data=zb3;
+format lp kwota.;
+run;
+
+data zb1;
+input lp rok miesiac dochod zmienna;
+label miesiac='miesiąc' dochod='dochód';
+cards;
+1 2006 1 500000 0 
+2 2006 2 530000 200000
+3 2006 3 480000 400000
+4 2007 1 530000 500000
+5 2007 2 570000 400000
+6 2007 3 550000 300000
+;
+run;
+proc print;
+run;
+
+proc print data=zb1;run;
+
+proc transpose data=zb1 out=zb1T;
+run;
+
+proc print;run;
+
+proc transpose data=zb1 out=zb1T2(drop=_name_ _label_);
+run;
+proc print;run;
+
+/* przy operacjach z by - tabela powinna byc posortowana */
+proc transpose data=zb1 out=zb1Tb;
+by rok miesiac;
+run;
+proc print;run;
+
+/* instrukcja 'var' pozwala wybrać nam zmienne, 
+które mają być transponowane
+
+*/
+
+proc transpose data=zb1 name=zmienne out=zb4T(drop=_label_);
+*by rok;
+var miesiac dochod;
+run;
+proc print;
+run;
+
+proc transpose data=zb1 name=zmienne out=zb4T(drop=_label_);
+by rok;
+var miesiac dochod;
+run;
+proc print;
+run;
+
+/* 
+instrukcja id
+
+*/
+
+proc transpose data=zb1 label=etykiety name=zmienne out=zb5T;
+by rok;
+id miesiac;
+var dochod;
+run;
+
+proc print;
+run;
+
+proc transpose data=zb1 name=zmienne out=zb6T (drop=_label_)
+prefix=miesiac;
+by rok;
+id miesiac;
+var dochod;
+run;
+proc print;
+run;
+
+
+proc transpose data=zb1 name=zmienne out=zb7T (drop=_label_);
+id rok;
+run;
+
+proc print;run;
+
+proc transpose data=zb1 name=zmienne out=zb7T (drop=_label_) let;
+id rok;
+run;
+
+proc print;run;
+
+proc transpose data=sashelp.class out=klasa;
+var Name Sex;
+where age = 14;
+run;
+proc print;run;
+
+data zb2;
+input lp1 lp2 plec $ nazwisko $ placa;
+label plec='płeć' placa='płaca';
+cards;
+1 1 K Domańska 2100
+2 2 K Kowal 2800
+3 3 K Nowak 3200
+4 1 M Górski 4200
+5 2 M Mazur 2500
+6 3 M Kowalski 1800
+;
+run;
+proc print;run;
+
+
+proc transpose data=zb2 out=zb2T;
+run;
+proc print;run;
+
+proc transpose data=zb2 out=zb2T;
+var lp1 nazwisko;
+run;
+proc print;run;
+
+/* Łączenie zbiorów jeszcze raz */
+
+data zb_1;
+ input zm zm1 zm2;
+ cards;
+ 1 110 210
+ 2 120 220
+ 3 130 230
+ 4 140 240 
+ ;
+run;
+
+data zb_2;
+ input zm zm1 zm3;
+ cards;
+ 1 10 310
+ 2 20 320
+ 3 30 330
+ 4 40 340 
+ ;
+run;
+
+data zb_3;
+input zm zm1 $;
+cards;
+1 a
+2 b
+3 c
+;
+run;
+
+proc sql ;
+create table wyn1 as 
+select * from zb_1 as z1, zb_2 as z2
+where z1.zm=z2.zm;
+quit;
+
+proc sql;
+create table wyn2 as 
+select t1.*, t2.zm3
+from zb_1 as t1 left join zb_2 as t2 on t1.zm=t2.zm
+;
+quit;
+proc print;run;
+
+
+data w;
+set zb_1 zb_2 ;
+run;
+proc print;run;
+
+proc sql ;
+select * from zb_1
+union
+select * from zb_2;
+quit;
+
+/* proc append */
+
+proc append base=zb_1 data=zb_2 force;
+
+run;
+
+data w;
+set zb_1 zb_3;
+run;
+proc print;run;
+
+proc append base=zb_1 data=zb_3 force;
+run;
+proc print data=zb_1;
+run;
+
+data wyn2;
+merge zb_1 zb_2;
+run;
+proc print;
+
+data wyn3;
+merge zb_1 zb_2(rename=(zm1=zm4));
+run;
+proc print;run;

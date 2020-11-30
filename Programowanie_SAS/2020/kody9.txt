@@ -1,0 +1,153 @@
+data a;
+input x1 x2 x3 x4 x5;
+cards;
+1 2 3 4 5
+3 4 2 5 2 
+2 1 3 4 5 
+2 3 1 5 6 
+2 5 3 2 5
+;
+run;
+
+data a50;
+set a;
+x1+50;
+x2=x2+50;
+x3=x3+50;
+x4+50;
+x5+50;
+run;
+
+/* tablice 
+
+dim()
+hbound()
+lbound()
+*/
+
+data a_50a;
+set a;
+array zm(*) x1-x5;
+do j=1 to dim(zm);
+zm(j)=zm(j)+50;
+end;
+drop j;
+run;
+
+/* tablica pozwa generowa i deklarowac nowe zmienne */
+data a;
+array z {3}$ zm1 a b ('imie','nazwisko','wiek');
+run;
+
+
+data b;
+set a;
+array tab(3);
+if _n_=1 then do j=1 to dim(tab);
+tab(j)=7;
+end;
+drop j;
+run;
+
+data a;
+array tymczasowa(10) _temporary_;
+do i=1 to dim(tymczasowa);
+tymczasowa(i)=i*7;
+end;
+do i=1 to dim(tymczasowa);
+x=2+tymczasowa(i);
+output;
+end;
+drop i;
+run;
+
+data tab;
+array t{3} ( 1 2 3);
+dim = dim(t);
+hb=hbound(t);
+lb=lbound(t);
+sum = sum(of t(*));
+run;
+
+data premia;
+array premia{3} _temporary_ (0.12 0.5 0.7);
+pracownik="pierwszy";
+wyplata = 1000;
+prem = wyplata*premia(3);
+razem= wyplata+prem;
+run;
+
+data a;
+array rok(6);
+rok(1)=1000;
+do i=2 to dim(rok);
+rok(i)= 1.04*rok(i-1);
+end;
+drop i; 
+run;
+
+
+options obs=1;
+proc import 
+datafile='c:\Users\szajac2\Desktop\dane\abt_retrain_score_prob_long.csv'
+dbms=csv out=test replace;
+getnames=yes;
+run;
+
+options obs=max;
+
+proc contents data=test out=names noprint;run;
+
+
+proc sort data=test;
+by partition;
+run;
+
+proc rank data=test out=score(keep=partition target_num prob1_bench prob1_new bin1 bin2) groups=10 descending ties=low ;
+by partition;
+var prob1_bench prob1_new;
+ranks bin1 bin2;
+run;
+
+
+data wynik_b(keep=partition n n0b1-n0b10 n1b1-n1b10)
+wynik_n(keep=partition n nn1-nn10 n1n1-n1n10);
+set score;
+retain n 0;
+array nb{*} nb1-nb10;
+array nn{*} nn1-nn10;
+array n1b{*} n1b1-n1b10;
+array n1n{*} n1n1-n1n10;
+array n0b{*} n0b1-n0b10;
+
+by partition;
+n+1;
+if first.partition then do;
+n=0;
+do j=1 to dim(nb);
+nb(j)=0; nn(j)=0; n1b(j)=0; n1n(j)=0;
+end;
+end;
+
+nb(bin1+1)+1;
+nn(bin2+1)+1;
+
+if target_num>0 then do;
+n1b(bin1+1)+target_num;
+n1n(bin2+1)+target_num;
+
+end;
+
+if last.partition then do;
+do j=1 to dim(n0b);
+n0b(j)=nb(j)-n1b(j);
+end;
+output wynik_b;
+output wynik_n;
+end;
+
+run;
+
+proc transpose data=wynik_b;
+by partition;
+run;

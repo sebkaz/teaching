@@ -1,319 +1,255 @@
-data _NULL_;
-liczba=4;
-put liczba;
-put liczba 4.1;
-put liczba commax4.2;
-put liczba roman.;
-put liczba wordf5.;
-run;
-
-/* <$>nazwa<w>.<d>
-$ - wiadomo 
-nazwa - wiadomo 
-w - max liczba znakow
-d - dl czesci dziesietnej
-
- */
-
-data zb1;
-input lp rok miesiac $ dochod;
-format lp ROMAN. miesiac $10. dochod comma10.2;
-cards;
-1 2019 styczeń 500000
-2 2019 luty 543400
-3 2019 marzec 430000
-4 2018 styczeń 542000
-5 2018 luty 309877
-6 2018 marzec 660000
-;
-run;
-
-proc contents data=zb1;
-run;
-
-
-
-proc print data=zb1;
-format dochod DOLLAR10.2;
-/* by rok */
-var miesiac dochod;
-run;
-
-
-proc format;
-value numerfmt
-1 = 'jeden'
-2 = 'dwa'
-3 = 'trzy'
-;
-run;
-
-proc format FMTLIB;
-value $znakowy
-'K' = 'kobieta'
-'M' = 'mężczyzna'
-;
-run;
-
-data zb2;
-input lp plec $;
-cards;
-1 K
-2 M
-3 K
-;
-run;
-
-data zb2_f;
-set zb2;
-format lp numerfmt. plec $znakowy.;
-run;
-
-proc print;
-run;
-
-/* 
-proc format lib=dane;
-value kwota
-low-2500 = 'mało'
-2500-3000 = 'średnio'
-3000-high = 'dużo'
-other = 'cos innego'
-;
-run;
-
-options fmtsearch=(dane)
-
-*/
-
-proc format;
-value kwota
-low-2500 = 'mało'
-2500-3000 = 'średnio'
-3000-high = 'dużo'
-OTHER = 'cos innego'
-;
-run;
-
-* Prosta transpozycja z nowym zbiorem wynikowym
-
-Zwróć uwagę, że masz tu tylko zmienne numeryczne 
- */
-
-data zb1;
-input lp rok miesiac dochod zmienna;
-label miesiac='miesiąc' dochod='dochód';
-cards;
-1 2006 1 500000 0 
-2 2006 2 530000 200000
-3 2006 3 480000 400000
-4 2007 1 530000 500000
-5 2007 2 570000 400000
-6 2007 3 550000 300000
-;
-run;
-proc print;
-run;
-
-
-
-proc transopse data=zb1 out=zb1T;
-run;
-proc print;
-run;
-
-/* można zmienić nazwy _name_ i pozbyć się _label_ */
-proc transpose data=zb1 name=zmienne out=zb2T (drop=_label_);
-run;
-proc print;
-run;
-
-/* Transpozycja po grupach 'by'
-
-- pamiętaj o posortowaniu zbioru
- */
-proc transpose data=zb1 name=zmienne out=zb3T (drop=_label_);
-by rok;
-run;
-proc print;
-run;
-
-/* instrukcja 'var' pozwala wybrać nam zmienne, 
-które mają być transponowane
-
-*/
-
-proc transpose data=zb1 name=zmienne out=zb4T (drop=_label_);
-by rok;
-var miesiac dochod;
-run;
-proc print;
-run;
-
-/* 
-instrukcja id
-
-*/
-
-proc transpose data=zb1 label=etykiety name=zmienne out=zb5T;
-by rok;
-id miesiac;
-var dochod;
-run;
-
-proc print;
-run;
-
-proc transpose data=zb1 name=zmienne out=zb6T (drop=_label_)
-prefix=miesiac;
-by rok;
-id miesiac;
-var dochod;
-run;
-
-proc print;
-run;
-
-/* uwaga ! co jeśli zmienimy id na zmienną rok ? */
-proc transpose data=zb1 name=zmienne out=zb7T (drop=_label_);
-id rok;
-run;
-
-proc print;
-run;
-
-proc transpose data=zb1 name=zmienne out=zb7T (drop=_label_) let;
-id rok;
-run;
-
-proc print;
-run;
-
-/* jako ćwiczenie */
-proc transpose data=sashelp.class out=klasa;
-var Name Sex;
-where age = 14;
-run;
-
-data zb2;
-input lp1 lp2 plec $ nazwisko $ placa;
-label plec='płeć' placa='płaca';
-cards;
-1 1 K Domańska 2100
-2 2 K Kowal 2800
-3 3 K Nowak 3200
-4 1 M Górski 4200
-5 2 M Mazur 2500
-6 3 M Kowalski 1800
-;
-run;
-
-proc transpose data=zb2 out=zb2T;
-run;
-/* sprawdz log */
-
-proc transpose data=zb2 out=zb2T;
-var lp1 nazwisko;
-run;
-/* sprawdz log */
-
-
-
-/* Łączenie zbiorów jeszcze raz */
-
 data zb_1;
- input zm zm1 zm2;
- cards;
- 1 110 210
- 2 120 220
- 3 130 230
- 4 140 240 
- ;
-run;
-
-data zb_2;
- input zm zm1 zm3;
- cards;
- 1 10 310
- 2 20 320
- 3 30 330
- 4 40 340 
- ;
-run;
-
-data zb_3;
-input zm zm1 $;
+input x y$;
 cards;
-1 a
-2 b
-3 c
+1.1 A
+1.2 B
+1.3 C
+1.4 D
 ;
 run;
-
-proc sql ;
-create table wyn1 as 
-select * from zb_1 as z1, zb_2 as z2
-where z1.zm=z2.zm;
-quit;
-
-proc sql ;
-select * from zb_1
-union
-select * from zb_2;
-quit;
-
-
-/* APPEND 
-
-modyfikowanie zbioru przez dodanie do niego elementow
-
-*/
-
-
-proc append base=zb_1 data=zb_2;
+ 
+data zb_2;
+input x y$;
+cards;
+2.1 A
+2.2 B
+2.3 C
+2.4 D
+;
 run;
-
-proc append base=zb_1 data=zb_2 force;
-run; 
-
-proc print data=zb_1;
+ 
+data boys(where=(sex='M'))
+girls(where=(sex='F'));
+set sashelp.class;
 run;
-
-
-data wyn1;
+ 
+data dwa;
+set zb_1 zb_2;
+run;
+ 
+data zb_3;
+input t k$;
+cards;
+2.1 A
+2.2 B
+2.3 C
+2.4 D
+;
+run;
+ 
+ 
+data dwa;
 set zb_1 zb_3;
 run;
-
-
-proc append base=zb_1 data=zb_3 force;
+ 
+ 
+data test;
+length zm 3 zm_2 $10;
 run;
-proc print data=zb_1;
+ 
+data zb_4;
+input t y $;
+cards;
+2.1 A
+2.2 B
+2.3 C
+2.4 D
+;
 run;
-
-/* marge 
-
-scalanie zbioru 
-pierwsza z pierwszego z pierwsza z drugiego itd 
-tzw one-to-one
+ 
+data dwa;
+set zb_1 zb_4;
+run;
+ 
+data dwa;
+set zb_1 zb_2;
+by y;
+run;
+ 
+ 
+/* do testowania */
+data pyt1
+set zb_1;
+set zb_2;
+run;
+ 
+ 
+/* do testowania */
+data pyt2
+set zb_1(rename=(x=t));
+set zb_2;
+run;
+ 
+ 
+data a;
+x1=1; x2=4; x4=54; y6=10; y8=12; y9=0.5;
+format x1-x4 words.;
+format y6-y8 roman.;
+format y9 2.;
+run;
+data a;
+x1=1; y6=10; y8=12; x2=4; x3=54;  y9=0.5;
+*format x1-x4 words.;
+*format y6-y8 roman.;
+*format y9 2.;
+run;
+ 
+data b;
+set a(keep=x1-x3);
+sum = sum(of x1-x3);
+run;
+ 
+data a;
+input id name $ x y z;
+cards;
+1 Zosia 2 3 4
+2 Ania 3 4 6
+;
+run;
+ 
+data b;
+set a(keep=x--z);
+run;
+ 
+data b;
+set a(keep=name--z);
+run;
+ 
+data b;
+set a(keep=id-numeric-z);
+run;
+ 
+ 
+data a;
+x_a=1; x_b=3; x_c=2; yxz=0;
+output;
+x_a=5; x_b=2; x_c=6; yxz=8;
+output;
+run;
+ 
+data b;
+set a(keep=x:);
+z = sum(of x:);
+run;
+ 
+/* ELEMENTY PROGRAMISTYCZNE */
+ 
+/*
+IF warunek THEN instrukcja;
+<ELSE instrukcje>;
 */
-data wyn2;
-merge zb_1 zb_2;
+ 
+data a;
+set sashelp.class;
+if age > 14;
 run;
-
-/* wartosci zmiennych powtarzajacych sie sa nadpisywane 
-a moze zmienic nazwy ?
-
+ 
+data a;
+set sashelp.cars;
+if enginesize >3 then test=1;
+else test=0;
+run;
+proc print data=a;
+title 'Warunek if';
+by make;
+var make model type ;
+footnote "Utworzono &systime &sysday, &sysdate9";
+run;
+ 
+/* petla */
+ 
+/* do to end
+ 
+do zmienna=start to stop <by krok>;
+instrukcje;
+end;
+ 
 */
-data wyn3;
-merge zb_1 zb_2 (rename=(zm1=zm4));
+ 
+data lasowe;
+do x=1 to 10 by 2;
+y = rand('NORMAL');
+output;
+end;
 run;
-
-%put _automatic_;
-%put &SYSTIME;
-
-proc print data=sashelp.cars(keep=Make origin EngineSize);
-	title "Utworzone &SYSTime &sysday";
-	where origin="Europe" and EngineSize between 2 and 4;
-	footnote "Created &systime &sysday, &sysdate9";
+ 
+/*
+DO WHILE END ;
+ 
+DO While(warunek);
+instrukcje;
+end;
+ 
+*/
+ 
+data _null_;
+n=0;
+do while(n<10);
+put n=;
+n+1;
+end;
 run;
-
+ 
+/* DO UNTIL */
+data _null_;
+n=0;
+do until(n<10);
+put n=;
+n+1;
+end;
+run;
+ 
+ 
+data losowe;
+do x=1 to 100 by 1; *until(y>0.7);
+y=rand('UNIForm');
+output;
+end;
+run;
+data inwestycje;
+rok=2010;
+do while(rok<year(today()));
+kapital+5000;
+do miesiac=1 to 12;
+kapital+(kapital*0.04/12);
+end;
+output;
+rok+1;
+end;
+drop miesiac;
+run;
+ 
+data _null_;
+set inwestycje;
+ 
+select;
+    when(rok=2012) do;
+        put rok=;
+        put kapital=;
+        put 'tak';  
+        end;
+    when(rok=2014) do;
+        put 'nie';  
+    end;
+    otherwise put 'nie 2012 i 2014';
+end;
+ 
+run;
+ 
+data a;
+    do x='a','b','c';
+        do y='AAA','BBB','CCC';
+            z = floor(10*rand('UNIForm'));
+            u = floor(10*rand('UNIForm'));
+            output;
+        end;
+    end;
+run;
+ 
+data b;
+set a;
+by x y;
+put _all_;
+pierwszy_x = first.x;
+ostatni_x = last.x;
+run;

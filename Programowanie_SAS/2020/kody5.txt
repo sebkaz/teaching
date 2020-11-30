@@ -1,374 +1,246 @@
-%let path = /home/10sasdemo01/sasuser.viya/SZ00001;
+libname dane '/home/10sasdemo01/sasuser.viya/SZ00001' ;
 
-LIBNANE dane "&path";
+proc print; run;
 
-
-data a;
-a = rand('Normal');
-b = RAND('BERNoulli', 0.3);
-c = RAND('BETA', 0.3, 0.5);
-d = RAND('BINOmial', 0.5, 10);
-e = RAND('LOGNormal', 3, 1);
-f = RAND('NEGBinomial', 0.2, 19);
-g = RAND('POISson', 3);
-h = RAND('UNIForm');
-i = RAND('UNIForm',2,5);
-
-run;
-proc print data=a;run;
-
-data b;
-do i = 1 to 10;
-a = rand('Uniform');
-output;
-end;
-run;
-proc print;
+proc print data=dane.insure;
 run;
 
-data c;
-a = "Ala ma kotka";
-x = "Ala,ma,kota";
-*b = Index(a, "kotka");/* pozycja jednego stringa w drugim */
+proc print data=dane.insure;
+var name policy balancedue;
+where pctinsured < 100;
+sum balancedue;
 
-*Imie = scan(a, 1); /* zwraca poszczegolne wyrazy */
-*Zwierzak = scan(a, 3);
-*test = scan(x, 2, ',');
-*c = substr(a,5);
-*d = substr(a,5,2);
-*low = lowcase(a);
-*up = upcase(a);
-*prop = propcase(a);
-*change = tranwrd(a, "tka","ty");
-*z = "S A S ";
-*zz = compress(z);
-fname = "Sebastian ";
-lname = "Zajac ";
-*fname_1 = trim(fname); /* prawa strona */
-*fname_2 = strip(fname);/* left right */
-person = fname||' '||lname;
-person2 = compbl(person); 
-person3 = cat(fname,lname);
-rev = reverse(person2);
-q = quote(rev);
-run;
-proc print;
-title 'Napisy i ich przetwarzanie';
 run;
 
-data a;
-set sashelp.class(keep=weight);
-x = lag(weight);
-y = lag2(weight);
-z= lag(x);
-run;
-proc print;
-title 'funkcja lag()';
+proc sort data=dane.admit out=work.admit;
+by actlevel;
 run;
 
-
-/* dif n*/ 
-
-data a;
-set sashelp.class(keep=weight);
-x = dif(weight);
-y = dif2(weight);
-run;
-proc print; title 'funkcja DIF()'; run;
-
-
-* 1 SCAN ;
-
-/* Syntax, SCAN function: SCAN(argument,n<,<delimiters>>)
-• argument specifies the character variable or expression to scan.
-• n specifies which word to return.
-• delimiters are special characters that 
-must be enclosed in single quotation marks (' '). 
-If you do not specify delimiters, default
- delimiters are used.
-*/
-
-
-data newnames(keep=name);
-set dane.staff;
-run;
-proc print;run;
-
-data newnames(drop=name);
-set dane.staff;
-lastname = scan(name,1);
-firstname = scan(name,2);
-run;
-proc print;
+proc print data=work.admit;
+var age height weight fee; 
+where age>30;
+sum fee;
+by actlevel;
+id actlevel;
 run;
 
-data newnames(drop=name);
-set dane.staff;
-length firstname lastname $12.;
-lastname = scan(name,1);
-firstname = scan(name,2);
-run;
-proc print;run;
-
-/* SUBSTR 
-SUBSTR(argument, position <,n>)
-• argument specifies the character variable or expression to scan.
-• position is the character position to start from.
-• n specifies the number of characters to extract. 
-If n is omitted, all remaining characters
- are included in the substring.
-*/
-
-
-data work.agencyemp; 
-set dane.agencyemp;
-length MiddleInitial $ 1; 
-MiddleInitial=substr(middlename,1,1);
-run;
-proc print data=work.agencyemp; run;
-
-data work.temp2;
-set dane.temp; substr(phone,1,3)='433';
-format startdate date9. enddate date9.;
-keep startdate enddate phone;
-run;
-proc print data=work.temp2; run;
-
-
-/* The SORT procedure does the following:
-• rearranges the observations in a SAS data set
-• creates a new SAS data set that contains the 
-rearranged observations
-• replaces the original SAS data set by default
-• can sort on multiple variables
-• can sort in ascending or descending order
-• treats missing values as the smallest possible 
-values 
-Note: PROC SORT does not generate printed output.
-
-Syntax, PROC SORT step:
-PROC SORT DATA=SAS-data-set <OUT=SAS-data-set>;
-BY <DESCENDING> BY-variable(s); RUN;
-• The DATA= option specifies the data set to be read.
-• The OUT= option creates an output data set that 
-contains the data in sorted order.
-• BY-variable(s) in the required BY statement specifies 
-one or more variables whose values are used to sort the 
-data.
-• The DESCENDING option in the BY statement sorts
- observations in descending order. If you have more 
-that one variable in the BY statement, DESCENDING 
-applies only to the variable that immediately follows it.
-
-*/
-
-
-data zbior;
- input x y;
- cards;
- 2 3
- 24 25
- 23 25
- 2 4
- 23 22
- 1 2
- 1 2
- ;
-run;
-proc print;run;
+TITLE;
+FOOTNOTE ;
 /*
-Sortowanie w jezyku 4GL wykonuje sie za pomoca procedury SORT. 
-Jej najprostszy wariant skladniowy wyglada tak:
+TITLE<n> 'text';
+FOOTNOTE<n> 'text';
+
+n = 1 to 10
+
+n is a number from 1 to 10 that specifies the 
+title or footnote line, and 'text' is the actual 
+title or footnote to be displayed. The maximum title
+ or footnote length depends on your operating 
+environment and on the value of the LINESIZE= option.
+The keyword TITLE is equivalent to TITLE1. Likewise, 
+FOOTNOTE is equivalent to FOOTNOTE1. If you do not 
+specify a title, the default title is The SAS System.
+ No footnote is printed unless you specify one
+
 */
 
-proc sort data=zbior;
- by x;
+
+title1 'Heart Rates for Patients with:'; 
+title3 'Increased Stress Tolerance Levels';
+proc print data=dane.stress;
+var resthr maxhr rechr;
+where tolerance='I'; 
 run;
 
-proc sort data=zbior out=zbiors;
- by x;
+footnote1 'Data from Treadmill Tests'; 
+footnote3 '1st Quarter Admissions'; 
+proc print data=dane.stress;
+var resthr maxhr rechr;
+where tolerance='I'; 
 run;
-proc print;run;
 
-proc sort data=zbior out=zbiors;
- by x y ;
+title1 'Heart Rates for Patients with'; 
+title3 'Participation in Exercise Therapy'; 
+footnote1 'Data from Treadmill Tests'; 
+footnote3 '1st Quarter Admissions';
+proc print data=dane.therapy;
+var swim walkjogrun aerclass; 
 run;
-proc print;run;
-/*
-Chcac odwrocic porzadek sortowania, nalezy napisac tak:
+title2 'Report for March'; 
+proc print data=dane.therapy; 
+run;
+
+title1;
+title3;
+footnote1;
+footnote3;
+
+title;
+
+proc print data=dane.therapy label; 
+label walkjogrun='Walk/Jog/Run';
+run;
+
+proc print data=dane.admit label;
+var actlevel height weight; 
+label 
+actlevel='Activity Level'
+height='Height in Inches'
+weight='Weight in Pounds';
+run;
+
+data dane.paris;
+set dane.laguardia;
+where dest='PAR' and (boarded=155 or boarded=146); 
+label date='Departure Date';
+run;
+
+data dane.paris;
+set dane.laguardia;
+where dest='PAR' and boarded in (155,146); 
+label date='Departure Date';
+run;
+
+proc print data=dane.paris label;
+var date dest boarded;
+run;
+
+/* fast excel 
+Proc import 
+libname nazwa xlsx 'plik.xlsx'
 */
 
-proc sort data=zbior out=zbiors;
-by descending x;
+libname  newF xlsx '/home/10sasdemo01/sasuser.viya/SZ00001/nowy_excel.xlsx';
+data newF.akrusz1;
+set sashelp.class;
+where age>14;
 run;
-proc print;run;
-/*
-Istnieje mozliwosc pozbycia sie powtarzajacych sie wartosci obserwacji:
-*/
 
-proc sort data=zbior out=zbiors nodup;
- by /*descending*/ x;
+
+/* proc SQL */
+
+proc print data=sashelp.class;
 run;
-proc print;run;
-/*
-A takze powtarzajacych sie wartosci klucza:
-*/
 
-proc sort data=zbior out=a;
-by x;
-run;proc print; run;
-proc sort data=zbior out=zbiors nodupkey;
- by /*descending*/ x ; 
-run;proc print;run;
+proc sql;
+select * from sashelp.class;
+quit;
 
+proc sql;
+select name, age from sashelp.class;
+quit;
 
+proc print data=sashelp.class;
+var name age;
+run;
 
-/*
-Dokladniej, znaczy to tyle, ze sposrod obserwacji o powtarzajacej
- sie wartosci klucza zapisana jest pierwsza.
-*/
+proc sql;
+select name, height as 'height inches'n,
+(height*2.54) as height_in_cm
+from sashelp.class;
+run;
+
+proc sql;
+create table testowa as 
+select name, height as 'height inches'n,
+(height*2.54) as height_in_cm
+from sashelp.class;
+run;
 
 /* 
-Nalezy zdawac sobie sprawe z pewnej wlasnosci implementacji sortowania w 4GL. 
-Wszystko bedzie dobrze widoczne na ponizszym zbiorze:
+proc sql;
+select columns
+from table 
+where expression
+group by column
+having expression
+order by column
+quit;
 */
 
-data a;
- input x y;
- cards;
- 1 2
- 0 2
- 1 3
- 1 2
- 9 8
- ;
+proc sql feedback;
+select * from sashelp.class;
+quit;
+
+proc sql outobs=7;
+select * from sashelp.class;
+quit;
+
+proc sql; 
+select name, height as height_old,
+(height*2.54) as height_in_cm,
+CALCULATED height_in_cm/2.54 as height
+from sashelp.class;
+quit;
+
+proc sql;
+select distinct name 
+from sashelp.class;
+quit;
+
+proc sql ;
+create table test(drop=make model) as 
+select * from sashelp.cars;
+quit;
+
+/* funkcje */
+
+data czas;
+x = today();
+z = '10OCT2020'd;
+y = year(x);
+y2 = month(z);
+format x z date9.;
 run;
-proc print;
-/*
-Chcac usunac duplikaty, wykonujemy ponizszy DATA Step:
-*/
+proc print; run;
 
-proc sort data=a out=as nodup;
- by x;
-run;
-proc print;
-
-/*
-Tymczasem, poniewaz NODUPRECS sprawdza jedynie kolejne obserwacje,
- niektore niekolejne obserwacje powtarzajace sie moga pozostac w zbiorze wynikowym.
- Rada na to jest sortowanie po wszystkich zmiennych:
-*/
-
-proc sort data=a out=as nodup;
- by x y;
-run;
-proc print;
-
-/*
-Oczywiscie, mozliwe sa kombinacje w porzadku sortowania klucza:
-*/
-
-proc sort data=a out=as nodup;
- by x descending y;
-run;
-proc print;
-/* 
-Zwrocmy uwage na to, ze SAS nie wykonuje niepotrzebnych sortowan,
- tzn. nie sortuje zbioru, ktory juz kiedys posortowal i od 
- tamtego czasu go nie modyfikowal. Oto stosowny przyklad: 
-*/
-
-proc sort data=a out=aposort;
- by x;
+data rok50;
+set sashelp.air;
+where date > '01JAN50'd;
 run;
 
-proc sort data=aposort;
- by x;
+data test2;
+set sashelp.air;
+* rok = year(date);
+where year(date) = 1950;
 run;
 
-/*
-Zwrocmy uwage na komunikat wyswietlany w okienku Log.
+data liczby;
+length a 8.;
+a = 34.5434;
+b = floor(a);
+c = ceil(a);
+d = int(a);
+e = round(a,2);
+f = abs(a);
+g = exp(a);
+h = round(log(a),0.01);
+i = round(log10(a),0.1);
+j = sqrt(a);
+k = sign(a);
+sin = sin(a);
+cos = cos(a);
 
-Skad SAS wie, ze zbior APOSORT byl juz sortowany? 
-Ta i inne informacje o zbiorze moga byc odkryte za pomoca procedury CONTENTS:
-
-*/
-
-proc contents data=aposort out=info;
-run;
-
-proc sort data=dane.admit out=work.wgtadmit;
-by weight age;
-run;
-proc print data=work.wgtadmit;
-var weight age height fee;
-where age>30; run;
-
-
-
-data pl;
-	input wyrazy $ napis $;
-	cards;
-żaba zaba
-ćma cma
-żywioł zywiol
-źrenica zrenica
-ławka lawka
+label a='edytowana liczba' 
+b = 'l int w dol'
+c = 'l int w gore'
 ;
 run;
+proc print label;run;
 
-proc print;run;
-
-
-proc sort data=pl out=pls;
-by napis;
+data agregacje;
+x1 = 34.23;
+x2 = 12.453;
+x3 = 43.2323;
+suma = sum(x1,x2);
+suma3 = sum(of x1-x3);
+max = max(x1,x2);
+min = min(x1,x2);
+mean = mean(x1,x2);
+var = var(x1,x2);
+sd = std(x1,x2);
+sd2 = sd**2;
+nmis = nmiss(x1,x2);
+range = range(x1,x2);
 run;
-proc print;run;
-
-proc sort data=pl out=pls;
-by wyrazy;
-run;
-proc print;run;
-
-
-proc sort data=pl sortseq=polish;
-	by wyrazy;
-run;
-proc print;run;
-
-
-/* Konwersja danych
-
-tekst -> numeryczny
-numeryczny -> tekstowy
-
-str()
-list()
-dict()
-
-
-*/
-/* NIEJAWNA */
-/* jeśli jest odpowiedni kontekst to zmiany wykonywane są automatycznie */
-data result;
-	length numeric 8;
-	text='100';
-	numeric=text;
-	text=numeric*2;
-
-	/* jaki bedzie log ? */
-run;
-proc print;run;
-/* JAWNA
-
-PUT(zmienna, format) - numeric -> tekst
-INPUT(zmienna, informat) - tekst -> numeric
-*/
-data wyr;
-	numeric=15;
-	text1='1,200.20';
-	text2=put(numeric, z4.);
-	numeric2=input(text1, comma8.2);
-
-run;
-
+proc print label;run;
