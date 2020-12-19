@@ -1,0 +1,236 @@
+/* proc FrEQ 
+
+proc freq data=zb_wejsc <opcje>
+<by zmienne_grupujace;>
+<tables kombinacja zmiennych;>
+<weight zmienna_wazaca>
+run;
+
+<opcje> 
+: Compress 
+: Nlevels (liczba poziomow dla wszystkich zmiennych tables)
+: noprint - brak wydruku w oknie output
+: page - kazda tablica w osobnej stronie
+
+<opcje tables>
+Missing - uwzglednia braki danych
+nocol - pomija procenty kolumnowe
+norow - pomija procenty wierszowe
+nofreq - pomija czestosci 
+noprocent - pomija udzialy procentowe
+out
+noprint
+
+*/
+data zb_f;
+input lp1 lp2 plec $ nazwisko $ placa;
+label plec='płeć' placa='płaca';
+cards;
+1 1 K Domańska 2100
+2 2 K Kowal 2800
+3 3 K Nowak 3200
+4 1 M Górski 4200
+5 2 M Mazur 2500
+6 3 M Kowalski 1800
+;
+run;
+
+proc freq data=zb_f;
+run;
+
+/* dla jednej zmiennej */
+proc freq data=zb_f;
+table plec;
+run;
+
+proc freq data=zb_f;
+/* table plec placa; */ 
+table plec / out=plec_t;
+table placa / out=placa_t;
+run;
+
+proc freq data=zb_f;
+tables plec*placa;
+run;
+
+proc freq data=zb_f;
+by plec;
+table placa*lp2;
+run;
+
+proc freq data=zb_f;
+tables plec*placa*lp2;
+run;
+
+proc sql;
+create table t as select 
+count(distinct make) as n_make, count(distinct type) as n_type,
+count(distinct origin) as n_origin
+from sashelp.cars;
+quit;
+
+ods output nlevels=charlevels;
+proc freq data=sashelp.cars (keep = make type origin) nlevels;
+tables make type origin/ nopercent nocol nocum nofreq noprint;
+run;
+ods output close;
+
+
+
+
+data temp;
+set sashelp.class;
+run;
+
+/*BAR CHART */
+title "Waga Studentow";
+proc gchart data=temp;
+hbar name / type=sum sumvar=weight;
+run;
+
+title "Waga Studentow";
+proc gchart data=temp;
+vbar name / type=sum sumvar=weight;
+run;
+
+/* etykiety */
+title "Waga Studentow";
+footnote 'wykresik z etykietami';
+proc gchart data=temp;
+vbar name / type=sum sumvar=weight outside=sum /* inside=sum */ ;
+run;
+
+title "Waga Studentow";
+footnote 'wykresik z etykietami';
+proc gchart data=temp;
+vbar name / type=sum sumvar=weight descending outside=sum ;
+run;
+
+title "Waga Studentow";
+goptions htext=13pt htitle=15pt;
+axis1 label=none;
+axis2 label="Waga w funtach";
+proc gchart data=temp;
+vbar name / type=sum sumvar=weight descending
+maxis=axis1 raxis=axis2
+;
+run;
+quit;
+
+title "Avarege Male and Female Weights";
+goptions htext=13pt htitle=15pt;
+axis1 label=none value(f="Arial/Bold" "Female" "Male");
+axis2 label=(a=90 f="Arial/Bold" 'Mean Weight in Pounds') order=(0 to 150 by 25)
+minor=none offset=(0,0);
+pattern1 value=solid color=pink;
+pattern2 value=solid color=cx42c0fb;
+proc gchart data=temp;
+vbar sex / width=25 type=mean sumvar=weight descending
+maxis=axis1 raxis=axis2 outside=mean coutline=gray subgroup=sex;
+run;
+quit;
+
+title 'zgrupowany bar chart';
+axis1 label=('MSRP') minor=none offset=(0,0);
+axis2 label=none;
+axis3 label=none offset=(7,7);
+proc gchart data=sashelp.cars;
+vbar type / discrete type=mean sumvar=msrp
+group=origin coutline=grey raxis=axis1 maxis=axis2 gaxis=axis3 noframe;
+run;
+quit;
+
+
+title ;
+axis1 label=('MSRP') minor=none offset=(0,0);
+axis2 lable=none offest=(7,7);
+proc gchart data=sashelp.cars;
+vbar type /discrete type=mean sumvar=msrp
+subgroups=origin countline=grat width=10 
+raxis=axis1 maxis=axis2 nofrme;
+run;
+quit;
+
+
+title;
+goptions htext=10pt htitle=12pt;
+proc gchart data=temp;
+vbar weight/ space=1 width=10 outside=freq levels=4 range;
+run;quit;
+
+
+title 'line chart';
+symbol1 value=noen interpol=sm color=blue;
+proc gplot data=sashelp.failure;
+where cause="Contamination" and process="Process A";
+plot count*day;
+run;
+quit;
+
+title 'scatter plot';
+symbol1 value=circle height=3 interpol=none color=blue;
+symbol2 value=circle height=3 interpol=none color=red;
+proc gplot data=temp;
+plot height*weight=sex;
+run;
+
+/* ANALIZA STATYSTYCZNA */
+
+/*przygotowanie danych*/
+data dane;
+do id=1 to 3000;
+	x=rannor(1);
+	y=ranuni(1);
+	z=rannor(1)*10+10;
+	u=x; if id=100 then u=1000;
+	v=rannor(1)*rannor(1)*rannor(1);
+	stala=1;
+	output;
+end;
+run;
+/*przygotowanie danych*/
+
+
+*ogladanie;
+proc print data=dane(obs=10);
+run;
+
+*podstawowe statystyki;
+proc means data=dane maxdec=3;
+var x y;
+run;
+
+*Troche wiecej i wspolczynnik zmiennosci i centyle i skrajne;
+proc univariate data=dane;
+var x y z u;
+id id;
+run;
+
+*wszystkie centyle;
+proc univariate data=dane noprint;
+var x y;
+id id;
+output out=centyle pctlpre=Px_ Py_ pctlpts=1 to 100 by 1;
+run;
+proc print;
+run;
+
+*czym różnią się rozkłady zmiennych x i u?;
+proc univariate data=dane;
+var x u;
+id id;
+run;
+
+proc gchart data=dane;
+vbar3d x / levels=10;
+vbar3d u / levels=10;
+run;
+quit;
+
+/*testy zodnosci z rozkładem*/
+proc univariate data=dane;
+var x u;
+id id;
+histogram  x u / normal;
+inset normal(sigma mean) / position=ne;
+run;

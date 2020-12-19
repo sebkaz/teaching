@@ -1,0 +1,188 @@
+Libname dane '/home/10sasdemo01/sasuser.viya/SZ00001';
+
+data zb_t;
+input lp1 lp2 plec $ nazwisko $ placa;
+datalines;
+1 1 K Domanska 2100
+2 2 K Kowal 2800
+3 3 K Nowak 3200
+4 1 M Gorski 2500 
+5 2 M Mazur 4200 
+6 3 M Kowalski 1890
+run;
+
+data summary;
+set dane.survey;
+mean = mean(of item1-item4);
+run;
+proc print; run;
+
+proc means data=dane.survey;
+run;
+
+proc means data=zb_t;
+run;
+
+proc means data=dane.survey noprint;
+output out=dane.surv_mean;
+run;
+/* wybor statystyk */
+proc means data=dane.survey n median range;
+run;
+
+proc means data=dane.survey max min mode n nmiss skew std sum;
+run;
+
+proc means data=dane.survey clm css cv kurtosis lclm;
+run;
+
+proc means data=dane.survey P1 P5 P10  Q1 median Q3 Qrange;
+run;
+
+proc means data=dane.survey mean probt; run;
+
+proc means data=dane.survey mean maxdec=2;run;
+
+proc means data=dane.survey;
+var item1-item5;
+run;
+
+proc means data=dane.diabetes min max maxdec=0;
+var age height weight;
+run;
+
+proc print data=dane.heart;run;
+
+
+proc means data=dane.heart maxdec=1;
+var arterial heart cardiac urinary;
+class sex;
+run;
+
+
+proc means data=dane.heart maxdec=1;
+var arterial heart cardiac urinary;
+class survive sex;
+run;
+
+proc sort data=dane.heart; by survive sex; run;
+
+proc means data=dane.heart maxdec=1;
+output out=test;
+var arterial heart cardiac urinary;
+by survive sex;
+run;
+
+
+proc means data=zb_t mean noprint;
+var placa;
+output out=t;
+run;
+
+proc means data=zb_t mean noprint;
+var placa;
+output out=t mean(placa)=srednioplaca;
+run;
+
+data zbm;
+input lp rok miesiac dochod zmiana;
+cards;
+1 2006 1 500000 0
+2 2006 2 520000 20000
+3 2006 3 480000 40000
+4 2007 1 530000 50000
+5 2007 2 570000 40000
+6 2007 3 550000 20000
+;
+run;
+
+proc means data=zbm mean;
+class rok miesiac;
+var dochod;
+ways 1 2;
+run;
+
+proc means data=zbm mean;
+class rok miesiac;
+var dochod;
+types rok miesiac rok*miesiac;
+run;
+
+
+proc univariate data=dane.survey;
+run;
+
+proc univariate data=sashelp.shoes;
+var sales;
+run;
+
+proc univariate data=sashelp.shoes;
+class region;
+var sales;
+run;
+
+
+proc univariate data=sashelp.shoes;
+by region;
+var sales;
+run;
+
+ods select Moments;
+proc univariate data=sashelp.shoes;
+var sales;
+class region;
+run;
+
+
+ods select ExtremeObs;
+proc univariate data=sashelp.shoes;
+var sales;
+class region;
+run;
+
+
+ods trace on;
+proc univariate data=sashelp.shoes;
+var sales;
+class region;
+run;
+ods trace off;
+
+ods output Quantiles=temp;
+proc univariate data=sashelp.shoes;
+var sales;
+class region;
+run;
+ods output close;
+
+
+proc univariate data=sashelp.shoes noprint;
+var sales;
+histogram /normal(color=red);
+run;
+
+ods select TestsForNormality;
+proc univariate data=sashelp.shoes normal;
+var sales;
+run;
+
+proc univariate data=sashelp.shoes noprint;
+var sales;
+output out=temp
+
+pctlpre=P_  pctlpts=10 to 100 by 10;
+
+run;
+
+
+
+
+
+
+
+
+
+
+
+
+
