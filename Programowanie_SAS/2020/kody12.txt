@@ -1,0 +1,232 @@
+/* ODS 
+
+The Output Delivery System
+
+ODS enables you to create 
+reports for popular software
+ applications. 
+For example, use the ODS 
+PDF statement to create PDF 
+files for viewing with Adobe
+ Acrobat or for printing.
+ With ODS, you easily create output 
+in a variety of formats, including
+ Microsoft Excel and Power Point, 
+HTML, PDF, and RTF.
+*/
+
+/* You use ODS statements to specify destinations 
+for your output. Each destination creates 
+a specific type of formatted output. 
+The following table lists some of the ODS 
+destinations that are currently supported.
+
+Document
+EXCEL
+HTML
+Output
+RTF
+
+*/
+
+/* Otwieranie i zamykanie punktu 
+- Domyslnie HTML otwarty reszta zamknieta
+
+ */
+
+%let path = /shared/home/szajac2@sgh.waw.pl/wyniki/index.html;
+
+%put &path ;
+%put '&path';
+%put "&path";
+
+ods html close; * gdy nie chcesz uzywac html;
+
+* ods html path="%qsysfunc(pathname(work))";
+
+ods html body="&path";
+
+FILENAME MYHTML "&path";
+ods html body=MYHTML;
+
+libname dane '/shared/home/szajac2@sgh.waw.pl/dane';
+ODS HTML CLOSE;
+ods html body="&path";
+proc print data=dane.admit label;
+var sex age height weight actlevel;
+label actlevel='Activity Level'; 
+run;
+ods html close;
+ods html path="%qsysfunc(pathname(work))";
+
+
+%let dir = /shared/home/szajac2@sgh.waw.pl/wyniki/;
+
+
+ODS HTML CLOSE;
+ods html body="&dir.data.html" 
+contents="&dir.toc.html"
+frame="&dir.frame.html";
+proc print data=dane.admit (obs=10) label;
+ var id sex age height weight actlevel; 
+label actlevel='Activity Level';
+run;
+proc print data=dane.stress2 (obs=10);
+var id resthr maxhr rechr; run;
+ODS HTML CLOSE;
+
+ods html path="&dir." (url=none) 
+body='data2.html'
+contents='toc2.html'
+frame='frame2.html';
+proc print data=dane.admit; run;
+proc print data=dane.stress2; run;
+ods html close;
+
+
+proc template;
+list styles/store=sashelp.tmplmst;
+run;
+
+ods html body="&dir.testb.html" 
+style=banker;
+proc print data=dane.admit label;
+ var sex age height weight actlevel;
+run;
+ods html close;
+ods html path="%qsysfunc(pathname(work))";
+
+
+ods html close;
+ods pdf file="&dir.Sample.pdf"; 
+proc freq data=sashelp.cars;
+tables origin*type; run;
+ods pdf close;
+ods html path="%qsysfunc(pathname(work))";
+
+ods html close;
+title "Create a Table of Contents";
+options nodate;
+ods pdf file="&dir.MyDefaultToc.pdf" 
+contents=yes bookmarklist=hide;
+
+proc freq data=sashelp.cars;
+tables origin*type; run;
+
+proc print data=sashelp.cars (obs=15);
+run;
+
+ods pdf close;
+ods html path="%qsysfunc(pathname(work))";
+
+ods html close;
+ods pdf file="&dir.SamplePDF2.pdf"
+ style=FestivalPrinter; 
+proc freq data=sashelp.cars;
+tables origin*type; run;
+ods pdf close;
+
+ods excel file="&dir.multitablefinal.xlsx"
+options (sheet_interval="bygroup"
+suppress_bylines='yes'
+ sheet_label='country' embedded_titles='yes');
+title 'Wage Rates By Manager'; 
+proc means data=dane.usa;
+by manager;
+var wagerate; 
+run;
+ods excel close;
+
+PROC UNIVARIATE DATA=sashelp.class;
+HISTOGRAM age /CFILL=SKYBLUE;
+RUN;
+
+ODS RTF;
+PROC UNIVARIATE DATA=sashelp.class;
+HISTOGRAM age /CFILL=SKYBLUE;
+RUN;
+ODS RTF CLOSE;
+
+
+
+DATA dane.outdata; 
+   INPUT age sex $ dept obs1 obs2 obs3; 
+   DATALINES; 
+1 F 3 17 6 24
+1 M 1 19 25 7
+3 M 4 24 10 20
+3 F 2 19 23 8
+2 F 1 14 23 12
+2 M 5 1 23 9
+3 M 1 8 21 7
+1 F 1 7 7 14
+;
+proc print;run;
+
+DATA dane.outdata; 
+   INPUT age sex $ dept obs1 obs2 obs3; 
+   INFILE DATALINES DLM=",";
+   DATALINES; 
+1,F,3,17,6,24
+1,M,1,19,25,7
+3,M,4,24,10,20
+;
+proc print;
+run;
+
+%LET url=https://sebkaz.github.io/teaching/PrzetwarzanieDanych/data/polish_names.csv;
+
+%put &dir;
+
+filename test "&dir.imiona.csv";
+proc http url="&url" method="get" out=test;
+run;
+
+proc import
+ file=test
+ out=dane.imiona
+ dbms=csv
+ replace;
+run;
+
+
+data dane.imiona2;
+infile test dsd firstobs=2;
+input name $ sex $;
+run;
+
+
+
+
+data example1;
+input x y $ z;
+cards;
+6 A 60
+6 A 70
+2 A 100
+2 B 10
+3 B 67
+2 C 81
+3 C 63
+5 C 55
+;
+run;
+
+proc freq data=example1;
+tables y*x / chisq;
+run;
+
+proc freq data = example1 ;
+tables y * x/chisq;
+output All out=temp_chi chisq;
+run; 
+
+
+
+
+
+
+
+
+
+
