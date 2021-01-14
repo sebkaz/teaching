@@ -1,0 +1,238 @@
+%let nazwa = sex age;
+%put &nazwa;
+
+%let plec=F;
+%put &plec;
+
+%let dane = sashelp.class;
+
+proc print data=sashelp.class;
+where sex="F";
+run;
+
+proc print data=&dane;
+where sex=&plec;
+run;
+
+%let plec = "F";
+
+proc print data=sashelp.class;
+where sex=F;
+run; 
+
+proc print data=&dane;
+where sex="&plec";
+run;
+
+
+%let plec=M;
+title "Raport dla plci &plec";
+proc print data=sashelp.class;
+where sex="&plec";
+run;
+
+
+%let a=1;
+%let b=2;
+%let c = &a+&b;
+%put &c;
+
+%let c = %eval(&a+&b);
+%put &c;
+
+%let d = %sysevalf(&a+&b);
+%put &d;
+
+
+data a;
+y=1;
+z=2;
+x=1+2;
+xx=y+z;
+run;
+proc print;run;
+
+/* %substr() */
+/* %scan() */
+/* %index() */
+
+
+%let f = %sysfunc(substr());
+
+data w;
+a='Ala#ma#kota';
+b=scan(a,1,'#');
+run;
+
+
+%let a=Ala#ma#kota;
+%let b=%scan(&a,1,#);
+%put &b;
+
+
+%let a=%sysfunc(today(), yymmdd10.);
+%put &a;
+
+%macro program1(s);
+title "Raport dla plci &s";
+proc print data=sashelp.class;
+where sex="&s";
+run;
+
+%mend;
+
+%program1;
+
+%program1(F);
+
+%program1(M);
+
+%do i=1 %to .....
+
+%macro raport2(a);
+
+%do i=1 %to 20 %by 5;
+%let a = %eval(&a+2);
+%if &a=12 %then %put A jest 12;
+%else %do;
+    %put A rozne od 12;
+%end;
+%end; 
+%mend;
+
+%raport2;
+
+%raport2(4);
+
+
+ods output Association=gini;
+proc logistic data=sashelp.class;
+model sex=age height weight;
+run;
+ods output close;
+
+proc sql;
+select nValue2 into :gini_coef
+from gini
+where Label2 contains "Somers";
+quit;
+
+%put &gini_coef;
+
+/* symputx() symput() */
+
+
+proc contents data=sashelp.class 
+out= names noprint; run;
+
+proc sort data=names;
+by varnum; run;
+
+%let target = Sex;
+
+proc sql;
+select name into :zmienne separated by  ' ' 
+from names 
+where name ne "Name" 
+and name ne "&target";
+quit;
+%put  &zmienne;
+
+
+%macro a(lista);
+%do i=1 %to 3;
+%put %scan(&lista,&i,' ');
+%end;
+%mend;
+
+%a(&zmienne);
+
+
+%macro gini(in, t,vars);
+
+data gini_tab;
+length zmienna $ 50. gini 8.;
+delete;
+run;
+
+proc sql noprint;
+select count(*) 
+into :n
+from names;
+quit;
+
+%do i=1 %to &n;
+%let zm =  %scan(&vars,&i,' ');
+
+ods output Association=gini;
+proc logistic data=&in;
+model &t=&zm;
+run;
+ods output close;
+
+proc sql;
+select nValue2 into :gini_coef
+from gini
+where Label2 contains "Somers";
+quit;
+
+%put Gini: &zm = &gini_coef;
+
+data tmp;
+length zmienna $ 50. gini 8.;
+zmienna = "&zm";
+gini = &gini_coef;
+run;
+
+proc append base=gini_tab data=tmp force;
+run;
+%end;
+
+proc sort data=gini_tab;
+by descending gini;
+run; 
+
+%mend;
+
+
+%gini(sashelp.class,Sex,&zmienne);
+
+
+
+data test6;
+length phone $20;
+input phone $20.;
+pattern = "/\d{9}/";
+patternID = prxparse(pattern);
+call prxsubstr(patternID, phone, position, length);
+if position = 0 then output;
+cards;
+a227335489
+22733548
+227335489
+oto numer 22733548
+podajê 501111222
+; 
+run;
+
+/* Regular Expressions */ 
+
+%macro testowanie(tekst, wyr, dt=temp);
+data &dt;
+street=&tekst;
+pattern = &wyr;
+patternID = prxparse(pattern);
+length match $80 ;
+ call prxsubstr(patternID, street, position, length);
+	if position ^= 0 then do;
+      match = substr(street, position, length);
+	  substr(street, position, length)='';
+	end;
+run;
+proc print;
+run;	
+
+%mend;
+
+
+%testowanie("Luebin, Ulilca Keopalniana 2 m 8","/\d+ m \d+/");
