@@ -1,16 +1,11 @@
----
-title: "cw4 - API w pythonie"
-output: 
-  html_document: 
-    theme: journal
----
+# Laboratorium 4
 
 ## API jako serwis www
 
-Korzystając z bazy danych [pobierz bazę](/data/chinook.db) stowrzymy servis www, który w zależności od wysłanego żądania (adres http) pobierze dane z bazy i prześle je w postaci JSON'a.
+Korzystając z bazy danych [pobierz bazę](/data/chinook.db) stworzymy serwis www, który w zależności od wysłanego żądania (adres http) pobierze dane z bazy i prześle je w postaci JSON'a.
 
 
-Zweryfikuj czy potrafisz uruchomić i załadować wszyskie potrzebne boblioteki. 
+Zweryfikuj czy potrafisz uruchomić i załadować wszystkie potrzebne biblioteki.
 
 ```{python,eval=FALSE}
 from flask import Flask, request
@@ -20,38 +15,38 @@ from json import dumps
 from flask_jsonpify import jsonify
 ```
 
-Jeżeli nie masz jakiegoś pakietu doinstaluj go 
+Jeżeli nie masz jakiegoś pakietu doinstaluj go
 ```{python, eval=FALSE}
-# tylko w środowisku Jupyter 
+# tylko w środowisku Jupyter
 !pip install flask
-# lub w konsoli 
+# lub w konsoli
 pip install <biblioteka>
 ```
 
-Uruchom konsolę "CMD" i zweryfikuj czy działa polecenie 
+Uruchom konsolę "CMD" i zweryfikuj czy działa polecenie
 
 
 ```{bash, eval=FALSE}
 python -V
 ```
 
-W programie notepad++ stwórz plik `serwer.py`. Na początku pliku umieść zweryfikowany kod ładujący biblioteki. 
+W programie notepad++ stwórz plik `serwer.py`. Na początku pliku umieść zweryfikowany kod ładujący biblioteki.
 
-Stwórz zmienne: 
+Stwórz zmienne:
 ```{python, eval=FALSE}
 db_connect = create_engine('sqlite:///chinook.db')
 app = Flask(__name__)
 api = Api(app)
 ```
 
-Pierwsze zapytani obsługiwać będzie odpowiedznia klasa: 
+Pierwsze zapytani obsługiwać będzie odpowiedznia klasa:
 
 ```{python, eval=FALSE}
 class Employees(Resource):
     def get(self):
         conn = db_connect.connect() # connect to database
-        query = conn.execute("select * from employees") 
-        return {'employees': [i[0] for i in query.cursor.fetchall()]} 
+        query = conn.execute("select * from employees")
+        return {'employees': [i[0] for i in query.cursor.fetchall()]}
 ```
 
 Dodaj ścieżkę do API i kod do uruchomienia serwera.
@@ -63,9 +58,8 @@ if __name__= '__main__":
   app.run(port='5002')
 ```
 
-Brawo właśnie napisałeś swoje pierwsze api. Zweryfikuj je jak działa. 
+Brawo właśnie napisałeś swoje pierwsze api. Zweryfikuj je jak działa.
 
 
 
 ## Perceptron
-
